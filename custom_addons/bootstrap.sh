@@ -86,7 +86,7 @@ services:
       - "5432:5432"
     volumes:
       - minierp_db_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U odoo"]
       interval: 10s
@@ -100,9 +100,9 @@ DOCKERCOMPOSE
     echo "  ✓ docker-compose.yaml created"
 fi
 
-if [ ! -f "$PROJECT_DIR/init-db.sql" ]; then
-    echo "  ⚠ init-db.sql not found. It should be committed to the repo."
-    echo "    Run: git checkout -- init-db.sql"
+if [ ! -f "$PROJECT_DIR/schema.sql" ]; then
+    echo "  ⚠ schema.sql not found. It should be committed to the repo."
+    echo "    Run: git checkout -- schema.sql"
 fi
 
 # ─── Step 4: Virtual environment ───

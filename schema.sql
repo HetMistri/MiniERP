@@ -1,14 +1,15 @@
 -- ============================================================================
--- Mini ERP — Full Database Schema
+-- Mini ERP — Full Database Bootstrap
 -- Shiv Furniture Works: From Demand to Delivery
 -- ============================================================================
--- This file defines the complete data model: all tables, enums, sequences,
--- constraints, indexes, triggers, and seed data.
--- Run AFTER init-db.sql has created the mini_erp database.
--- Usage: \i schema.sql  (while connected to mini_erp)
+-- Self-contained: creates mini_erp database and all tables.
+-- Mount into /docker-entrypoint-initdb.d/ via docker-compose.
 -- ============================================================================
 
-BEGIN;
+CREATE DATABASE mini_erp OWNER odoo;
+ALTER USER odoo CREATEDB;
+
+\c mini_erp
 
 -- ============================================================================
 -- ENUMS
@@ -545,5 +546,3 @@ INSERT INTO mrp_work_center (name, code, cost_per_hour) VALUES
     ('Assembly Line', 'ASSY', 50.00),
     ('Paint Floor', 'PAINT', 30.00),
     ('Packaging Unit', 'PACK', 20.00);
-
-COMMIT;

@@ -97,7 +97,7 @@ services:
       - "5432:5432"
     volumes:
       - minierp_db_data:/var/lib/postgresql/data
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U odoo"]
       interval: 10s
@@ -114,12 +114,12 @@ volumes:
     Write-Host "  ✓ docker-compose.yaml already exists" -ForegroundColor Green
 }
 
-$initPath = Join-Path $ProjectDir "init-db.sql"
-if (-not (Test-Path $initPath)) {
-    Write-Host "  ⚠ init-db.sql not found. It should be committed to the repo." -ForegroundColor Yellow
-    Write-Host "    Run: git checkout -- init-db.sql" -ForegroundColor Yellow
+$schemaPath = Join-Path $ProjectDir "schema.sql"
+if (-not (Test-Path $schemaPath)) {
+    Write-Host "  ⚠ schema.sql not found. It should be committed to the repo." -ForegroundColor Yellow
+    Write-Host "    Run: git checkout -- schema.sql" -ForegroundColor Yellow
 } else {
-    Write-Host "  ✓ init-db.sql found" -ForegroundColor Green
+    Write-Host "  ✓ schema.sql found" -ForegroundColor Green
 }
 
 # ─── Step 4: Python virtual environment ───
