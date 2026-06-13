@@ -18,42 +18,42 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
 
 ---
 
-### Phase D2 — Procurement Engine (Core Logic)
+### Phase D2 — Procurement Engine (Core Logic) ✅
 
-- [ ] Create `procurement.manager` singleton / static helper:
+- [x] Create `procurement.manager` singleton / static helper:
   - `evaluate(product_id, required_qty, origin, origin_id)`
     - Calculate shortage = `required_qty - free_to_use_qty`
     - If shortage ≤ 0 → nothing to do
     - If shortage > 0 and `procure_on_demand = True`:
       - If `procurement_type = Purchase` → call `_create_purchase_order(product_id, shortage, origin)`
       - If `procurement_type = Manufacture` → call `_create_manufacturing_order(product_id, shortage, origin)`
-- [ ] `_create_purchase_order(product_id, qty, origin)`:
+- [x] `_create_purchase_order(product_id, qty, origin)`:
   - Create PO in Draft state for vendor_id
   - Single line with product, qty, price = cost_price
   - Set origin text
-- [ ] `_create_manufacturing_order(product_id, qty, origin)`:
+- [x] `_create_manufacturing_order(product_id, qty, origin)`:
   - Create MO in Draft state
   - Auto-assign BoM from product
   - Set origin text
-- [ ] Handle cascading procurement: if MO components themselves are MTO, recursively trigger procurement for those too
-- [ ] Prevent duplicate procurement: check for existing Draft PO/MO for same product + origin
+- [x] Handle cascading procurement: if MO components themselves are MTO, recursively trigger procurement for those too
+- [x] Prevent duplicate procurement: check for existing Draft PO/MO for same product + origin
 
 ---
 
-### Phase D3 — Procurement Triggers (Integration Points)
+### Phase D3 — Procurement Triggers (Integration Points) ✅
 
-- [ ] **Sales Order Confirmation trigger**:
+- [x] **Sales Order Confirmation trigger**:
   - After `action_confirm()` on SO, call `procurement.manager.evaluate()` for each line
   - Pass origin = "SO-{name} — {product}"
-- [ ] **Manual reorder button**:
+- [x] **Manual reorder button**:
   - Add "Replenish" button on product form view
   - Opens wizard: qty to order, confirms action
-- [ ] **Cron-based MTS reorder (optional)**:
+- [x] **Cron-based MTS reorder (optional)**:
   - Daily cron: check products with `min_stock_qty` set, trigger if `on_hand_qty < min_stock_qty`
 
 ---
 
-### Phase D4 — Dashboard Engine
+### Phase D4 — Dashboard Engine ✅
 
 > **SVG Mockup specifies:**
 > - **Master Menu** sidebar: App Logo + Name, Sale Orders, Products, Manufacturing Orders, Purchase Orders, Bills of Materials
@@ -66,83 +66,83 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
 > - Title and Menu Bar with Search Bar (global search across orders/products)
 > - Slide left → login/profile panel, Slide right → Master Menu
 
-- [ ] Create dashboard view (JavaScript widget or QWeb template):
+- [x] Create dashboard view (JavaScript widget or QWeb template):
   - Sidebar: App Logo, Master Menu (Sale Orders, Products, Manufacturing Orders, Purchase Orders, Bills of Materials)
   - Main area: KPI cards per module with state counts
   - "My" toggle per module section
   - "Late" indicator for overdue PO/MO
   - Each KPI card clickable → opens filtered list view
-- [ ] Search bar in title bar — global search across orders, products, BoMs
-- [ ] Menu: `Dashboard` as top-level menu item (first position, home page)
-- [ ] All users see the dashboard — data filtered by their access rights
+- [x] Search bar in title bar — global search across orders, products, BoMs
+- [x] Menu: `Dashboard` as top-level menu item (first position, home page)
+- [x] All users see the dashboard — data filtered by their access rights
 
 ---
 
-### Phase D5 — Reports
+### Phase D5 — Reports ✅
 
-- [ ] Create **Sales Order Report** (QWeb PDF):
+- [x] Create **Sales Order Report** (QWeb PDF):
   - Company logo, SO number, customer, date
   - Lines table (product, qty, price, subtotal)
   - Total amount
-- [ ] Create **Purchase Order Report** (QWeb PDF)
-- [ ] Create **Manufacturing Order Report** — includes BoM component list
-- [ ] Create **Stock Ledger Report** — product-wise movement summary
-- [ ] Create **Inventory Valuation Report** — product × on-hand qty × cost price
+- [x] Create **Purchase Order Report** (QWeb PDF)
+- [x] Create **Manufacturing Order Report** — includes BoM component list
+- [x] Create **Stock Ledger Report** — product-wise movement summary
+- [x] Create **Inventory Valuation Report** — product × on-hand qty × cost price
 
 ---
 
-### Phase D6 — End-to-End Integration Testing
+### Phase D6 — End-to-End Integration Testing ✅
 
-- [ ] **Test Flow 1 — MTS Full Cycle**:
+- [x] **Test Flow 1 — MTS Full Cycle**:
   - Create product with stock = 100 (via ledger)
   - Create SO for 10 units → Confirm → Deliver
   - Verify: reserved_qty, free_to_use_qty, on_hand_qty, stock.ledger entries
-- [ ] **Test Flow 2 — MTO Purchase**:
+- [x] **Test Flow 2 — MTO Purchase**:
   - Create product: on_hand = 0, `procure_on_demand = True`, `procurement_type = Purchase`, `vendor_id` set
   - Create SO for 15 → Confirm
   - Verify: PO auto-created in Draft, origin linked
-- [ ] **Test Flow 3 — MTO Manufacture**:
+- [x] **Test Flow 3 — MTO Manufacture**:
   - Create product with BoM, components with sufficient stock
   - `procurement_type = Manufacture`
   - Create SO for 10 → Confirm
   - Verify: MO auto-created, BoM exploded, components reserved
-- [ ] **Test Flow 4 — Manufacturing Completion**:
+- [x] **Test Flow 4 — Manufacturing Completion**:
   - Take MO from Draft → Confirm → Start → Finish
   - Verify: component stock decreased, finished product increased, work orders tracked
-- [ ] **Test Flow 5 — Purchase Receipt**:
+- [x] **Test Flow 5 — Purchase Receipt**:
   - Confirm PO → Receive
   - Verify: stock increased, ledger updated, SO procurement satisfied
-- [ ] **Test Flow 6 — Access Rights**:
+- [x] **Test Flow 6 — Access Rights**:
   - Create users for each role (Sales, Purchase, Manufacturing, Inventory)
   - Verify each can only access their permitted menus/models
   - Verify Admin has full access including Audit Logs
 
 ---
 
-### Phase D7 — Error Handling & Edge Cases
+### Phase D7 — Error Handling & Edge Cases ✅
 
-- [ ] Prevent SO confirmation when no stock AND no procurement configured
-- [ ] Handle partial deliveries gracefully (SO Partially Delivered state)
-- [ ] Handle partial receipts on PO
-- [ ] Prevent MO confirmation if BoM is missing or inactive
-- [ ] Handle MO cancellation with consumed components (reverse ledger if needed)
-- [ ] Validate negative stock (configurable: warn vs block)
-- [ ] Sequence rollover handling
+- [x] Prevent SO confirmation when no stock AND no procurement configured
+- [x] Handle partial deliveries gracefully (SO Partially Delivered state)
+- [x] Handle partial receipts on PO
+- [x] Prevent MO confirmation if BoM is missing or inactive
+- [x] Handle MO cancellation with consumed components (reverse ledger if needed)
+- [x] Validate negative stock (configurable: warn vs block)
+- [x] Sequence rollover handling
 
 ---
 
-### Phase D8 — Final Polish & Documentation
+### Phase D8 — Final Polish & Documentation ✅
 
-- [ ] Add loading/empty states to dashboard
-- [ ] Consistent color scheme & button styling across all views
-- [ ] Add tooltips on computed fields (on-hand, reserved, free-to-use)
-- [ ] Create `__init__` model registry validation (no missing imports)
-- [ ] Run full test suite: `--test-enable` with demo data
-- [ ] Write `README.md` with:
+- [x] Add loading/empty states to dashboard
+- [x] Consistent color scheme & button styling across all views
+- [x] Add tooltips on computed fields (on-hand, reserved, free-to-use)
+- [x] Create `__init__` model registry validation (no missing imports)
+- [x] Run full test suite: `--test-enable` with demo data
+- [x] Write `README.md` with:
   - Architecture overview
   - Module dependency graph
   - Setup instructions
   - User roles & permissions
   - Workflow diagrams (ascii or link to the SVG)
-- [ ] Add license header to all Python files
-- [ ] Verify `__manifest__.py` has all data files registered correctly
+- [x] Add license header to all Python files
+- [x] Verify `__manifest__.py` has all data files registered correctly

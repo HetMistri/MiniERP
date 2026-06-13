@@ -47,3 +47,53 @@
 - **Odoo ORM Database Mappings:** Mapped Odoo Python classes exactly to the pre-existing SQL tables and constraints (e.g. `name` fields automatically fetching sequence values, relations, constraints, and currency fields).
 - **Recursion & Search API:** Leveraged `self.env[model].search(...)` to prevent duplicate document generation and recursively trigger cascading procurement for sub-assembly components during BOM explosion.
 
+---
+
+## Phase D3 — Procurement Triggers (Integration Points)
+
+### 1. Work Done
+- **Sales Order Confirmation Trigger:** Added logic to `action_confirm()` of `sale.order` to automatically trigger `procurement.manager.evaluate()` for any confirmed sales order lines where the product has `procure_on_demand` enabled.
+- **Manual Replenishment Wizard:** Registered `product.replenish.wizard` model and registered `'wizard/product_replenish_views.xml'` in the manifest. Added a "Replenish" header button on the product form view to open this wizard, allowing manual, quick evaluations.
+- **Daily Reordering Cron:** Created `data/ir_cron_data.xml` defining a daily scheduler task in Odoo (`model._cron_evaluate_reordering_rules()`) to automatically scan products with a minimum stock threshold set and trigger MTS replenishment POs/MOs if the stock drops below the threshold.
+
+---
+
+## Phase D4 — Dashboard Engine
+
+### 1. Work Done
+- **Dashboard Data Model:** Created `models/dashboard.py` implementing `dashboard.data` model which dynamically computes 7 KPI stats (total sales orders, pending deliveries, total MOs, delayed orders, total POs, partial receipts, low stock products) and fetches the last 10 audit logs.
+- **Vibrant Dashboard Form View:** Created `views/dashboard_views.xml` defining a custom, high-fidelity form view with colored KPI cards, action navigation buttons, and recent audit trail list view.
+- **Controller Route:** Exposed `/dashboard/data` JSON POST controller route in `controllers/controllers.py` serving dashboard analytics data.
+- **Vibrant CSS Assets:** Added `static/src/css/dashboard.css` using rich gradients, custom card borders, card hover scaling, and pulse animations.
+
+---
+
+## Phase D5 — Reports
+
+### 1. Work Done
+- **QWeb PDF Layouts:** Created `views/reports.xml` registering PDF print actions and layouts for Sales Orders, Purchase Orders, Manufacturing Orders (with component breakdown lists), Stock Ledger history, and a grand-totaled Inventory Valuation summary report.
+
+---
+
+## Phase D6 — End-to-End Integration Testing
+
+### 1. Work Done
+- **Python Test Cases:** Created `tests/test_procurement.py` implementing comprehensive TransactionCase tests checking:
+  - Flow 1 (MTS full cycle reservation and delivery wizard execution).
+  - Flow 2 (MTO purchase PO auto-generation).
+  - Flow 3 (MTO manufacture MO auto-generation & BOM component reservation).
+  - Flow 4 (MO workflow progress from confirmed -> progress -> done).
+  - Flow 5 (PO receiving wizard stock increases).
+  - Flow 6 (Access/negative stock block and inactive BOM validations).
+
+---
+
+## Phase D7 — Error Handling & Edge Cases
+
+### 1. Work Done
+- **Negative Stock Settings:** Added `allow_negative_stock` configuration field to the company model (`res.company`) and form view, allowing toggleable block vs warn behavior.
+- **Blocking Validations:** Added logic to block Sales Order confirmation if there is no stock and MTO is not configured, and blocked Manufacturing Order confirmation if its Bill of Materials is inactive.
+- **MO Cancel Reversals:** Implemented clean ledger reversals if a Manufacturing Order is cancelled from a `done` state.
+- **Delivery Stock Restraints:** Updated the SO delivery wizard to block delivery validation on insufficient stock unless `allow_negative_stock` is enabled.
+
+

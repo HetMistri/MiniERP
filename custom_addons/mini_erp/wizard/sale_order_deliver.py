@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
@@ -39,7 +41,7 @@ class SaleOrderDeliver(models.TransientModel):
             
             product = line.product_id
             # Perform availability validation for stockable items
-            if product.product_type == 'stockable':
+            if product.product_type == 'stockable' and not self.env.company.allow_negative_stock:
                 if product.on_hand_qty < line.qty_delivered:
                     raise UserError(
                         f"Insufficient stock for '{product.name}'. "

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 from odoo import models, fields, api, _
 # pyrefly: ignore [missing-import]
 from odoo.exceptions import ValidationError
@@ -177,8 +178,8 @@ class MrpProduction(models.Model):
                 continue
             if not order.product_id:
                 raise ValidationError(_("Please select a product to manufacture."))
-            if not order.bom_id:
-                raise ValidationError(_("Please select a Bill of Materials (BoM) for product %s.") % order.product_id.name)
+            if not order.bom_id or not order.bom_id.active:
+                raise ValidationError(_("Please select an active Bill of Materials (BoM) for product %s.") % order.product_id.name)
             if order.product_qty <= 0:
                 raise ValidationError(_("Quantity to produce must be greater than zero."))
 
@@ -245,6 +246,16 @@ class MrpProduction(models.Model):
                 if comp.quantity_consumed <= 0:
                     comp.write({'quantity_consumed': comp.quantity_needed})
 
+            # Validate component stock availability if negative stock is not allowed
+            if not self.env.company.allow_negative_stock:
+                for comp in order.component_ids:
+                    if comp.product_id.product_type == 'stockable':
+                        if comp.product_id.on_hand_qty < comp.quantity_consumed:
+                            raise ValidationError(_(
+                                "Insufficient stock for component '%s'. "
+                                "On Hand: %s, Consumed: %s"
+                            ) % (comp.product_id.name, comp.product_id.on_hand_qty, comp.quantity_consumed))
+
             for comp in order.component_ids:
                 self.env['stock.ledger']._update_stock(
                     comp.product_id.id,
@@ -271,8 +282,21 @@ class MrpProduction(models.Model):
 
     def action_cancel(self):
         for order in self:
-            if order.state not in ('draft', 'confirmed'):
-                raise ValidationError(_("You can only cancel manufacturing orders in 'Draft' or 'Confirmed' status."))
+            if order.state not in ('draft', 'confirmed', 'progress', 'done'):
+                raise ValidationError(_("You cannot cancel this manufacturing order in its current state."))
+            
+            # If MO is Done, reverse stock movements
+            if order.state == 'done':
+                ledger_entries = self.env['stock.ledger'].search([('reference', '=', order.name)])
+                for entry in ledger_entries:
+                    self.env['stock.ledger']._update_stock(
+                        entry.product_id.id,
+                        -entry.quantity,
+                        order.name,
+                        'adjustment',
+                        notes=f"Reversal of {entry.transaction_type} due to MO cancellation"
+                    )
+            
             for comp in order.component_ids:
                 comp.write({'quantity_reserved': 0.0})
             order.write({'state': 'cancel'})

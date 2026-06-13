@@ -37,7 +37,7 @@ class ProcurementManager(models.AbstractModel):
         existing_po = self.env['purchase.order'].search([
             ('state', '=', 'draft'),
             ('origin', '=', origin),
-            ('order_line.product_id', '=', product.id)
+            ('order_line_ids.product_id', '=', product.id)
         ], limit=1)
         if existing_po:
             return existing_po
@@ -45,12 +45,19 @@ class ProcurementManager(models.AbstractModel):
         if not product.vendor_id:
             raise UserError(f"Cannot create Purchase Order for {product.name}: no vendor configured.")
 
+        # Find source sales order if applicable
+        so_name = origin.split(' — ')[0] if ' — ' in origin else origin
+        so = self.env['sale.order'].search([('name', '=', so_name)], limit=1)
+
         po_vals = {
             'partner_id': product.vendor_id.id,
             'state': 'draft',
             'origin': origin,
             'date_order': fields.Datetime.now(),
         }
+        if so:
+            po_vals['origin_sale_order_id'] = so.id
+
         po = self.env['purchase.order'].create(po_vals)
 
         self.env['purchase.order.line'].create({
@@ -105,3 +112,20 @@ class ProcurementManager(models.AbstractModel):
                 self.evaluate(bom_line.product_id, needed_qty, component_origin)
 
         return mo
+
+    @api.model
+    def _cron_evaluate_reordering_rules(self):
+        """Daily cron method to evaluate reordering rules for MTS products."""
+        products = self.env['product.product'].search([
+            ('procure_on_demand', '=', True),
+            ('min_stock_qty', '>', 0.0)
+        ])
+        for product in products:
+            if product.on_hand_qty < product.min_stock_qty:
+                needed_qty = product.min_stock_qty - product.free_to_use_qty
+                if needed_qty > 0:
+                    self.evaluate(
+                        product.id,
+                        needed_qty,
+                        f"MTS Reordering — {product.name}"
+                    )

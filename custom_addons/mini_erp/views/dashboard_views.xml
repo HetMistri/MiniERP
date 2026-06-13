@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_dashboard_data_form" model="ir.ui.view">
+            <field name="name">dashboard.data.form</field>
+            <field name="model">dashboard.data</field>
+            <field name="arch" type="xml">
+                <form string="Dashboard" create="false" edit="false" delete="false" class="o_mini_erp_dashboard_form">
+                    <sheet>
+                        <div class="o_dashboard_header text-center mb-4">
+                            <h1 class="display-4 font-weight-bold text-gradient">Mini ERP Dashboard</h1>
+                            <p class="text-muted">Real-time Operations &amp; Inventory Overview</p>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Sales Orders Card -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card o_dashboard_card card-sales text-center shadow-sm">
+                                    <div class="card-body">
+                                        <div class="o_card_icon"><i class="fa fa-shopping-cart fa-2x text-primary"/></div>
+                                        <div class="text-uppercase text-muted small font-weight-bold mt-2">Total Sales</div>
+                                        <div class="h2 font-weight-bold text-primary my-2">
+                                            <field name="total_sales_orders"/>
+                                        </div>
+                                        <button name="action_view_sales" type="object" string="View Sales" class="btn btn-sm btn-primary mt-2 w-100 o_btn_pulse"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pending Deliveries Card -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card o_dashboard_card card-pending text-center shadow-sm">
+                                    <div class="card-body">
+                                        <div class="o_card_icon"><i class="fa fa-truck fa-2x text-warning"/></div>
+                                        <div class="text-uppercase text-muted small font-weight-bold mt-2">Pending Deliveries</div>
+                                        <div class="h2 font-weight-bold text-warning my-2">
+                                            <field name="pending_deliveries"/>
+                                        </div>
+                                        <button name="action_view_pending_deliveries" type="object" string="View Pending" class="btn btn-sm btn-warning mt-2 w-100"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delayed Orders Card -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card o_dashboard_card card-delayed text-center shadow-sm">
+                                    <div class="card-body">
+                                        <div class="o_card_icon"><i class="fa fa-exclamation-triangle fa-2x text-danger"/></div>
+                                        <div class="text-uppercase text-muted small font-weight-bold mt-2">Delayed Orders</div>
+                                        <div class="h2 font-weight-bold text-danger my-2">
+                                            <field name="delayed_orders"/>
+                                        </div>
+                                        <button name="action_view_delayed_orders" type="object" string="View Delayed" class="btn btn-sm btn-danger mt-2 w-100"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Manufacturing Orders Card -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card o_dashboard_card card-mfg text-center shadow-sm">
+                                    <div class="card-body">
+                                        <div class="o_card_icon"><i class="fa fa-wrench fa-2x text-info"/></div>
+                                        <div class="text-uppercase text-muted small font-weight-bold mt-2">Manufacturing Orders</div>
+                                        <div class="h2 font-weight-bold text-info my-2">
+                                            <field name="total_mo"/>
+                                        </div>
+                                        <button name="action_view_mos" type="object" string="View MOs" class="btn btn-sm btn-info mt-2 w-100"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Purchase Orders Card -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card o_dashboard_card card-purchase text-center shadow-sm">
+                                    <div class="card-body">
+                                        <div class="o_card_icon"><i class="fa fa-credit-card fa-2x text-indigo"/></div>
+                                        <div class="text-uppercase text-muted small font-weight-bold mt-2">Purchase Orders</div>
+                                        <div class="h2 font-weight-bold text-dark my-2">
+                                            <field name="total_po"/>
+                                        </div>
+                                        <button name="action_view_pos" type="object" string="View Purchases" class="btn btn-sm btn-secondary mt-2 w-100"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Partial Receipts Card -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card o_dashboard_card card-receipt text-center shadow-sm">
+                                    <div class="card-body">
+                                        <div class="o_card_icon"><i class="fa fa-sign-in fa-2x text-orange"/></div>
+                                        <div class="text-uppercase text-muted small font-weight-bold mt-2">Partial Receipts</div>
+                                        <div class="h2 font-weight-bold text-orange my-2">
+                                            <field name="partial_receipts"/>
+                                        </div>
+                                        <button name="action_view_partial_receipts" type="object" string="View Receipts" class="btn btn-sm btn-warning mt-2 w-100"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Low Stock Card -->
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+                                <div class="card o_dashboard_card card-lowstock text-center shadow-sm">
+                                    <div class="card-body">
+                                        <div class="o_card_icon"><i class="fa fa-archive fa-2x text-danger"/></div>
+                                        <div class="text-uppercase text-muted small font-weight-bold mt-2">Low Stock Items</div>
+                                        <div class="h2 font-weight-bold text-danger my-2">
+                                            <field name="low_stock_products"/>
+                                        </div>
+                                        <button name="action_view_low_stock" type="object" string="Replenish Now" class="btn btn-sm btn-danger mt-2 w-100"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Audit Log Section -->
+                        <div class="o_audit_section mt-5">
+                            <h3 class="border-bottom pb-2 text-primary"><i class="fa fa-history mr-2"/>Recent Audit Logs</h3>
+                            <field name="recent_audit_log_ids" readonly="1">
+                                <list>
+                                    <field name="timestamp" string="Time"/>
+                                    <field name="user_id" string="User"/>
+                                    <field name="action" string="Action"/>
+                                    <field name="model_name" string="Model"/>
+                                    <field name="record_id" string="ID"/>
+                                    <field name="display_name" string="Summary"/>
+                                </list>
+                            </field>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Server Action to open the dashboard transient record -->
+        <record id="action_server_dashboard" model="ir.actions.server">
+            <field name="name">Dashboard</field>
+            <field name="model_id" ref="model_dashboard_data"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_dashboard()</field>
+        </record>
+
+        <!-- Top-level Menu Item (first position) -->
+        <menuitem id="menu_mini_erp_dashboard" name="Dashboard" parent="menu_mini_erp_root" action="action_server_dashboard" sequence="1"/>
+    </data>
+</odoo>

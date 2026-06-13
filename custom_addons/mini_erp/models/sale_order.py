@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
@@ -20,6 +22,7 @@ class SaleOrder(models.Model):
     ], string='Status', default='draft', required=True, copy=False)
     order_line_ids = fields.One2many('sale.order.line', 'order_id', string='Order Lines', copy=True)
     date_order = fields.Datetime(string='Order Date', required=True, default=fields.Datetime.now)
+    expected_date = fields.Date(string='Expected Delivery Date')
     total_amount = fields.Monetary(string='Total Amount', compute='_compute_total_amount', store=True, currency_field='currency_id')
     user_id = fields.Many2one('res.users', string='Salesperson', default=lambda self: self.env.user)
     notes = fields.Text(string='Notes')
@@ -90,6 +93,15 @@ class SaleOrder(models.Model):
         for line in self.order_line_ids:
             if line.quantity <= 0:
                 raise UserError("Quantity must be greater than zero.")
+            
+            # Enforce stock check if not allow_negative_stock
+            if line.product_id.product_type == 'stockable' and not self.env.company.allow_negative_stock:
+                if line.product_id.free_to_use_qty < line.quantity and not line.product_id.procure_on_demand:
+                    raise UserError(
+                        f"Insufficient stock for product '{line.product_id.name}' and no procurement configured.\n"
+                        f"Requested: {line.quantity}, Free: {line.product_id.free_to_use_qty}"
+                    )
+
             # Reserve stock
             line.reserved_qty = line.quantity
             
@@ -123,10 +135,11 @@ class SaleOrder(models.Model):
         """Trigger procurement engine for each confirmed sale order line."""
         for line in self.order_line_ids:
             if line.product_id.procure_on_demand:
+                origin_name = f"{self.name} — {line.product_id.name}"
                 self.env['procurement.manager'].evaluate(
                     line.product_id.id,
                     line.quantity,
-                    self.name
+                    origin_name
                 )
 
     # View Actions

@@ -66,3 +66,4 @@ access_sale_order_deliver_line_sales_user,sale.order.deliver.line.sales_user,mod
 access_sale_order_deliver_line_admin,sale.order.deliver.line.admin,model_sale_order_deliver_line,mini_erp.group_admin,1,1,1,1
 access_purchase_order_receive_line_purchase_user,purchase.order.receive.line.purchase_user,model_purchase_order_receive_line,mini_erp.group_purchase_user,1,1,1,1
 access_purchase_order_receive_line_admin,purchase.order.receive.line.admin,model_purchase_order_receive_line,mini_erp.group_admin,1,1,1,1
+access_dashboard_data_all,dashboard.data.all,model_dashboard_data,base.group_user,1,1,1,1

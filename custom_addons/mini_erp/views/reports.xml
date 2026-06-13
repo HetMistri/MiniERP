@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Sales Order Report Action -->
+        <record id="action_report_sale_order" model="ir.actions.report">
+            <field name="name">Sales Order</field>
+            <field name="model">sale.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">mini_erp.report_sale_order_template</field>
+            <field name="report_file">mini_erp.report_sale_order_template</field>
+            <field name="binding_model_id" ref="model_sale_order"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Purchase Order Report Action -->
+        <record id="action_report_purchase_order" model="ir.actions.report">
+            <field name="name">Purchase Order</field>
+            <field name="model">purchase.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">mini_erp.report_purchase_order_template</field>
+            <field name="report_file">mini_erp.report_purchase_order_template</field>
+            <field name="binding_model_id" ref="model_purchase_order"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Manufacturing Order Report Action -->
+        <record id="action_report_mrp_production" model="ir.actions.report">
+            <field name="name">Manufacturing Order</field>
+            <field name="model">mrp.production</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">mini_erp.report_mrp_production_template</field>
+            <field name="report_file">mini_erp.report_mrp_production_template</field>
+            <field name="binding_model_id" ref="model_mrp_production"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Stock Ledger Report Action -->
+        <record id="action_report_stock_ledger" model="ir.actions.report">
+            <field name="name">Stock Ledger Summary</field>
+            <field name="model">product.product</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">mini_erp.report_stock_ledger_template</field>
+            <field name="report_file">mini_erp.report_stock_ledger_template</field>
+            <field name="binding_model_id" ref="model_product_product"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Inventory Valuation Report Action -->
+        <record id="action_report_inventory_valuation" model="ir.actions.report">
+            <field name="name">Inventory Valuation Report</field>
+            <field name="model">product.product</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">mini_erp.report_inventory_valuation_template</field>
+            <field name="report_file">mini_erp.report_inventory_valuation_template</field>
+            <field name="binding_model_id" ref="model_product_product"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <!-- Sales Order Report Template -->
+        <template id="report_sale_order_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2 class="mt-4">Sales Order: <span t-field="doc.name"/></h2>
+                            <div class="row mt-4 mb-4">
+                                <div class="col-6">
+                                    <strong>Customer:</strong>
+                                    <div t-field="doc.partner_id.name"/>
+                                    <div t-field="doc.partner_id.phone"/>
+                                    <div t-field="doc.partner_id.email"/>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Order Date:</strong>
+                                    <div t-field="doc.date_order" t-options='{"widget": "date"}'/>
+                                    <strong>Expected Delivery:</strong>
+                                    <div t-field="doc.expected_date" t-options='{"widget": "date"}'/>
+                                </div>
+                            </div>
+                            <table class="table table-sm mt-4">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th class="text-end">Quantity</th>
+                                        <th class="text-end">Unit Price</th>
+                                        <th class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.order_line_ids" t-as="line">
+                                        <td><span t-field="line.product_id.name"/></td>
+                                        <td class="text-end"><span t-field="line.quantity"/></td>
+                                        <td class="text-end"><span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                        <td class="text-end"><span t-field="line.subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="row justify-content-end mt-4">
+                                <div class="col-4 text-end">
+                                    <h3>Total: <span t-field="doc.total_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></h3>
+                                </div>
+                            </div>
+                            <div class="mt-4" t-if="doc.notes">
+                                <strong>Notes:</strong>
+                                <p t-field="doc.notes"/>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- Purchase Order Report Template -->
+        <template id="report_purchase_order_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2 class="mt-4">Purchase Order: <span t-field="doc.name"/></h2>
+                            <div class="row mt-4 mb-4">
+                                <div class="col-6">
+                                    <strong>Vendor:</strong>
+                                    <div t-field="doc.partner_id.name"/>
+                                    <div t-field="doc.partner_id.phone"/>
+                                    <div t-field="doc.partner_id.email"/>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Order Date:</strong>
+                                    <div t-field="doc.date_order" t-options='{"widget": "date"}'/>
+                                    <strong>Source Document:</strong>
+                                    <div t-field="doc.origin"/>
+                                </div>
+                            </div>
+                            <table class="table table-sm mt-4">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th class="text-end">Quantity</th>
+                                        <th class="text-end">Unit Price</th>
+                                        <th class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.order_line_ids" t-as="line">
+                                        <td><span t-field="line.product_id.name"/></td>
+                                        <td class="text-end"><span t-field="line.quantity"/></td>
+                                        <td class="text-end"><span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                        <td class="text-end"><span t-field="line.subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="row justify-content-end mt-4">
+                                <div class="col-4 text-end">
+                                    <h3>Total: <span t-field="doc.total_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></h3>
+                                </div>
+                            </div>
+                            <div class="mt-4" t-if="doc.notes">
+                                <strong>Notes:</strong>
+                                <p t-field="doc.notes"/>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- Manufacturing Order Report Template -->
+        <template id="report_mrp_production_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2 class="mt-4">Manufacturing Order: <span t-field="doc.name"/></h2>
+                            <div class="row mt-4 mb-4">
+                                <div class="col-6">
+                                    <strong>Finished Product:</strong>
+                                    <div t-field="doc.product_id.name"/>
+                                    <strong>Quantity to Produce:</strong>
+                                    <div><span t-field="doc.product_qty"/> <span t-field="doc.product_id.uom_id.name"/></div>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Planned Start:</strong>
+                                    <div t-field="doc.date_planned_start" t-options='{"widget": "date"}'/>
+                                    <strong>Source Document:</strong>
+                                    <div t-field="doc.origin"/>
+                                    <strong>BOM Reference:</strong>
+                                    <div t-field="doc.bom_id.name"/>
+                                </div>
+                            </div>
+                            
+                            <h4 class="mt-4 border-bottom pb-2">Bill of Materials Component List</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Component Product</th>
+                                        <th class="text-end">Quantity Needed</th>
+                                        <th class="text-end">Quantity Consumed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.component_ids" t-as="comp">
+                                        <td><span t-field="comp.product_id.name"/></td>
+                                        <td class="text-end"><span t-field="comp.quantity_needed"/> <span t-field="comp.uom_id.name"/></td>
+                                        <td class="text-end"><span t-field="comp.quantity_consumed"/> <span t-field="comp.uom_id.name"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h4 class="mt-4 border-bottom pb-2">Work Operations</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Operation</th>
+                                        <th>Work Center</th>
+                                        <th class="text-end">Duration (Mins)</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.work_order_ids" t-as="wo">
+                                        <td><span t-field="wo.name"/></td>
+                                        <td><span t-field="wo.work_center_id.name"/></td>
+                                        <td class="text-end"><span t-field="wo.duration_minutes"/></td>
+                                        <td><span t-field="wo.state"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- Stock Ledger Report Template -->
+        <template id="report_stock_ledger_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <h2 class="mt-4">Stock Ledger: <span t-field="doc.name"/></h2>
+                            <div class="row mt-4 mb-4">
+                                <div class="col-6">
+                                    <strong>Internal Reference:</strong> <span t-field="doc.reference"/><br/>
+                                    <strong>Product Category:</strong> <span t-field="doc.category_id.name"/><br/>
+                                    <strong>UoM:</strong> <span t-field="doc.uom_id.name"/>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Current On Hand:</strong> <span t-field="doc.on_hand_qty"/><br/>
+                                    <strong>Free to Use:</strong> <span t-field="doc.free_to_use_qty"/>
+                                </div>
+                            </div>
+                            <h4 class="mt-4 border-bottom pb-2">Movement History</h4>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Reference</th>
+                                        <th>Type</th>
+                                        <th class="text-end">Quantity</th>
+                                        <th class="text-end">Balance After</th>
+                                        <th>User</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.stock_ledger_ids" t-as="ledger">
+                                        <td><span t-field="ledger.date" t-options='{"widget": "datetime"}'/></td>
+                                        <td><span t-field="ledger.reference"/></td>
+                                        <td><span t-field="ledger.transaction_type"/></td>
+                                        <td class="text-end">
+                                            <span t-if="ledger.quantity &gt; 0" class="text-success">+</span>
+                                            <span t-field="ledger.quantity"/>
+                                        </td>
+                                        <td class="text-end"><span t-field="ledger.balance_after"/></td>
+                                        <td><span t-field="ledger.user_id.name"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- Inventory Valuation Report Template -->
+        <template id="report_inventory_valuation_template">
+            <t t-call="web.html_container">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2 class="mt-4 text-center">Inventory Valuation Report</h2>
+                        <div class="text-center text-muted mb-4">Printed on: <span t-esc="context_today().strftime('%Y-%m-%d')"/></div>
+                        
+                        <table class="table table-sm mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Product</th>
+                                    <th class="text-end">On Hand Quantity</th>
+                                    <th>UoM</th>
+                                    <th class="text-end">Cost Price</th>
+                                    <th class="text-end">Total Valuation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-set="grand_total" t-value="0.0"/>
+                                <tr t-foreach="docs" t-as="doc">
+                                    <t t-set="valuation" t-value="doc.on_hand_qty * doc.cost_price"/>
+                                    <t t-set="grand_total" t-value="grand_total + valuation"/>
+                                    <td><span t-field="doc.reference"/></td>
+                                    <td><span t-field="doc.name"/></td>
+                                    <td class="text-end"><span t-field="doc.on_hand_qty"/></td>
+                                    <td><span t-field="doc.uom_id.name"/></td>
+                                    <td class="text-end"><span t-field="doc.cost_price" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                    <td class="text-end"><span t-esc="valuation" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/></td>
+                                </tr>
+                                <tr class="font-weight-bold border-top">
+                                    <td colspan="5" class="text-end"><strong>Grand Total Valuation:</strong></td>
+                                    <td class="text-end">
+                                        <strong>
+                                            <span t-esc="grand_total" t-options='{"widget": "monetary", "display_currency": docs and docs[0].currency_id}'/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

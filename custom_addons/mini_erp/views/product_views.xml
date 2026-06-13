@@ -81,6 +81,9 @@
             <field name="model">product.product</field>
             <field name="arch" type="xml">
                 <form string="Product">
+                    <header>
+                        <button name="action_open_replenish_wizard" string="Replenish" type="object" class="btn-primary" invisible="not id"/>
+                    </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                             <button name="%(action_open_audit_logs_product)d"

@@ -10,6 +10,7 @@
                     <field name="name"/>
                     <field name="partner_id"/>
                     <field name="date_order"/>
+                    <field name="expected_date" optional="show"/>
                     <field name="user_id"/>
                     <field name="total_amount" widget="monetary"/>
                     <field name="state" widget="badge"
@@ -59,6 +60,7 @@
                                 <field name="partner_id" readonly="state != 'draft'"/>
                                 <field name="partner_address" placeholder="Auto-filled from partner, editable" readonly="state not in ('draft', 'confirmed')"/>
                                 <field name="date_order" readonly="state != 'draft'"/>
+                                <field name="expected_date" readonly="state != 'draft'"/>
                             </group>
                             <group>
                                 <field name="user_id" readonly="state != 'draft'"/>

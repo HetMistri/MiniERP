@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 from odoo import models, fields, api
 
 
@@ -120,6 +122,17 @@ class ProductProduct(models.Model):
             if not vals.get('reference'):
                 vals['reference'] = self.env['ir.sequence'].next_by_code('product.product') or '/'
         return super().create(vals_list)
+
+    def action_open_replenish_wizard(self):
+        self.ensure_one()
+        return {
+            'name': 'Product Replenishment',
+            'type': 'ir.actions.act_window',
+            'res_model': 'product.replenish.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_product_id': self.id},
+        }
 
 
 class ProductQuantityHistory(models.Model):

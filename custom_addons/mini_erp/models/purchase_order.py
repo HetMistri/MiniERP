@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
@@ -23,6 +25,7 @@ class PurchaseOrder(models.Model):
     total_amount = fields.Monetary(string='Total Amount', compute='_compute_total_amount', store=True, currency_field='currency_id')
     user_id = fields.Many2one('res.users', string='Buyer', default=lambda self: self.env.user)
     notes = fields.Text(string='Notes')
+    origin = fields.Char(string='Source Document')
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
 
     # Integration Field
@@ -119,6 +122,7 @@ class PurchaseOrderLine(models.Model):
     _description = 'Purchase Order Line'
 
     order_id = fields.Many2one('purchase.order', string='Order Reference', required=True, ondelete='cascade')
+    sequence = fields.Integer(string='Sequence', default=10)
     product_id = fields.Many2one('product.product', string='Product', required=True)
     description = fields.Text(string='Description')
     quantity = fields.Float(string='Quantity Ordered', required=True, default=1.0)
