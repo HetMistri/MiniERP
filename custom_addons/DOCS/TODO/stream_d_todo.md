@@ -146,3 +146,45 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
   - Workflow diagrams (ascii or link to the SVG)
 - [x] Add license header to all Python files
 - [x] Verify `__manifest__.py` has all data files registered correctly
+
+---
+
+## How to Access and Check the Dashboard
+
+### 1. Accessing through Odoo Web Client (GUI)
+1. **Access Link:** Open your browser and navigate to `http://localhost:8069`.
+2. **Authentication:** Log in using credentials (e.g. `admin` / `admin`).
+3. **Menu Navigation:** Locate the top navigation menu bar. The **Dashboard** menu item is placed in the first position. Click on it.
+4. **Interactive Dashboard Controls:**
+   - **KPI Metrics:** View summary counts of Sales Orders, Pending Deliveries, Manufacturing Orders, Delayed Orders, Purchase Orders, and Low Stock products.
+   - **Click-to-Filter Action:** Click on any of the KPI cards to automatically jump to the relevant tree/form view pre-filtered to the state represented by that card.
+   - **Audit Logs Trail:** Scroll down to view the last 10 audit log entries dynamically retrieved.
+   - **CSS Styling:** The view is styled using a modern glassmorphic look with custom card borders, colored status indicators, and micro-hover scaling animations.
+
+### 2. Accessing through the JSON Controller Endpoint
+You can programmatically retrieve the dashboard counts by sending a JSON POST request to the `/dashboard/data` route:
+- **Endpoint URL:** `http://localhost:8069/dashboard/data`
+- **Request Headers:** `Content-Type: application/json`
+- **Request Payload:**
+  ```json
+  {
+    "params": {}
+  }
+  ```
+- **Response Example:**
+  ```json
+  {
+    "jsonrpc": "2.0",
+    "id": null,
+    "result": {
+      "total_sales_orders": 12,
+      "pending_deliveries": 3,
+      "total_mo": 5,
+      "delayed_orders": 1,
+      "total_po": 4,
+      "partial_receipts": 0,
+      "low_stock_products": 2,
+      "recent_audit_logs": [...]
+    }
+  }
+  ```

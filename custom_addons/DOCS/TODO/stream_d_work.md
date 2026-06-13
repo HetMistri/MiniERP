@@ -96,4 +96,57 @@
 - **MO Cancel Reversals:** Implemented clean ledger reversals if a Manufacturing Order is cancelled from a `done` state.
 - **Delivery Stock Restraints:** Updated the SO delivery wizard to block delivery validation on insufficient stock unless `allow_negative_stock` is enabled.
 
+---
+
+## Phase D8 — Final Polish & Documentation
+
+### 1. Work Done
+- **UI/UX Styling:** Added tooltips on computed fields (on-hand, reserved, free-to-use) and finalized colors/button styling.
+- **Documentation:** Created a comprehensive `README.md` containing the architecture overview, workflow/sequence diagrams, module dependency graphs, and permissions definitions.
+- **License Headers:** Added standard `LGPL-3.0` license headers to all Python files in the module.
+- **Verify Registry & Imports:** Checked `__init__` files to ensure no missing imports.
+- **Test Enable Run:** Ran a full test run using `--test-enable` confirming all tests compile and pass.
+
+---
+
+## How to Access and Check the Dashboard
+
+### 1. Accessing through Odoo Web Client (GUI)
+1. **Access Link:** Open your browser and navigate to `http://localhost:8069`.
+2. **Authentication:** Log in using credentials (e.g. `admin` / `admin`).
+3. **Menu Navigation:** Locate the top navigation menu bar. The **Dashboard** menu item is placed in the first position. Click on it.
+4. **Interactive Dashboard Controls:**
+   - **KPI Metrics:** View summary counts of Sales Orders, Pending Deliveries, Manufacturing Orders, Delayed Orders, Purchase Orders, and Low Stock products.
+   - **Click-to-Filter Action:** Click on any of the KPI cards to automatically jump to the relevant tree/form view pre-filtered to the state represented by that card.
+   - **Audit Logs Trail:** Scroll down to view the last 10 audit log entries dynamically retrieved.
+   - **CSS Styling:** The view is styled using a modern glassmorphic look with custom card borders, colored status indicators, and micro-hover scaling animations.
+
+### 2. Accessing through the JSON Controller Endpoint
+You can programmatically retrieve the dashboard counts by sending a JSON POST request to the `/dashboard/data` route:
+- **Endpoint URL:** `http://localhost:8069/dashboard/data`
+- **Request Headers:** `Content-Type: application/json`
+- **Request Payload:**
+  ```json
+  {
+    "params": {}
+  }
+  ```
+- **Response Example:**
+  ```json
+  {
+    "jsonrpc": "2.0",
+    "id": null,
+    "result": {
+      "total_sales_orders": 12,
+      "pending_deliveries": 3,
+      "total_mo": 5,
+      "delayed_orders": 1,
+      "total_po": 4,
+      "partial_receipts": 0,
+      "low_stock_products": 2,
+      "recent_audit_logs": [...]
+    }
+  }
+  ```
+
 
