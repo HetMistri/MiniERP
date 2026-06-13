@@ -20,9 +20,10 @@ class StockLedger(models.Model):
     balance_after = fields.Float(string='Balance After', help='On-hand quantity after this transaction')
     date = fields.Datetime(string='Date', default=fields.Datetime.now, required=True, index=True)
     user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user, required=True)
+    notes = fields.Text(string='Notes')
 
     @api.model
-    def _update_stock(self, product_id, qty, reference, transaction_type):
+    def _update_stock(self, product_id, qty, reference, transaction_type, notes=False):
         """Helper method to write a ledger entry and calculate balance_after"""
         product = self.env['product.product'].browse(product_id)
         if not product.exists():
@@ -42,5 +43,6 @@ class StockLedger(models.Model):
             'balance_after': balance_after,
             'date': fields.Datetime.now(),
             'user_id': self.env.user.id,
+            'notes': notes,
         })
         return ledger_entry

@@ -5,3 +5,5 @@ from . import partner
 from . import mrp_bom
 from . import stock
 from . import mrp
+from . import sale_order
+from . import purchase_order

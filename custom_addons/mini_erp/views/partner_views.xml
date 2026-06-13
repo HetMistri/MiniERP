@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit res.partner Form View -->
+        <record id="view_partner_form_mini_erp" model="ir.ui.view">
+            <field name="name">res.partner.form.mini.erp</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group string="Mini ERP Categorization" name="mini_erp_categorization">
+                        <group>
+                            <field name="is_customer"/>
+                            <field name="is_vendor"/>
+                        </group>
+                        <group>
+                            <field name="partner_type" widget="radio"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Inherit res.partner Search View -->
+        <record id="view_res_partner_filter_mini_erp" model="ir.ui.view">
+            <field name="name">res.partner.select.mini.erp</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='inactive']" position="before">
+                    <filter string="Customers" name="filter_customers" domain="[('is_customer', '=', True)]"/>
+                    <filter string="Vendors" name="filter_vendors" domain="[('is_vendor', '=', True)]"/>
+                    <separator/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Window Action: Customers -->
+        <record id="action_partner_customers" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'default_is_customer': True, 'default_is_vendor': False, 'search_default_filter_customers': 1}</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Register a new customer.
+                </p>
+            </field>
+        </record>
+
+        <!-- Window Action: Vendors -->
+        <record id="action_partner_vendors" model="ir.actions.act_window">
+            <field name="name">Vendors</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'default_is_vendor': True, 'default_is_customer': False, 'search_default_filter_vendors': 1}</field>
+            <field name="search_view_id" ref="base.view_res_partner_filter"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Register a new vendor.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

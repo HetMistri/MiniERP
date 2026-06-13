@@ -82,5 +82,113 @@
             <field name="product_type">consumable</field>
         </record>
 
+        <!-- Demo Partners (Customers) -->
+        <record id="partner_rajesh_interiors" model="res.partner">
+            <field name="name">Rajesh Interiors</field>
+            <field name="is_customer" eval="True"/>
+            <field name="is_vendor" eval="False"/>
+            <field name="partner_type">company</field>
+            <field name="email">rajesh@interiors.com</field>
+            <field name="phone">+91 98765 43210</field>
+        </record>
+
+        <record id="partner_sita_homes" model="res.partner">
+            <field name="name">Sita Homes</field>
+            <field name="is_customer" eval="True"/>
+            <field name="is_vendor" eval="False"/>
+            <field name="partner_type">company</field>
+            <field name="email">sita@homes.com</field>
+            <field name="phone">+91 87654 32109</field>
+        </record>
+
+        <!-- Demo Partners (Vendors) -->
+        <record id="partner_timber_mart" model="res.partner">
+            <field name="name">Timber Mart</field>
+            <field name="is_customer" eval="False"/>
+            <field name="is_vendor" eval="True"/>
+            <field name="partner_type">company</field>
+            <field name="email">contact@timbermart.com</field>
+            <field name="phone">+91 76543 21098</field>
+        </record>
+
+        <record id="partner_hardware_hub" model="res.partner">
+            <field name="name">Hardware Hub</field>
+            <field name="is_customer" eval="False"/>
+            <field name="is_vendor" eval="True"/>
+            <field name="partner_type">company</field>
+            <field name="email">sales@hardwarehub.com</field>
+            <field name="phone">+91 65432 10987</field>
+        </record>
+
+        <!-- Demo Sales Order 1 (Draft) -->
+        <record id="so_draft_1" model="sale.order">
+            <field name="partner_id" ref="partner_rajesh_interiors"/>
+            <field name="state">draft</field>
+            <field name="date_order" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="so_line_draft_1" model="sale.order.line">
+            <field name="order_id" ref="so_draft_1"/>
+            <field name="product_id" ref="product_wooden_table"/>
+            <field name="description">Wooden Table</field>
+            <field name="quantity">2.0</field>
+            <field name="price_unit">15000.00</field>
+        </record>
+
+        <!-- Demo Sales Order 2 (Confirmed) -->
+        <record id="so_confirmed_1" model="sale.order">
+            <field name="partner_id" ref="partner_sita_homes"/>
+            <field name="state">draft</field>
+            <field name="date_order" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="so_line_confirmed_1" model="sale.order.line">
+            <field name="order_id" ref="so_confirmed_1"/>
+            <field name="product_id" ref="product_office_chair"/>
+            <field name="description">Office Chair</field>
+            <field name="quantity">5.0</field>
+            <field name="price_unit">8000.00</field>
+        </record>
+
+        <!-- Execute action_confirm on Confirmed SO -->
+        <function model="sale.order" name="action_confirm" eval="[[ref('so_confirmed_1')]]"/>
+
+        <!-- Demo Purchase Order 1 (Draft) -->
+        <record id="po_draft_1" model="purchase.order">
+            <field name="partner_id" ref="partner_timber_mart"/>
+            <field name="state">draft</field>
+            <field name="date_order" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="po_line_draft_1" model="purchase.order.line">
+            <field name="order_id" ref="po_draft_1"/>
+            <field name="product_id" ref="product_wooden_legs"/>
+            <field name="description">Wooden Legs</field>
+            <field name="quantity">50.0</field>
+            <field name="price_unit">200.00</field>
+        </record>
+
+        <!-- Demo Purchase Order 2 (Confirmed) -->
+        <record id="po_confirmed_1" model="purchase.order">
+            <field name="partner_id" ref="partner_hardware_hub"/>
+            <field name="state">draft</field>
+            <field name="date_order" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="po_line_confirmed_1" model="purchase.order.line">
+            <field name="order_id" ref="po_confirmed_1"/>
+            <field name="product_id" ref="product_screws"/>
+            <field name="description">Screws</field>
+            <field name="quantity">1000.0</field>
+            <field name="price_unit">2.00</field>
+        </record>
+
+        <!-- Execute action_confirm on Confirmed PO -->
+        <function model="purchase.order" name="action_confirm" eval="[[ref('po_confirmed_1')]]"/>
+
     </data>
 </odoo>

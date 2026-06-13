@@ -52,6 +52,7 @@ class ProductProduct(models.Model):
         ('service', 'Service'),
         ('consumable', 'Consumable'),
     ], string='Product Type', default='stockable', required=True)
+    stock_ledger_ids = fields.One2many('stock.ledger', 'product_id', string='Stock Ledger Entries')
     on_hand_qty = fields.Float(string='On Hand Quantity', compute='_compute_quantities', readonly=True)
     reserved_qty = fields.Float(string='Reserved Quantity', compute='_compute_quantities', readonly=True)
     free_to_use_qty = fields.Float(string='Free to Use Quantity', compute='_compute_quantities', readonly=True)
@@ -70,7 +71,7 @@ class ProductProduct(models.Model):
     min_stock_qty = fields.Float(string='Minimum Stock Quantity', default=0.0)
     lead_time_days = fields.Integer(string='Lead Time (Days)', default=1)
 
-    @api.depends('on_hand_qty', 'reserved_qty')
+    @api.depends('stock_ledger_ids.quantity')
     def _compute_quantities(self):
         # Safe checks to ensure database tables are created before running queries
         self.env.cr.execute("SELECT to_regclass('stock_ledger')")
@@ -103,7 +104,7 @@ class ProductProduct(models.Model):
             has_so = self.env.cr.fetchone()[0]
             if has_so:
                 so_data = self.env['sale.order.line'].sudo().read_group(
-                    [('product_id', 'in', self.ids), ('order_id.state', '=', 'confirmed')],
+                    [('product_id', 'in', self.ids), ('order_id.state', 'in', ('confirmed', 'partially_delivered'))],
                     ['product_id', 'reserved_qty:sum'],
                     ['product_id']
                 )

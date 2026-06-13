@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sale_order_deliver_form" model="ir.ui.view">
+            <field name="name">sale.order.deliver.form</field>
+            <field name="model">sale.order.deliver</field>
+            <field name="arch" type="xml">
+                <form string="Deliver Sales Order">
+                    <sheet>
+                        <group>
+                            <field name="order_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Items to Deliver">
+                                <field name="line_ids">
+                                    <list editable="bottom" create="0" delete="0">
+                                        <field name="product_id" readonly="1"/>
+                                        <field name="qty_ordered" readonly="1"/>
+                                        <field name="qty_delivered"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <footer>
+                        <button name="action_validate" string="Validate" type="object" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_sale_order_deliver" model="ir.actions.act_window">
+            <field name="name">Deliver Sales Order</field>
+            <field name="res_model">sale.order.deliver</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- List/Tree View -->
+        <record id="view_purchase_order_tree" model="ir.ui.view">
+            <field name="name">purchase.order.tree</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <list string="Purchase Orders" decoration-info="state == 'draft'" decoration-success="state == 'fully_received'">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="date_order"/>
+                    <field name="user_id"/>
+                    <field name="total_amount" widget="monetary"/>
+                    <field name="state" widget="badge"
+                           decoration-info="state == 'draft'"
+                           decoration-warning="state in ('confirmed', 'partially_received')"
+                           decoration-success="state == 'fully_received'"
+                           decoration-danger="state == 'cancelled'"/>
+                    <field name="currency_id" column_invisible="True"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <form string="Purchase Order">
+                    <header>
+                        <button name="action_confirm" string="Confirm" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_receive" string="Receive" type="object" class="btn-primary" invisible="state not in ('confirmed', 'partially_received')"/>
+                        <button name="action_cancel" string="Cancel" type="object" class="btn-secondary" invisible="state not in ('draft', 'confirmed')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,partially_received,fully_received,cancelled"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_source_sale_order" type="object" class="oe_stat_button" icon="fa-link" invisible="not origin_sale_order_id">
+                                <span class="o_stat_text">Source SO</span>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id" readonly="state != 'draft'"/>
+                                <field name="date_order" readonly="state != 'draft'"/>
+                            </group>
+                            <group>
+                                <field name="user_id" readonly="state != 'draft'"/>
+                                <field name="origin_sale_order_id" readonly="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="total_amount" widget="monetary"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Order Lines" name="order_lines">
+                                <field name="order_line_ids" readonly="state != 'draft'">
+                                    <list editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="description"/>
+                                        <field name="quantity"/>
+                                        <field name="received_qty" readonly="1"/>
+                                        <field name="price_unit"/>
+                                        <field name="subtotal" sum="Total" widget="monetary"/>
+                                        <field name="currency_id" column_invisible="True"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Receipt Status" name="receipt_status">
+                                <group>
+                                    <field name="state" readonly="1" string="Current Receipt State"/>
+                                </group>
+                            </page>
+                            <page string="Notes" name="notes">
+                                <field name="notes" placeholder="Enter terms, conditions, or internal notes here..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Kanban View -->
+        <record id="view_purchase_order_kanban" model="ir.ui.view">
+            <field name="name">purchase.order.kanban</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state" quick_create="false">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="total_amount"/>
+                    <field name="state"/>
+                    <field name="currency_id"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_kanban_record">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <div class="o_kanban_record_body">
+                                        <div>Vendor: <field name="partner_id"/></div>
+                                        <div>Total: <field name="total_amount" widget="monetary"/></div>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <span class="float-end">
+                                            <field name="state" widget="label_selection"
+                                                   options="{'classes': {'draft': 'info', 'confirmed': 'warning', 'partially_received': 'warning', 'fully_received': 'success', 'cancelled': 'danger'}}"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_purchase_order_search" model="ir.ui.view">
+            <field name="name">purchase.order.search</field>
+            <field name="model">purchase.order</field>
+            <field name="arch" type="xml">
+                <search string="Search Purchase Orders">
+                    <field name="name" string="Order Number"/>
+                    <field name="partner_id" string="Vendor"/>
+                    <field name="user_id" string="Buyer"/>
+                    <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="filter_confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                    <filter name="filter_partially_received" string="Partially Received" domain="[('state', '=', 'partially_received')]"/>
+                    <filter name="filter_fully_received" string="Fully Received" domain="[('state', '=', 'fully_received')]"/>
+                    <filter name="filter_cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                    <separator/>
+                    <filter name="group_by_partner" string="Vendor" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_date" string="Order Date" context="{'group_by': 'date_order'}"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Window Action -->
+        <record id="action_purchase_orders" model="ir.actions.act_window">
+            <field name="name">Purchase Orders</field>
+            <field name="res_model">purchase.order</field>
+            <field name="view_mode">list,form,kanban</field>
+            <field name="search_view_id" ref="view_purchase_order_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Purchase Order.
+                </p>
+            </field>
+        </record>
+
+        <!-- Purchase Menu Category -->
+        <menuitem id="menu_purchase_category" name="Purchases" parent="menu_mini_erp_root" sequence="20"/>
+        <menuitem id="menu_purchase_orders" name="Purchase Orders" parent="menu_purchase_category" action="action_purchase_orders" sequence="10"/>
+        <menuitem id="menu_purchase_vendors" name="Vendors" parent="menu_purchase_category" action="action_partner_vendors" sequence="20"/>
+
+        <!-- Inventory Actions & Menus (Optional, for easier navigation and testing) -->
+        <record id="action_mini_erp_products" model="ir.actions.act_window">
+            <field name="name">Products</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_mini_erp_stock_ledger" model="ir.actions.act_window">
+            <field name="name">Stock Ledger</field>
+            <field name="res_model">stock.ledger</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_inventory_category" name="Inventory" parent="menu_mini_erp_root" sequence="30"/>
+        <menuitem id="menu_inventory_products" name="Products" parent="menu_inventory_category" action="action_mini_erp_products" sequence="10"/>
+        <menuitem id="menu_inventory_stock_ledger" name="Stock Ledger" parent="menu_inventory_category" action="action_mini_erp_stock_ledger" sequence="20"/>
+    </data>
+</odoo>
