@@ -218,15 +218,16 @@ class ProcurementManager(models.AbstractModel):
                     )
 
     @api.model
-    def manual_replenish(self, product, qty):
-        if product.procurement_type == 'purchase':
+    def manual_replenish(self, product, qty, procurement_type=None):
+        proc_type = procurement_type or product.procurement_type
+        if proc_type == 'purchase':
             return self._create_purchase_order(
                 product,
                 qty,
                 f"Manual Replenishment — {product.name}"
             )
 
-        if product.procurement_type == 'manufacture':
+        if proc_type == 'manufacture':
             return self._create_manufacturing_order(
                 product,
                 qty,
@@ -234,5 +235,5 @@ class ProcurementManager(models.AbstractModel):
             )
 
         raise UserError(
-            f"Unsupported procurement type '{product.procurement_type}'"
+            f"Unsupported procurement type '{proc_type}'"
         )
