@@ -9,4 +9,4 @@ __pycache__/
 .idea/
 .vscode/
 start.sh
-start.ps1
+pgdata/
