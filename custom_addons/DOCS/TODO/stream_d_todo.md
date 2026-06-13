@@ -53,7 +53,7 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
 
 ---
 
-### Phase D4 — Dashboard Engine ✅
+### Phase D4 — Dashboard Engine
 
 > **SVG Mockup specifies:**
 > - **Master Menu** sidebar: App Logo + Name, Sale Orders, Products, Manufacturing Orders, Purchase Orders, Bills of Materials
@@ -67,14 +67,14 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
 > - Slide left → login/profile panel, Slide right → Master Menu
 
 - [x] Create dashboard view (JavaScript widget or QWeb template):
-  - Sidebar: App Logo, Master Menu (Sale Orders, Products, Manufacturing Orders, Purchase Orders, Bills of Materials)
-  - Main area: KPI cards per module with state counts
-  - "My" toggle per module section
-  - "Late" indicator for overdue PO/MO
-  - Each KPI card clickable → opens filtered list view
-- [x] Search bar in title bar — global search across orders, products, BoMs
 - [x] Menu: `Dashboard` as top-level menu item (first position, home page)
 - [x] All users see the dashboard — data filtered by their access rights
+- [ ] Implement custom "Master Menu" sidebar (App Logo, Sale Orders, Products, etc.)
+- [ ] Add granular KPI state cards for Sales (Draft, Confirmed, Delivered, etc.)
+- [ ] Add granular KPI state cards for Purchase (Draft, Confirmed, Received, etc.)
+- [ ] Add granular KPI state cards for Manufacturing (Draft, Confirmed, In-Progress, Done, etc.)
+- [ ] Implement the "My" toggle filter for each module section
+- [ ] Add Global Search Bar to the dashboard title area
 
 ---
 
@@ -148,3 +148,4 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
 - [x] Verify `__manifest__.py` has all data files registered correctly
 
 ---
+
