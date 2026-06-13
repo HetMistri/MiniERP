@@ -86,7 +86,7 @@ services:
       - "5432:5432"
     volumes:
       - minierp_db_data:/var/lib/postgresql/data
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U odoo"]
       interval: 10s
@@ -100,18 +100,12 @@ DOCKERCOMPOSE
     echo "  ✓ docker-compose.yaml created"
 fi
 
-if [ "$USE_DOCKER" = true ] && [ ! -f "$PROJECT_DIR/init-db.sh" ]; then
-    cat > "$PROJECT_DIR/init-db.sh" << INITDB
-#!/bin/bash
-set -e
-psql -v ON_ERROR_STOP=1 --username "\$POSTGRES_USER" --dbname "\$POSTGRES_DB" <<-EOSQL
-    CREATE DATABASE mini_erp OWNER odoo;
-    CREATE DATABASE odoo OWNER odoo;
-    ALTER USER odoo CREATEDB;
-EOSQL
-INITDB
-    chmod +x "$PROJECT_DIR/init-db.sh"
-    echo "  ✓ init-db.sh created"
+if [ "$USE_DOCKER" = true ] && [ ! -f "$PROJECT_DIR/init-db.sql" ]; then
+    cat > "$PROJECT_DIR/init-db.sql" << INITSQL
+CREATE DATABASE mini_erp OWNER odoo;
+ALTER USER odoo CREATEDB;
+INITSQL
+    echo "  ✓ init-db.sql created"
 fi
 
 # ─── Step 4: Virtual environment ───

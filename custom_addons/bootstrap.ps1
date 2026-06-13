@@ -97,7 +97,7 @@ services:
       - "5432:5432"
     volumes:
       - minierp_db_data:/var/lib/postgresql/data
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U odoo"]
       interval: 10s
@@ -114,20 +114,16 @@ volumes:
     Write-Host "  ✓ docker-compose.yaml already exists" -ForegroundColor Green
 }
 
-$initPath = Join-Path $ProjectDir "init-db.sh"
+$initPath = Join-Path $ProjectDir "init-db.sql"
 if ($useDocker -and -not (Test-Path $initPath)) {
-    $init = @'#!/bin/bash
-set -e
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-    CREATE DATABASE mini_erp OWNER odoo;
-    CREATE DATABASE odoo OWNER odoo;
-    ALTER USER odoo CREATEDB;
-EOSQL
+    $init = @'
+CREATE DATABASE mini_erp OWNER odoo;
+ALTER USER odoo CREATEDB;
 '@
     Set-Content -Path $initPath -Value $init
-    Write-Host "  ✓ init-db.sh created" -ForegroundColor Green
+    Write-Host "  ✓ init-db.sql created" -ForegroundColor Green
 } elseif ($useDocker) {
-    Write-Host "  ✓ init-db.sh already exists" -ForegroundColor Green
+    Write-Host "  ✓ init-db.sql already exists" -ForegroundColor Green
 }
 
 # ─── Step 4: Python virtual environment ───
