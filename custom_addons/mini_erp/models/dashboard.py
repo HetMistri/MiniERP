@@ -32,6 +32,7 @@ class DashboardData(models.TransientModel):
     po_confirmed = fields.Integer(string="Confirmed Purchases", compute='_compute_purchase_kpis')
     po_partial = fields.Integer(string="Partially Received", compute='_compute_purchase_kpis')
     po_received = fields.Integer(string="Fully Received", compute='_compute_purchase_kpis')
+    po_late = fields.Integer(string="Late Purchases", compute='_compute_purchase_kpis')
 
     # Granular KPIs - Manufacturing
     mo_all = fields.Integer(string="All MOs", compute='_compute_mfg_kpis')
@@ -39,6 +40,7 @@ class DashboardData(models.TransientModel):
     mo_confirmed = fields.Integer(string="Confirmed MOs", compute='_compute_mfg_kpis')
     mo_progress = fields.Integer(string="In Progress MOs", compute='_compute_mfg_kpis')
     mo_done = fields.Integer(string="Done MOs", compute='_compute_mfg_kpis')
+    mo_to_close = fields.Integer(string="To Close MOs", compute='_compute_mfg_kpis')
 
     # Other KPIs
     delayed_orders = fields.Integer(string='Delayed Orders', compute='_compute_global_kpis')
@@ -76,6 +78,7 @@ class DashboardData(models.TransientModel):
             rec.po_confirmed = len(purchases.filtered(lambda p: p.state == 'confirmed'))
             rec.po_partial = len(purchases.filtered(lambda p: p.state == 'partially_received'))
             rec.po_received = len(purchases.filtered(lambda p: p.state == 'fully_received'))
+            rec.po_late = len(purchases.filtered(lambda p: p.state == 'confirmed' and p.date_order and p.date_order.date() < fields.Date.today()))
 
     @api.depends('filter_my_manufacturing')
     def _compute_mfg_kpis(self):
@@ -92,8 +95,9 @@ class DashboardData(models.TransientModel):
                 rec.mo_confirmed = len(mos.filtered(lambda m: m.state == 'confirmed'))
                 rec.mo_progress = len(mos.filtered(lambda m: m.state == 'progress'))
                 rec.mo_done = len(mos.filtered(lambda m: m.state == 'done'))
+                rec.mo_to_close = len(mos.filtered(lambda m: m.state == 'progress' and all(wo.state == 'done' for wo in m.work_order_ids)))
             else:
-                rec.mo_all = rec.mo_draft = rec.mo_confirmed = rec.mo_progress = rec.mo_done = 0
+                rec.mo_all = rec.mo_draft = rec.mo_confirmed = rec.mo_progress = rec.mo_done = rec.mo_to_close = 0
 
     @api.depends('filter_my_sales')
     def _compute_global_kpis(self):
@@ -215,9 +219,11 @@ class DashboardData(models.TransientModel):
     def action_view_so_delivered(self):
         return self._action_view_sales_by_state('fully_delivered')
 
-    def _action_view_purchase_by_state(self, state=None):
+    def _action_view_purchase_by_state(self, state=None, domain_override=None):
         domain = []
-        if state:
+        if domain_override is not None:
+            domain.extend(domain_override)
+        elif state:
             domain.append(('state', '=', state))
         if self.filter_my_purchases:
             domain.append(('user_id', '=', self.env.user.id))
@@ -245,9 +251,18 @@ class DashboardData(models.TransientModel):
     def action_view_po_received(self):
         return self._action_view_purchase_by_state('fully_received')
 
-    def _action_view_mrp_by_state(self, state=None):
+    def action_view_po_late(self):
+        domain_override = [
+            ('state', '=', 'confirmed'),
+            ('date_order', '<', fields.Date.today())
+        ]
+        return self._action_view_purchase_by_state(state='Late', domain_override=domain_override)
+
+    def _action_view_mrp_by_state(self, state=None, domain_override=None):
         domain = []
-        if state:
+        if domain_override is not None:
+            domain.extend(domain_override)
+        elif state:
             domain.append(('state', '=', state))
         if self.filter_my_manufacturing:
             domain.append(('assignee_id', '=', self.env.user.id))
@@ -274,6 +289,15 @@ class DashboardData(models.TransientModel):
 
     def action_view_mo_done(self):
         return self._action_view_mrp_by_state('done')
+
+    def action_view_mo_to_close(self):
+        mrp_production_model = self.env['mrp.production']
+        domain = [('state', '=', 'progress')]
+        if self.filter_my_manufacturing:
+            domain.append(('assignee_id', '=', self.env.user.id))
+        mos = mrp_production_model.search(domain)
+        to_close_ids = mos.filtered(lambda m: all(wo.state == 'done' for wo in m.work_order_ids)).ids
+        return self._action_view_mrp_by_state(state='To Close', domain_override=[('id', 'in', to_close_ids)])
 
     def action_view_low_stock(self):
         products = self.env['product.product'].search([('product_type', '=', 'stockable')])

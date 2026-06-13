@@ -206,6 +206,11 @@
                                                     <span class="h4 font-weight-bold text-success"><field name="po_received"/></span>
                                                     <button name="action_view_po_received" type="object" class="o_card_overlay_btn"/>
                                                 </div>
+                                                <div class="o_kpi_subcard flex-fill mx-1 mb-2 text-center">
+                                                    <span class="text-muted small d-block">Late</span>
+                                                    <span class="h4 font-weight-bold text-danger"><field name="po_late"/></span>
+                                                    <button name="action_view_po_late" type="object" class="o_card_overlay_btn"/>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -242,6 +247,11 @@
                                                     <span class="text-muted small d-block">In Progress</span>
                                                     <span class="h4 font-weight-bold text-info"><field name="mo_progress"/></span>
                                                     <button name="action_view_mo_progress" type="object" class="o_card_overlay_btn"/>
+                                                </div>
+                                                <div class="o_kpi_subcard flex-fill mx-1 mb-2 text-center">
+                                                    <span class="text-muted small d-block">To Close</span>
+                                                    <span class="h4 font-weight-bold text-danger"><field name="mo_to_close"/></span>
+                                                    <button name="action_view_mo_to_close" type="object" class="o_card_overlay_btn"/>
                                                 </div>
                                                 <div class="o_kpi_subcard flex-fill mx-1 mb-2 text-center">
                                                     <span class="text-muted small d-block">Done</span>
