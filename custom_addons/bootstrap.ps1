@@ -72,6 +72,7 @@ db_host = localhost
 db_port = 5432
 db_user = odoo
 db_password = odoo
+db_name = mini_erp
 addons_path = $($odooDir -replace '\\', '/')/addons,$($ScriptDir -replace '\\', '/')
 debug_mode = True
 max_cron_threads = 0
