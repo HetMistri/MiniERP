@@ -11,7 +11,7 @@ Mini ERP System that digitally manages the complete business flow:
 - Inventory & Stock Tracking
 - Procurement Automation
     """,
-    'author': "Shiv Furniture Works",
+    'author': "Shiv Furniture Works (Haclathon Team: Het, Pradip, Soha, Varun)",
     'website': "",
     'license': 'LGPL-3',
     'category': 'Manufacturing',
