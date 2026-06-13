@@ -148,4 +148,3 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
 - [x] Verify `__manifest__.py` has all data files registered correctly
 
 ---
-
