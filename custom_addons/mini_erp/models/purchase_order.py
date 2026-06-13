@@ -114,7 +114,7 @@ class PurchaseOrder(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'audit.log',
             'view_mode': 'list,form',
-            'domain': [('model', '=', 'purchase.order')],
+            'domain': [('model_name', '=', 'purchase.order')],
             'context': {'search_default_res_id': self.id},
         }
 

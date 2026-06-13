@@ -14,9 +14,14 @@
                             <page string="Items to Deliver">
                                 <field name="line_ids">
                                     <list editable="bottom" create="0" delete="0">
+
+                                        <field name="sale_line_id" invisible="1"/>
+                                        <field name="product_id" invisible="1"/>
+
                                         <field name="product_id" readonly="1"/>
                                         <field name="qty_ordered" readonly="1"/>
                                         <field name="qty_delivered"/>
+
                                     </list>
                                 </field>
                             </page>

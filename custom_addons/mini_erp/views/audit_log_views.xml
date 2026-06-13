@@ -40,7 +40,7 @@
                                 <field name="model_name" readonly="1"/>
                                 <field name="record_id" readonly="1"/>
                                 <field name="field_name" readonly="1"/>
-                                <field name="res_id" readonly="1" widget="many2one"/>
+                                <!-- <field name="res_id" readonly="1" widget="many2one"/> -->
                             </group>
                         </group>
                         <group string="Change Details">

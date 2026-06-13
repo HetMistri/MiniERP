@@ -6,9 +6,17 @@ cd "$SCRIPT_DIR"
 
 echo "=== Mini ERP — Starting PostgreSQL ==="
 docker compose up -d
-echo "PostgreSQL is running on port 5432"
+
+echo "Waiting for PostgreSQL..."
+
+until docker exec minierp_postgres pg_isready -U odoo >/dev/null 2>&1
+do
+    sleep 1
+done
+
+echo "PostgreSQL is ready"
 
 echo ""
 echo "=== Mini ERP — Starting Odoo ==="
-echo "Using virtual environment: $SCRIPT_DIR/venv"
+
 "$SCRIPT_DIR/venv/bin/python" odoo/odoo-bin -c odoo.conf "$@"

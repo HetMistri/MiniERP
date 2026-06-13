@@ -216,3 +216,23 @@ class ProcurementManager(models.AbstractModel):
                         needed_qty,
                         f"MTS Reordering — {product.name}"
                     )
+
+    @api.model
+    def manual_replenish(self, product, qty):
+        if product.procurement_type == 'purchase':
+            return self._create_purchase_order(
+                product,
+                qty,
+                f"Manual Replenishment — {product.name}"
+            )
+
+        if product.procurement_type == 'manufacture':
+            return self._create_manufacturing_order(
+                product,
+                qty,
+                f"Manual Replenishment — {product.name}"
+            )
+
+        raise UserError(
+            f"Unsupported procurement type '{product.procurement_type}'"
+        )
