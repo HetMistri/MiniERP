@@ -378,16 +378,16 @@
             <t t-elif="isKanban('inventory')">
                 <div class="o_sv_kanban_grid">
                     <t t-foreach="rows('inventory')" t-as="rec" t-key="rec.id">
-                        <div t-att-class="'o_sv_card o_sv_card_inventory' + (rec.free_to_use_qty <= 0 ? ' o_sv_card_danger' : '')"
+                        <div t-att-class="'o_sv_card o_sv_card_inventory' + (rec.free_to_use_qty &lt;= 0 ? ' o_sv_card_danger' : '')"
                              t-on-click="() => this.openRecord('product.product', rec.id)">
                             <div class="o_sv_card_icon">
-                                <i t-att-class="'fa fa-2x ' + (rec.free_to_use_qty <= 0 ? 'fa-exclamation-triangle text-danger' : 'fa-archive text-warning')"/>
+                                <i t-att-class="'fa fa-2x ' + (rec.free_to_use_qty &lt;= 0 ? 'fa-exclamation-triangle text-danger' : 'fa-archive text-warning')"/>
                             </div>
                             <div class="o_sv_card_body">
                                 <div class="o_sv_card_title" t-esc="rec.name"/>
                                 <div class="text-muted small" t-esc="fmt(rec.reference)"/>
                                 <div class="mt-2">
-                                    <span t-att-class="'o_sv_tag ' + (rec.free_to_use_qty <= 0 ? 'o_sv_tag_danger' : 'o_sv_tag_success')">
+                                    <span t-att-class="'o_sv_tag ' + (rec.free_to_use_qty &lt;= 0 ? 'o_sv_tag_danger' : 'o_sv_tag_success')">
                                         <t t-if="rec.free_to_use_qty &lt;= 0">Low Stock</t>
                                         <t t-else="">In Stock</t>
                                     </span>
