@@ -1,6 +1,7 @@
 # Stream C — Manufacturing & Bill of Materials
 
 ## Focus
+
 Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, component reservation, finished goods receipt, and production tracking.
 
 ---
@@ -41,7 +42,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
   - `product_id` (Many2one → product.product, required) — "Finished Product"
   - `product_qty` (Float, required) — "Quantity"
   - `bom_id` (Many2one → mrp.bom) — auto-filled from product
-  - `state` (Selection: *Draft → Confirmed → In Progress → Done → Cancelled*)
+  - `state` (Selection: _Draft → Confirmed → In Progress → Done → Cancelled_)
   - `component_ids` (One2many → mrp.production.component)
   - `work_order_ids` (One2many → mrp.work.order)
   - `date_planned_start` (Datetime) — "Schedule Date"
@@ -85,6 +86,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 ### Phase C6 — Manufacturing Views & Menus ✅
 
 > **SVG Mockup specifies additional details:**
+>
 > - List View columns: Reference, Date, Finished Product, Status, **Component Status** (Available / Not Available)
 > - Form View: Product, Quantity, Bill of Material, Schedule Date, Assignee
 > - Components section: "To Consume" qty populated from BoM, "Consumed" qty

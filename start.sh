@@ -19,9 +19,10 @@ echo "PostgreSQL is ready"
 echo ""
 echo "=== Mini ERP — Starting venv ==="
 
-source "$SCRIPT_DIR/venv/bin/activate"
+source "$SCRIPT_DIR/.venv/bin/activate"
 echo "Virtual environment activated"
 
 echo ""
 echo "=== Mini ERP — Starting Odoo ==="
-"$SCRIPT_DIR/venv/bin/python" odoo/odoo-bin -c odoo.conf "$@"
+echo "Using virtual environment: $SCRIPT_DIR/.venv"
+"$SCRIPT_DIR/.venv/bin/python" odoo/odoo-bin -c odoo.conf "$@"
