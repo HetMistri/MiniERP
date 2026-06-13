@@ -83,46 +83,46 @@
         </record>
 
         <!-- Demo Partners (Customers) -->
-        <record id="partner_rajesh_interiors" model="res.partner">
-            <field name="name">Rajesh Interiors</field>
+        <record id="partner_suzuki_india" model="res.partner">
+            <field name="name">Suzuki India</field>
             <field name="is_customer" eval="True"/>
             <field name="is_vendor" eval="False"/>
             <field name="partner_type">company</field>
-            <field name="email">rajesh@interiors.com</field>
+            <field name="email">procurement@suzuki-india.com</field>
             <field name="phone">+91 98765 43210</field>
         </record>
 
-        <record id="partner_sita_homes" model="res.partner">
-            <field name="name">Sita Homes</field>
+        <record id="partner_mrf_ltd" model="res.partner">
+            <field name="name">MRF Ltd</field>
             <field name="is_customer" eval="True"/>
             <field name="is_vendor" eval="False"/>
             <field name="partner_type">company</field>
-            <field name="email">sita@homes.com</field>
+            <field name="email">orders@mrf.com</field>
             <field name="phone">+91 87654 32109</field>
         </record>
 
         <!-- Demo Partners (Vendors) -->
-        <record id="partner_timber_mart" model="res.partner">
-            <field name="name">Timber Mart</field>
+        <record id="partner_plastofact_in" model="res.partner">
+            <field name="name">Plastofact IN</field>
             <field name="is_customer" eval="False"/>
             <field name="is_vendor" eval="True"/>
             <field name="partner_type">company</field>
-            <field name="email">contact@timbermart.com</field>
+            <field name="email">supply@plastofact.in</field>
             <field name="phone">+91 76543 21098</field>
         </record>
 
-        <record id="partner_hardware_hub" model="res.partner">
-            <field name="name">Hardware Hub</field>
+        <record id="partner_orm_metals" model="res.partner">
+            <field name="name">ORM Metals</field>
             <field name="is_customer" eval="False"/>
             <field name="is_vendor" eval="True"/>
             <field name="partner_type">company</field>
-            <field name="email">sales@hardwarehub.com</field>
+            <field name="email">sales@ormmetals.com</field>
             <field name="phone">+91 65432 10987</field>
         </record>
 
         <!-- Demo Sales Order 1 (Draft) -->
         <record id="so_draft_1" model="sale.order">
-            <field name="partner_id" ref="partner_rajesh_interiors"/>
+            <field name="partner_id" ref="partner_suzuki_india"/>
             <field name="state">draft</field>
             <field name="date_order" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="user_id" ref="base.user_admin"/>
@@ -138,7 +138,7 @@
 
         <!-- Demo Sales Order 2 (Confirmed) -->
         <record id="so_confirmed_1" model="sale.order">
-            <field name="partner_id" ref="partner_sita_homes"/>
+            <field name="partner_id" ref="partner_mrf_ltd"/>
             <field name="state">draft</field>
             <field name="date_order" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="user_id" ref="base.user_admin"/>
@@ -157,7 +157,7 @@
 
         <!-- Demo Purchase Order 1 (Draft) -->
         <record id="po_draft_1" model="purchase.order">
-            <field name="partner_id" ref="partner_timber_mart"/>
+            <field name="partner_id" ref="partner_plastofact_in"/>
             <field name="state">draft</field>
             <field name="date_order" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="user_id" ref="base.user_admin"/>
@@ -173,7 +173,7 @@
 
         <!-- Demo Purchase Order 2 (Confirmed) -->
         <record id="po_confirmed_1" model="purchase.order">
-            <field name="partner_id" ref="partner_hardware_hub"/>
+            <field name="partner_id" ref="partner_orm_metals"/>
             <field name="state">draft</field>
             <field name="date_order" eval="(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="user_id" ref="base.user_admin"/>

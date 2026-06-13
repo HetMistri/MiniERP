@@ -10,6 +10,7 @@ class SaleOrder(models.Model):
 
     name = fields.Char(string='SO Number', required=True, copy=False, readonly=True, default=lambda self: '/')
     partner_id = fields.Many2one('res.partner', string='Customer', domain="[('is_customer', '=', True)]", required=True)
+    partner_address = fields.Char(string='Customer Address', compute='_compute_partner_address', store=True, readonly=False)
     state = fields.Selection([
         ('draft', 'Draft'),
         ('confirmed', 'Confirmed'),
@@ -28,6 +29,16 @@ class SaleOrder(models.Model):
     purchase_order_count = fields.Integer(string='Purchase Order Count', compute='_compute_purchase_order_count')
     delivery_count = fields.Integer(string='Delivery Count', compute='_compute_delivery_count')
     mrp_production_count = fields.Integer(string='Manufacturing Order Count', compute='_compute_mrp_production_count')
+
+    @api.depends('partner_id')
+    def _compute_partner_address(self):
+        for order in self:
+            p = order.partner_id
+            if p:
+                parts = [p.street, p.city, p.state_id.name if p.state_id else None, p.country_id.name if p.country_id else None]
+                order.partner_address = ', '.join(filter(None, parts))
+            else:
+                order.partner_address = ''
 
     @api.depends('order_line_ids.subtotal')
     def _compute_total_amount(self):
@@ -150,6 +161,18 @@ class SaleOrder(models.Model):
             'res_model': 'mrp.production',
             'view_mode': 'list,form',
             'domain': [('origin', '=', self.name)],
+        }
+
+    def action_view_audit_logs(self):
+        """Open audit logs filtered to Sales module."""
+        self.ensure_one()
+        return {
+            'name': 'Audit Logs — Sales',
+            'type': 'ir.actions.act_window',
+            'res_model': 'audit.log',
+            'view_mode': 'list,form',
+            'domain': [('model', '=', 'sale.order')],
+            'context': {'search_default_res_id': self.id},
         }
 
 
