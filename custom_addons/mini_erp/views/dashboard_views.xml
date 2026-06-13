@@ -105,10 +105,6 @@
                                 <!-- Financial Overview & Analytics Section -->
                                 <field name="financial_dashboard_widget" widget="financial_dashboard" nolabel="1"/>
 
-                                <!-- Section View Widget: Products / Sales / Purchase / Mfg / Inventory -->
-                                <!-- with Kanban / Table toggle per section -->
-                                <field name="section_views_widget" widget="section_view_widget" nolabel="1"/>
-
                                 <!-- Audit Log Section -->
                                 <div class="o_audit_section mt-5" groups="mini_erp.group_admin">
                                     <h3 class="border-bottom pb-2 text-primary"><i class="fa fa-history mr-2" title="Audit History"/>Recent Audit Logs</h3>

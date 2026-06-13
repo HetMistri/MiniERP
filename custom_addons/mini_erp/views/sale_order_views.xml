@@ -160,7 +160,7 @@
         <record id="action_sale_orders" model="ir.actions.act_window">
             <field name="name">Sales Orders</field>
             <field name="res_model">sale.order</field>
-            <field name="view_mode">list,form,kanban</field>
+            <field name="view_mode">kanban,list,form</field>
             <field name="search_view_id" ref="view_sale_order_search"/>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">

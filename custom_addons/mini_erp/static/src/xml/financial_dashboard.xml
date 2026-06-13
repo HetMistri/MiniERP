@@ -157,7 +157,7 @@
                         <div class="card shadow-sm border-0 h-100 p-4 chart-card">
                             <h5 class="chart-card-title mb-3">Monthly Income vs Expenses</h5>
                             <div class="chart-container flex-grow-1" style="position: relative; height: 300px;">
-                                <canvas ref="chart_income_vs_expenses"></canvas>
+                                <canvas t-ref="chart_income_vs_expenses"></canvas>
                             </div>
                         </div>
                     </div>
@@ -165,7 +165,7 @@
                         <div class="card shadow-sm border-0 h-100 p-4 chart-card">
                             <h5 class="chart-card-title mb-3">Revenue Breakdown</h5>
                             <div class="chart-container flex-grow-1" style="position: relative; height: 300px;">
-                                <canvas ref="chart_revenue_breakdown"></canvas>
+                                <canvas t-ref="chart_revenue_breakdown"></canvas>
                             </div>
                         </div>
                     </div>
@@ -177,7 +177,7 @@
                         <div class="card shadow-sm border-0 h-100 p-4 chart-card">
                             <h5 class="chart-card-title mb-3">Profit Trend</h5>
                             <div class="chart-container flex-grow-1" style="position: relative; height: 300px;">
-                                <canvas ref="chart_profit_trend"></canvas>
+                                <canvas t-ref="chart_profit_trend"></canvas>
                             </div>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                         <div class="card shadow-sm border-0 h-100 p-4 chart-card">
                             <h5 class="chart-card-title mb-3">Expense Categories</h5>
                             <div class="chart-container flex-grow-1" style="position: relative; height: 300px;">
-                                <canvas ref="chart_expense_categories"></canvas>
+                                <canvas t-ref="chart_expense_categories"></canvas>
                             </div>
                         </div>
                     </div>

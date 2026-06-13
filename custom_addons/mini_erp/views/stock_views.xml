@@ -39,11 +39,52 @@
             </field>
         </record>
 
+        <!-- Stock Ledger Kanban View -->
+        <record id="view_stock_ledger_kanban" model="ir.ui.view">
+            <field name="name">stock.ledger.kanban</field>
+            <field name="model">stock.ledger</field>
+            <field name="arch" type="xml">
+                <kanban create="0" delete="0" edit="0" quick_create="false">
+                    <field name="product_id"/>
+                    <field name="reference"/>
+                    <field name="transaction_type"/>
+                    <field name="quantity"/>
+                    <field name="balance_after"/>
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click o_kanban_record">
+                                <div class="oe_kanban_details">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong class="o_kanban_record_title"><field name="product_id"/></strong>
+                                        <span t-attf-class="badge #{record.quantity.raw_value >= 0 ? 'text-bg-success' : 'text-bg-danger'}">
+                                            <field name="quantity"/>
+                                        </span>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        Ref: <field name="reference"/>
+                                    </div>
+                                    <div class="mt-2 d-flex justify-content-between align-items-center">
+                                        <span class="badge text-bg-info"><field name="transaction_type"/></span>
+                                        <span class="text-muted small"><field name="date"/></span>
+                                    </div>
+                                    <div class="text-muted small mt-1">
+                                        Balance After: <field name="balance_after"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
         <!-- Window Action -->
         <record id="action_stock_ledger" model="ir.actions.act_window">
             <field name="name">Stock Ledger</field>
             <field name="res_model">stock.ledger</field>
-            <field name="view_mode">list</field>
+            <field name="view_mode">kanban,list</field>
             <field name="search_view_id" ref="view_stock_ledger_search"/>
             <field name="help" type="html">
                 <p>

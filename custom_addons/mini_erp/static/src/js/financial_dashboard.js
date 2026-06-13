@@ -2,9 +2,10 @@
 
 import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
-import { Component, onMounted, onWillUnmount, useRef, useState } from "@odoo/owl";
+import { Component, onMounted, onWillUnmount, onWillStart, useRef, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { rpc } from "@web/core/network/rpc";
+import { loadBundle } from "@web/core/assets";
 
 export class FinancialDashboard extends Component {
     static template = "mini_erp.FinancialDashboard";
@@ -47,6 +48,16 @@ export class FinancialDashboard extends Component {
         });
 
         this.charts = {};
+
+        onWillStart(async () => {
+            console.log("[FinancialDashboard] onWillStart: loading web.chartjs_lib bundle");
+            try {
+                await loadBundle("web.chartjs_lib");
+                console.log("[FinancialDashboard] onWillStart: web.chartjs_lib loaded. window.Chart type is:", typeof window.Chart);
+            } catch (err) {
+                console.error("[FinancialDashboard] Failed to load web.chartjs_lib bundle:", err);
+            }
+        });
 
         onMounted(() => {
             this.loadData();
@@ -119,7 +130,9 @@ export class FinancialDashboard extends Component {
     renderCharts(chartData) {
         this.destroyCharts();
 
-        if (typeof Chart === 'undefined') {
+        const ChartLib = window.Chart || globalThis.Chart;
+        console.log("[FinancialDashboard] renderCharts. window.Chart type:", typeof window.Chart, "globalThis.Chart type:", typeof globalThis.Chart);
+        if (!ChartLib) {
             console.error("Chart.js is not loaded in this window.");
             return;
         }
@@ -127,7 +140,7 @@ export class FinancialDashboard extends Component {
         // 1. Chart 1: Monthly Income vs Expenses (Line Chart)
         if (this.chart1Ref.el) {
             const ctx1 = this.chart1Ref.el.getContext('2d');
-            this.charts.chart_income_vs_expenses = new Chart(ctx1, {
+            this.charts.chart_income_vs_expenses = new ChartLib(ctx1, {
                 type: 'line',
                 data: {
                     labels: chartData.monthly_months,
@@ -176,7 +189,7 @@ export class FinancialDashboard extends Component {
         if (this.chart2Ref.el) {
             const ctx2 = this.chart2Ref.el.getContext('2d');
             const totalRevenue = chartData.revenue_breakdown.values.reduce((a, b) => a + b, 0);
-            this.charts.chart_revenue_breakdown = new Chart(ctx2, {
+            this.charts.chart_revenue_breakdown = new ChartLib(ctx2, {
                 type: 'doughnut',
                 data: {
                     labels: chartData.revenue_breakdown.labels,
@@ -212,7 +225,7 @@ export class FinancialDashboard extends Component {
             const bgColors = chartData.monthly_profits.map(v => v >= 0 ? 'rgba(16, 185, 129, 0.85)' : 'rgba(239, 68, 68, 0.85)');
             const borderColors = chartData.monthly_profits.map(v => v >= 0 ? '#10b981' : '#ef4444');
 
-            this.charts.chart_profit_trend = new Chart(ctx3, {
+            this.charts.chart_profit_trend = new ChartLib(ctx3, {
                 type: 'bar',
                 data: {
                     labels: chartData.monthly_months,
@@ -246,7 +259,7 @@ export class FinancialDashboard extends Component {
         // 4. Chart 4: Expense Categories (Horizontal Bar Chart)
         if (this.chart4Ref.el) {
             const ctx4 = this.chart4Ref.el.getContext('2d');
-            this.charts.chart_expense_categories = new Chart(ctx4, {
+            this.charts.chart_expense_categories = new ChartLib(ctx4, {
                 type: 'bar',
                 data: {
                     labels: chartData.expense_categories.labels,

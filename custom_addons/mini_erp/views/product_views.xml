@@ -76,6 +76,41 @@
             </field>
         </record>
 
+        <record id="view_product_product_kanban" model="ir.ui.view">
+            <field name="name">product.product.kanban</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <kanban quick_create="false">
+                    <field name="name"/>
+                    <field name="reference"/>
+                    <field name="product_type"/>
+                    <field name="sale_price"/>
+                    <field name="on_hand_qty"/>
+                    <field name="free_to_use_qty"/>
+                    <field name="currency_id"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click o_kanban_record">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                    <div class="text-muted small">
+                                        Ref: <field name="reference"/>
+                                    </div>
+                                    <div class="mt-2 text-muted small">
+                                        Type: <field name="product_type"/>
+                                    </div>
+                                    <div class="mt-2 d-flex justify-content-between align-items-center">
+                                        <span class="font-weight-bold text-success"><field name="sale_price" widget="monetary"/></span>
+                                        <span class="badge text-bg-info">Stock: <field name="on_hand_qty"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
         <record id="view_product_product_form" model="ir.ui.view">
             <field name="name">product.product.form</field>
             <field name="model">product.product</field>

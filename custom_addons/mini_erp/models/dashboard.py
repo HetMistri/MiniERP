@@ -205,7 +205,7 @@ class DashboardData(models.TransientModel):
             'name': 'Products',
             'type': 'ir.actions.act_window',
             'res_model': 'product.product',
-            'view_mode': 'list,form',
+            'view_mode': 'kanban,list,form',
             'target': 'current',
         }
 
@@ -229,7 +229,7 @@ class DashboardData(models.TransientModel):
             'name': f'Sales Orders ({state or "All"})',
             'type': 'ir.actions.act_window',
             'res_model': 'sale.order',
-            'view_mode': 'list,form,kanban',
+            'view_mode': 'kanban,list,form',
             'domain': domain,
             'target': 'current',
         }
@@ -261,7 +261,7 @@ class DashboardData(models.TransientModel):
             'name': f'Purchase Orders ({state or "All"})',
             'type': 'ir.actions.act_window',
             'res_model': 'purchase.order',
-            'view_mode': 'list,form',
+            'view_mode': 'kanban,list,form',
             'domain': domain,
             'target': 'current',
         }
@@ -300,7 +300,7 @@ class DashboardData(models.TransientModel):
             'name': f'Manufacturing Orders ({state or "All"})',
             'type': 'ir.actions.act_window',
             'res_model': 'mrp.production',
-            'view_mode': 'list,form',
+            'view_mode': 'kanban,list,form',
             'domain': domain,
             'target': 'current',
         }
@@ -336,7 +336,7 @@ class DashboardData(models.TransientModel):
             'name': 'Low Stock Products',
             'type': 'ir.actions.act_window',
             'res_model': 'product.product',
-            'view_mode': 'list,form',
+            'view_mode': 'kanban,list,form',
             'domain': [('id', 'in', low_stock_ids)],
             'target': 'current',
         }
@@ -352,7 +352,7 @@ class DashboardData(models.TransientModel):
             'name': 'Delayed Orders',
             'type': 'ir.actions.act_window',
             'res_model': 'sale.order',
-            'view_mode': 'list,form,kanban',
+            'view_mode': 'kanban,list,form',
             'domain': domain,
             'target': 'current',
         }
