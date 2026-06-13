@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <field name="login" position="after">
                     <field name="position" placeholder="e.g. Sales Manager"/>
+                    <field name="mobile" placeholder="e.g. +91 98765 43210"/>
                 </field>
 
                 <xpath expr="//notebook" position="inside">

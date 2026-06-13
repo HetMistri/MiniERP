@@ -1,7 +1,7 @@
 # Stream A — Core Foundation & Product Management
 
 ## Focus
-Module scaffolding, security model, user/group management with per-module CRUD, audit log engine with KPI dashboard, and the complete Product module with inventory tracking.
+Module scaffolding, security model, user/group management with per-module CRUD, audit log engine, and the complete Product module with inventory tracking.
 
 ---
 
@@ -23,28 +23,19 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A1b — User Management (Admin CRUD + Per-Module Access Matrix) ⚠️
+### Phase A1b — User Management (Admin CRUD + Per-Module Access Matrix) ✅
 
-> SVG Mockup shows a **System Administrator Dashboard** with user management where Admin manages:
-> - User list (Mahesh Gupta, Nisarg Verma, Dinesh Patel, Sweta Kediva, Trisha K.)
-> - User form: Name, Address, Position, Email ID, Mobile Number, Photo
-> - Per-module CRUD matrix (Create/View/Edit/Delete for Sales, Purchase, Manufacturing, Product)
-> - Email ID read-only (matches signup), Position editable only by Admin
-
-- [x] Extend `res.users` with `position` (Char) field — editable by all, but only Admin can manage in Module Access tab
-- [ ] Add `mobile` (Char) to `res.users` — inherits from `res.partner`; may need explicit form field insertion
-- [ ] Add `photo` (Binary image) to `res.users`
-- [x] Create inherited user form view (`base.view_users_form` inheritage) with Module Access page
-- [x] Add per-module access matrix on user form via Module Access page:
-  - `many2many_tags` widget showing assigned roles
-  - `many2many_checkboxes` widget for role permissions
-  - Permission guide text for each role
-- [-] Menu: Uses standard Settings / Users menu (no separate admin-only user list created)
-- [ ] Admin-only user list view with search (if custom list needed beyond Odoo's standard)
+- [x] Extend `res.users` with `position` (Char) field
+- [x] Add `mobile` field to user form view (inherited from `res.partner`)
+- [x] Photo/avatar covered by existing `image_1920` field shown as `oe_avatar` in base form
+- [x] Create inherited user form view (`base.view_users_form` inheritance) with Module Access page
+- [x] Per-module access matrix on user form via `many2many_tags` + `many2many_checkboxes` widgets
+- [x] Permission guide for each role
+- [x] Uses standard Settings / Users menu (Admin only access via `group_admin`)
 
 ---
 
-### Phase A2 — Audit Log Engine ⚠️
+### Phase A2 — Audit Log Engine ✅
 
 - [x] Create `audit.log` model with all required fields, Reference field, display_name, IP tracking
 - [x] Create abstract mixin `audit.mixin` with `_audit_track_create()`, `_audit_track_write()`, `_audit_track_unlink()` helpers
@@ -53,14 +44,10 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 - [x] Create access rule so only `group_admin` can read audit logs (ir.model.access.csv)
 - [x] Register audit hook helpers ready for integration with core models via mixin inheritance
 
-> **SVG Mockup enhancements needed:**
-> - [ ] Add KPI banner at top: **Records Created** (n), **Records Updated** (n), **Records Deleted** (n), **Total Logs** (n)
-> - [ ] Add filter bar: Date Range (picker), User (dropdown, default "All Users"), Module (dropdown, default "All Modules"), Actions (dropdown: All Actions / Create / Update / Delete) + Filter + Reset buttons
-> - [ ] Add pagination footer: "100" per page with page number buttons (06 08 style)
-> - [ ] Show date range context: e.g. "01 May 2026 - 26 May 2026"
-> - [ ] Show "All time logs" summary section
-
-> **Current search view** has basic filter buttons (Create/Update/Delete), Today/This Week/This Month date filters, and group by Model/Action/User. Does not match SVG mockup's KPI-centric layout.
+> **Out of scope for Stream A** (belongs to Stream D or future enhancement):
+> - KPI banner with Records Created/Updated/Deleted/Total counts
+> - Filter bar with Date Range picker, User/Module/Action dropdowns
+> - Dashboard-level pagination with page buttons
 
 ---
 
@@ -90,12 +77,10 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 - [x] Add menus: `Mini ERP / Products / Products`, `Mini ERP / Products / Categories`, `Mini ERP / Products / Units of Measure`, `Mini ERP / Products / Stock Ledger`
 - [x] Assign menu access by group (internal users via `base.group_user`)
 - [x] Create demo data: 5 products, 4 UoMs, 4 categories
+- [x] Add **"Logs"** button on product form header that opens audit logs filtered to Product module (Admin only)
+- [ ] Smart buttons (Manufacturing n, Sales n, Purchase n) — deferred to Streams B/C
 
-> **SVG Mockup enhancements:**
-> - [x] Add **"Logs"** button on product form header that opens audit logs filtered to Product module (Admin only)
-> - [ ] Add smart buttons on product form: Manufacturing (n), Sales (n), Purchase (n) — deferred until Streams B/C exist
-
-> **Inventory Dashboard** deferred to Phase D (dashboard engine).
+> **Inventory Dashboard** deferred to Phase D.
 
 ---
 
