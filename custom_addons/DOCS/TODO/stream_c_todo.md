@@ -18,6 +18,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 - [x] Menu: `Manufacturing / Configuration / Work Centers`
 - [x] Demo data: Assembly Line, Paint Floor, Packaging Unit
 
+
 ---
 
 ### Phase C2 — Bill of Materials (BoM) ✅
