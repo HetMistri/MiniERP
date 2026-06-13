@@ -5,7 +5,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A1 — Project Scaffold & Security Foundation
+### Phase A1 — Project Scaffold & Security Foundation ✅
 
 - [x] Create Odoo module `mini_erp` with `__manifest__.py` (name, description, depends, data keys)
 - [x] Define security groups in XML:

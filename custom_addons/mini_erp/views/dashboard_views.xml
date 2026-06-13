@@ -264,7 +264,7 @@
                                 </div>
 
                                 <!-- Audit Log Section -->
-                                <div class="o_audit_section mt-5">
+                                <div class="o_audit_section mt-5" groups="mini_erp.group_admin">
                                     <h3 class="border-bottom pb-2 text-primary"><i class="fa fa-history mr-2" title="Audit History"/>Recent Audit Logs</h3>
                                     <field name="recent_audit_log_ids" readonly="1">
                                         <list>
@@ -278,7 +278,6 @@
                                     </field>
                                 </div>
                             </div>
-                        </div>
                     </sheet>
                 </form>
             </field>

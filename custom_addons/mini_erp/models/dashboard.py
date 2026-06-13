@@ -103,23 +103,34 @@ class DashboardData(models.TransientModel):
     def _compute_global_kpis(self):
         sale_order_model = self.env['sale.order']
         product_product_model = self.env['product.product']
+        has_sale = sale_order_model.check_access_rights('read', raise_exception=False)
+        has_product = product_product_model.check_access_rights('read', raise_exception=False)
         for rec in self:
-            so_domain = [
-                ('state', 'in', ('confirmed', 'partially_delivered')),
-                ('expected_date', '<', fields.Date.today())
-            ]
-            if rec.filter_my_sales:
-                so_domain.append(('user_id', '=', self.env.user.id))
+            if has_sale:
+                so_domain = [
+                    ('state', 'in', ('confirmed', 'partially_delivered')),
+                    ('expected_date', '<', fields.Date.today())
+                ]
+                if rec.filter_my_sales:
+                    so_domain.append(('user_id', '=', self.env.user.id))
+                rec.delayed_orders = sale_order_model.search_count(so_domain)
+            else:
+                rec.delayed_orders = 0
                 
-            rec.delayed_orders = sale_order_model.search_count(so_domain)
             
-            # Low stock products: stockable products with free_to_use_qty <= 0
-            products = product_product_model.search([('product_type', '=', 'stockable')])
-            rec.low_stock_products = len(products.filtered(lambda p: p.free_to_use_qty <= 0))
+            if has_product:
+                products = product_product_model.search([('product_type', '=', 'stockable')])
+                rec.low_stock_products = len(products.filtered(lambda p: p.free_to_use_qty <= 0))
+            else:
+                rec.low_stock_products = 0
 
     def _compute_recent_audit_logs(self):
+        has_access = self.env['audit.log'].check_access_rights('read', raise_exception=False)
         for rec in self:
-            rec.recent_audit_log_ids = self.env['audit.log'].search([], limit=10).ids
+            if has_access:
+                rec.recent_audit_log_ids = self.env['audit.log'].search([], limit=10).ids
+            else:
+                rec.recent_audit_log_ids = False
 
     @api.depends('search_query')
     def _compute_search_results(self):
