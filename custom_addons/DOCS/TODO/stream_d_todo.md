@@ -1,20 +1,20 @@
 # Stream D — Procurement Automation, Dashboard & Integration
 
 ## Focus
-Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, real-time dashboard, end-to-end integration testing, report generation, and final polish.
+Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, real-time dashboard with KPIs, end-to-end integration testing, report generation, and final polish.
 
 ---
 
-### Phase D1 — Procurement Configuration on Product
+### Phase D1 — Procurement Configuration on Product ✅ (moved to Stream A)
 
-- [ ] Extend `product.product` with procurement fields:
-  - `procure_on_demand` (Boolean) — enable auto-replenishment
+- [x] Extend `product.product` with procurement fields:
+  - `procure_on_demand` (Boolean) — when unchecked, no PO/MO created
   - `procurement_type` (Selection: *Manufacture*, *Purchase*)
-  - `vendor_id` (Many2one → res.partner, domain = is_vendor=True) — used when proc_type = Purchase
-  - `bom_id` (Many2one → mrp.bom) — used when proc_type = Manufacture
-  - `min_stock_qty` (Float) — reorder point (future MTS enhancement)
+  - `vendor_id` (Many2one → res.partner, domain = is_vendor=True)
+  - `bom_id` (Many2one → mrp.bom)
+  - `min_stock_qty` (Float) — reorder point for MTS
   - `lead_time_days` (Integer, default=1)
-- [ ] Add these fields to the Procurement Settings page in product form view
+- [x] Added to Procurement Settings page in product form view
 
 ---
 
@@ -44,7 +44,7 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
 
 - [ ] **Sales Order Confirmation trigger**:
   - After `action_confirm()` on SO, call `procurement.manager.evaluate()` for each line
-  - Pass origin = "SO{name} — {product}"
+  - Pass origin = "SO-{name} — {product}"
 - [ ] **Manual reorder button**:
   - Add "Replenish" button on product form view
   - Opens wizard: qty to order, confirms action
@@ -55,21 +55,25 @@ Procurement strategy engine (MTS/MTO), automated PO/MO creation on shortage, rea
 
 ### Phase D4 — Dashboard Engine
 
-- [ ] Create `dashboard.data` model to cache computed KPIs (or compute on‑the‑fly)
-- [ ] Create controller `/dashboard/data` returning JSON:
-  - `total_sales_orders` — count of all SOs
-  - `pending_deliveries` — SOs in Confirmed or Partially Delivered state
-  - `total_mo` — count of all MOs
-  - `delayed_orders` — SOs past expected delivery date
-  - `total_po` — count of all POs
-  - `partial_receipts` — POs in Partially Received state
-  - `low_stock_products` — products where `free_to_use_qty ≤ 0`
-  - `recent_audit_logs` — last 10 audit entries
-- [ ] Create dashboard view (JavaScript widget or simple QWeb template):
-  - KPI cards (big numbers)
-  - Quick-links to filtered lists (clicking a card opens relevant tree view)
-  - Color-coded status indicators (green/amber/red)
-- [ ] Menu: `Dashboard` as top-level menu item (first position)
+> **SVG Mockup specifies:**
+> - **Master Menu** sidebar: App Logo + Name, Sale Orders, Products, Manufacturing Orders, Purchase Orders, Bills of Materials
+> - **SO KPI cards**: All (n), Draft (n), Confirmed (n), Partially Delivered (n), Delivered (n) — with "My" toggle
+> - **PO KPI cards**: All (n), Draft (n), Confirmed (n), Partially Received (n), Received (n), Late (n) — with "My" toggle
+> - **MO KPI cards**: All (n), Draft (n), Confirmed (n), In-Progress (n), To Close (n), Done (n) — with "My" toggle
+> - **"My" filter**: shows only orders assigned to logged-in user
+> - **"Late" filter**: orders whose start date has passed and are still in Confirmed state
+> - Clicking a state button filters the respective list view to that state
+> - Title and Menu Bar with Search Bar (global search across orders/products)
+> - Slide left → login/profile panel, Slide right → Master Menu
+
+- [ ] Create dashboard view (JavaScript widget or QWeb template):
+  - Sidebar: App Logo, Master Menu (Sale Orders, Products, Manufacturing Orders, Purchase Orders, Bills of Materials)
+  - Main area: KPI cards per module with state counts
+  - "My" toggle per module section
+  - "Late" indicator for overdue PO/MO
+  - Each KPI card clickable → opens filtered list view
+- [ ] Search bar in title bar — global search across orders, products, BoMs
+- [ ] Menu: `Dashboard` as top-level menu item (first position, home page)
 - [ ] All users see the dashboard — data filtered by their access rights
 
 ---
