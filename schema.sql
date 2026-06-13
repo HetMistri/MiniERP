@@ -1,16 +1,19 @@
 -- ============================================================================
--- Mini ERP — Database Bootstrap
--- Creates mini_erp database + full schema + seed data
+-- Mini ERP — Full Database Schema
+-- Shiv Furniture Works: From Demand to Delivery
+-- ============================================================================
+-- This file defines the complete data model: all tables, enums, sequences,
+-- constraints, indexes, triggers, and seed data.
+-- Run AFTER init-db.sql has created the mini_erp database.
+-- Usage: \i schema.sql  (while connected to mini_erp)
 -- ============================================================================
 
-CREATE DATABASE mini_erp OWNER odoo;
-ALTER USER odoo CREATEDB;
-
-\c mini_erp
+BEGIN;
 
 -- ============================================================================
 -- ENUMS
 -- ============================================================================
+
 CREATE TYPE product_type AS ENUM ('stockable', 'service', 'consumable');
 CREATE TYPE transaction_type AS ENUM (
     'sale_delivery', 'purchase_receipt', 'manufacture_in',
@@ -31,17 +34,20 @@ CREATE TYPE audit_action AS ENUM ('create', 'write', 'unlink');
 CREATE TYPE procurement_type AS ENUM ('manufacture', 'purchase');
 
 -- ============================================================================
--- SEQUENCES
+-- SEQUENCES (Document Auto-Numbering)
 -- ============================================================================
+
 CREATE SEQUENCE seq_product_reference   START 10000;
-CREATE SEQUENCE seq_sale_order          START 10000;
-CREATE SEQUENCE seq_purchase_order      START 10000;
-CREATE SEQUENCE seq_mrp_production      START 10000;
-CREATE SEQUENCE seq_mrp_bom             START 10000;
+CREATE SEQUENCE seq_sale_order           START 10000;
+CREATE SEQUENCE seq_purchase_order       START 10000;
+CREATE SEQUENCE seq_mrp_production       START 10000;
+CREATE SEQUENCE seq_mrp_bom              START 10000;
 
 -- ============================================================================
--- PRODUCT & INVENTORY
+-- PRODUCT & INVENTORY MODULE
 -- ============================================================================
+
+-- Unit of Measure
 CREATE TABLE product_uom (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(64) NOT NULL,
@@ -52,7 +58,9 @@ CREATE TABLE product_uom (
     write_uid       INTEGER NOT NULL DEFAULT 1,
     write_date      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+COMMENT ON TABLE product_uom IS 'Units of Measure (e.g. pcs, kg, m, box)';
 
+-- Product Category (hierarchical via parent_path)
 CREATE TABLE product_category (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(128) NOT NULL,
@@ -65,12 +73,14 @@ CREATE TABLE product_category (
     write_uid       INTEGER NOT NULL DEFAULT 1,
     write_date      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-CREATE INDEX idx_category_parent_path ON product_category (parent_path);
+CREATE INDEX idx_category_parent_path ON product_category USING btree (parent_path);
+COMMENT ON TABLE product_category IS 'Hierarchical product categories';
 
+-- Product Master
 CREATE TABLE product_product (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(256) NOT NULL,
-    reference       VARCHAR(32) NOT NULL DEFAULT 'PROD-' || LPAD(nextval('seq_product_reference')::TEXT, 5, '0'),
+    reference       VARCHAR(32) NOT NULL DEFAULT 'PROD-' || nextval('seq_product_reference')::TEXT,
     category_id     INTEGER REFERENCES product_category(id) ON DELETE RESTRICT,
     uom_id          INTEGER NOT NULL REFERENCES product_uom(id) ON DELETE RESTRICT,
     product_type    product_type NOT NULL DEFAULT 'stockable',
@@ -82,6 +92,7 @@ CREATE TABLE product_product (
     reserved_qty    NUMERIC(16,4) NOT NULL DEFAULT 0,
     free_to_use_qty NUMERIC(16,4) GENERATED ALWAYS AS (on_hand_qty - reserved_qty) STORED,
     active          BOOLEAN NOT NULL DEFAULT TRUE,
+    -- Procurement settings (Phase D)
     procure_on_demand   BOOLEAN NOT NULL DEFAULT FALSE,
     procurement_type    procurement_type,
     vendor_id           INTEGER,
@@ -99,7 +110,11 @@ CREATE INDEX idx_product_uom ON product_product (uom_id);
 CREATE INDEX idx_product_active ON product_product (active);
 CREATE INDEX idx_product_procure ON product_product (procure_on_demand)
     WHERE procure_on_demand = TRUE;
+COMMENT ON TABLE product_product IS 'Master product catalog';
+COMMENT ON COLUMN product_product.free_to_use_qty
+    IS 'Computed: on_hand_qty - reserved_qty';
 
+-- Product Quantity History (Snapshot)
 CREATE TABLE product_quantity_history (
     id              SERIAL PRIMARY KEY,
     product_id      INTEGER NOT NULL REFERENCES product_product(id) ON DELETE CASCADE,
@@ -111,14 +126,15 @@ CREATE TABLE product_quantity_history (
     create_date     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_qty_history_product ON product_quantity_history (product_id);
-CREATE INDEX idx_qty_history_date ON product_quantity_history (date DESC);
+CREATE INDEX idx_qty_history_date ON product_quantity_history USING btree (date DESC);
 
+-- Stock Ledger (Single Source of Truth for Inventory)
 CREATE TABLE stock_ledger (
     id              SERIAL PRIMARY KEY,
     product_id      INTEGER NOT NULL REFERENCES product_product(id) ON DELETE RESTRICT,
     reference       VARCHAR(64),
     transaction_type transaction_type NOT NULL,
-    quantity        NUMERIC(16,4) NOT NULL,
+    quantity        NUMERIC(16,4) NOT NULL,  -- signed: +inbound, -outbound
     balance_after   NUMERIC(16,4) NOT NULL,
     user_id         INTEGER NOT NULL DEFAULT 1,
     date            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -127,12 +143,14 @@ CREATE TABLE stock_ledger (
     create_date     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 CREATE INDEX idx_ledger_product ON stock_ledger (product_id);
-CREATE INDEX idx_ledger_date ON stock_ledger (date DESC);
+CREATE INDEX idx_ledger_date ON stock_ledger USING btree (date DESC);
 CREATE INDEX idx_ledger_type ON stock_ledger (transaction_type);
+COMMENT ON TABLE stock_ledger IS 'Single source of truth for all stock movements';
 
 -- ============================================================================
--- AUDIT
+-- AUDIT MODULE
 -- ============================================================================
+
 CREATE TABLE audit_log (
     id              SERIAL PRIMARY KEY,
     model_name      VARCHAR(128) NOT NULL,
@@ -148,12 +166,14 @@ CREATE TABLE audit_log (
 CREATE INDEX idx_audit_model ON audit_log (model_name);
 CREATE INDEX idx_audit_record ON audit_log (record_id);
 CREATE INDEX idx_audit_action ON audit_log (action);
-CREATE INDEX idx_audit_timestamp ON audit_log (timestamp DESC);
+CREATE INDEX idx_audit_timestamp ON audit_log USING btree (timestamp DESC);
 CREATE INDEX idx_audit_user ON audit_log (user_id);
+COMMENT ON TABLE audit_log IS 'Complete audit trail for all business documents';
 
 -- ============================================================================
--- PARTNER
+-- PARTNER MODULE (Customers & Vendors)
 -- ============================================================================
+
 CREATE TABLE res_partner (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(256) NOT NULL,
@@ -171,10 +191,12 @@ CREATE TABLE res_partner (
 );
 CREATE INDEX idx_partner_customer ON res_partner (is_customer) WHERE is_customer = TRUE;
 CREATE INDEX idx_partner_vendor ON res_partner (is_vendor) WHERE is_vendor = TRUE;
+COMMENT ON TABLE res_partner IS 'Customers, vendors, and contacts';
 
 -- ============================================================================
--- SALES
+-- SALES MODULE
 -- ============================================================================
+
 CREATE TABLE sale_order (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(32) NOT NULL
@@ -196,7 +218,8 @@ CREATE TABLE sale_order (
 );
 CREATE INDEX idx_so_partner ON sale_order (partner_id);
 CREATE INDEX idx_so_state ON sale_order (state);
-CREATE INDEX idx_so_date ON sale_order (date_order DESC);
+CREATE INDEX idx_so_date ON sale_order USING btree (date_order DESC);
+COMMENT ON TABLE sale_order IS 'Sales Orders — customer demand';
 
 CREATE TABLE sale_order_line (
     id              SERIAL PRIMARY KEY,
@@ -217,6 +240,7 @@ CREATE TABLE sale_order_line (
 CREATE INDEX idx_so_line_order ON sale_order_line (order_id);
 CREATE INDEX idx_so_line_product ON sale_order_line (product_id);
 
+-- Sales Order Delivery Wizard
 CREATE TABLE sale_order_deliver (
     id              SERIAL PRIMARY KEY,
     order_id        INTEGER NOT NULL REFERENCES sale_order(id) ON DELETE CASCADE,
@@ -238,8 +262,9 @@ CREATE TABLE sale_order_deliver_line (
 CREATE INDEX idx_deliver_line_deliver ON sale_order_deliver_line (deliver_id);
 
 -- ============================================================================
--- PURCHASE
+-- PURCHASE MODULE
 -- ============================================================================
+
 CREATE TABLE purchase_order (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(32) NOT NULL
@@ -261,7 +286,8 @@ CREATE TABLE purchase_order (
 );
 CREATE INDEX idx_po_partner ON purchase_order (partner_id);
 CREATE INDEX idx_po_state ON purchase_order (state);
-CREATE INDEX idx_po_date ON purchase_order (date_order DESC);
+CREATE INDEX idx_po_date ON purchase_order USING btree (date_order DESC);
+COMMENT ON TABLE purchase_order IS 'Purchase Orders — vendor supply';
 
 CREATE TABLE purchase_order_line (
     id              SERIAL PRIMARY KEY,
@@ -281,6 +307,7 @@ CREATE TABLE purchase_order_line (
 CREATE INDEX idx_po_line_order ON purchase_order_line (order_id);
 CREATE INDEX idx_po_line_product ON purchase_order_line (product_id);
 
+-- Purchase Receipt Wizard
 CREATE TABLE purchase_order_receive (
     id              SERIAL PRIMARY KEY,
     order_id        INTEGER NOT NULL REFERENCES purchase_order(id) ON DELETE CASCADE,
@@ -302,8 +329,10 @@ CREATE TABLE purchase_order_receive_line (
 CREATE INDEX idx_receive_line_receive ON purchase_order_receive_line (receive_id);
 
 -- ============================================================================
--- MANUFACTURING
+-- MANUFACTURING MODULE
 -- ============================================================================
+
+-- Work Centers
 CREATE TABLE mrp_work_center (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(128) NOT NULL,
@@ -318,7 +347,9 @@ CREATE TABLE mrp_work_center (
     write_uid       INTEGER NOT NULL DEFAULT 1,
     write_date      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+COMMENT ON TABLE mrp_work_center IS 'Production work centers / cells';
 
+-- Bill of Materials
 CREATE TABLE mrp_bom (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(32) NOT NULL
@@ -334,6 +365,7 @@ CREATE TABLE mrp_bom (
     UNIQUE (name)
 );
 CREATE INDEX idx_bom_product ON mrp_bom (product_id);
+COMMENT ON TABLE mrp_bom IS 'Bill of Materials — defines how a product is made';
 
 CREATE TABLE mrp_bom_component (
     id              SERIAL PRIMARY KEY,
@@ -364,6 +396,7 @@ CREATE TABLE mrp_bom_operation (
 );
 CREATE INDEX idx_bom_operation_bom ON mrp_bom_operation (bom_id);
 
+-- Manufacturing Orders
 CREATE TABLE mrp_production (
     id              SERIAL PRIMARY KEY,
     name            VARCHAR(32) NOT NULL
@@ -389,6 +422,7 @@ CREATE TABLE mrp_production (
 CREATE INDEX idx_mo_product ON mrp_production (product_id);
 CREATE INDEX idx_mo_state ON mrp_production (state);
 CREATE INDEX idx_mo_bom ON mrp_production (bom_id);
+COMMENT ON TABLE mrp_production IS 'Manufacturing Orders — production schedule';
 
 CREATE TABLE mrp_production_component (
     id                  SERIAL PRIMARY KEY,
@@ -406,6 +440,7 @@ CREATE TABLE mrp_production_component (
 CREATE INDEX idx_mo_component_production ON mrp_production_component (production_id);
 CREATE INDEX idx_mo_component_product ON mrp_production_component (product_id);
 
+-- Work Orders
 CREATE TABLE mrp_work_order (
     id              SERIAL PRIMARY KEY,
     production_id   INTEGER NOT NULL REFERENCES mrp_production(id) ON DELETE CASCADE,
@@ -429,6 +464,8 @@ CREATE INDEX idx_wo_state ON mrp_work_order (state);
 -- ============================================================================
 -- TRIGGERS
 -- ============================================================================
+
+-- Auto-update write_date on any row modification
 CREATE OR REPLACE FUNCTION update_write_date()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -437,6 +474,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Apply to all business tables
 DO $$
 DECLARE
     tbl TEXT;
@@ -461,9 +499,25 @@ BEGIN
 END;
 $$;
 
+-- Auto-update free_to_use_qty on product when on_hand or reserved changes
+CREATE OR REPLACE FUNCTION update_product_quantities()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.free_to_use_qty = NEW.on_hand_qty - NEW.reserved_qty;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_product_quantities
+    BEFORE UPDATE OF on_hand_qty, reserved_qty ON product_product
+    FOR EACH ROW
+    EXECUTE FUNCTION update_product_quantities();
+
 -- ============================================================================
 -- SEED DATA
 -- ============================================================================
+
+-- Default UoMs
 INSERT INTO product_uom (name, code) VALUES
     ('Pieces', 'pcs'),
     ('Kilograms', 'kg'),
@@ -472,6 +526,7 @@ INSERT INTO product_uom (name, code) VALUES
     ('Litres', 'l'),
     ('Pairs', 'pr');
 
+-- Default product categories
 INSERT INTO product_category (name, parent_path) VALUES
     ('All Products', '/'),
     ('Furniture', '/1/'),
@@ -485,7 +540,10 @@ INSERT INTO product_category (name, parent_id, parent_path) VALUES
     ('Metal', 3, '/2/7/'),
     ('Screws & Fasteners', 4, '/3/8/');
 
+-- Sample Work Centers
 INSERT INTO mrp_work_center (name, code, cost_per_hour) VALUES
     ('Assembly Line', 'ASSY', 50.00),
     ('Paint Floor', 'PAINT', 30.00),
     ('Packaging Unit', 'PACK', 20.00);
+
+COMMIT;

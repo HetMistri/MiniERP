@@ -115,15 +115,11 @@ volumes:
 }
 
 $initPath = Join-Path $ProjectDir "init-db.sql"
-if ($useDocker -and -not (Test-Path $initPath)) {
-    $init = @'
-CREATE DATABASE mini_erp OWNER odoo;
-ALTER USER odoo CREATEDB;
-'@
-    Set-Content -Path $initPath -Value $init
-    Write-Host "  ✓ init-db.sql created" -ForegroundColor Green
-} elseif ($useDocker) {
-    Write-Host "  ✓ init-db.sql already exists" -ForegroundColor Green
+if (-not (Test-Path $initPath)) {
+    Write-Host "  ⚠ init-db.sql not found. It should be committed to the repo." -ForegroundColor Yellow
+    Write-Host "    Run: git checkout -- init-db.sql" -ForegroundColor Yellow
+} else {
+    Write-Host "  ✓ init-db.sql found" -ForegroundColor Green
 }
 
 # ─── Step 4: Python virtual environment ───

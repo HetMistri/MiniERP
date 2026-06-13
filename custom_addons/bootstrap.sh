@@ -100,12 +100,9 @@ DOCKERCOMPOSE
     echo "  ✓ docker-compose.yaml created"
 fi
 
-if [ "$USE_DOCKER" = true ] && [ ! -f "$PROJECT_DIR/init-db.sql" ]; then
-    cat > "$PROJECT_DIR/init-db.sql" << INITSQL
-CREATE DATABASE mini_erp OWNER odoo;
-ALTER USER odoo CREATEDB;
-INITSQL
-    echo "  ✓ init-db.sql created"
+if [ ! -f "$PROJECT_DIR/init-db.sql" ]; then
+    echo "  ⚠ init-db.sql not found. It should be committed to the repo."
+    echo "    Run: git checkout -- init-db.sql"
 fi
 
 # ─── Step 4: Virtual environment ───
