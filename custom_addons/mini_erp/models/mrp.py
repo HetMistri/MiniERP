@@ -221,6 +221,7 @@ class MrpProduction(models.Model):
                 needed = comp.quantity_needed
                 reserved = min(needed, max(0.0, free_qty))
                 comp.write({'quantity_reserved': reserved})
+                self.env['product.product']._update_reserved_qty(comp.product_id.id, reserved)
 
     def action_start(self):
         for order in self:
@@ -272,6 +273,8 @@ class MrpProduction(models.Model):
             )
 
             for comp in order.component_ids:
+                if comp.quantity_reserved > 0:
+                    self.env['product.product']._update_reserved_qty(comp.product_id.id, -comp.quantity_reserved)
                 comp.write({'quantity_reserved': 0.0})
 
             order.write({
@@ -298,6 +301,8 @@ class MrpProduction(models.Model):
                     )
             
             for comp in order.component_ids:
+                if comp.quantity_reserved > 0:
+                    self.env['product.product']._update_reserved_qty(comp.product_id.id, -comp.quantity_reserved)
                 comp.write({'quantity_reserved': 0.0})
             order.write({'state': 'cancel'})
         return True

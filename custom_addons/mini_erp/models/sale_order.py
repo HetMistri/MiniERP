@@ -104,6 +104,7 @@ class SaleOrder(models.Model):
 
             # Reserve stock
             line.reserved_qty = line.quantity
+            self.env['product.product']._update_reserved_qty(line.product_id.id, line.quantity)
             
         self.write({'state': 'confirmed'})
         # Trigger procurement evaluation
@@ -128,6 +129,7 @@ class SaleOrder(models.Model):
                 raise UserError("Only draft or confirmed orders can be cancelled.")
             for line in order.order_line_ids:
                 if line.reserved_qty > 0:
+                    self.env['product.product']._update_reserved_qty(line.product_id.id, -line.reserved_qty)
                     line.reserved_qty = 0.0
             order.write({'state': 'cancelled'})
 

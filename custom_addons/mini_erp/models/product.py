@@ -116,6 +116,16 @@ class ProductProduct(models.Model):
             record.on_hand_qty = on_hand_map.get(record.id, 0.0)
             record.reserved_qty = reserved_mrp_map.get(record.id, 0.0) + reserved_so_map.get(record.id, 0.0)
             record.free_to_use_qty = record.on_hand_qty - record.reserved_qty
+    @api.model
+    def _update_reserved_qty(self, product_id, delta):
+        """Helper to update/recompute reservation. Since reserved_qty is dynamically computed,
+        this method invalidates the cache to ensure correct quantities are loaded.
+        """
+        product = self.browse(product_id)
+        if product.exists():
+            product.invalidate_recordset(['reserved_qty', 'free_to_use_qty'])
+        return True
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:

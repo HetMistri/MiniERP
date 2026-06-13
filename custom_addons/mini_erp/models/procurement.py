@@ -16,8 +16,29 @@ class ProcurementManager(models.AbstractModel):
 
         product = self.env['product.product'].browse(product_id) if isinstance(product_id, int) else product_id
 
-        # shortage = required_qty - free_to_use_qty
-        shortage = required_qty - product.free_to_use_qty
+        # Calculate free_to_use_qty excluding any reservation made by this source document
+        free_qty = product.free_to_use_qty
+        if origin:
+            if origin.startswith('SO'):
+                so_name = origin.split(' — ')[0]
+                so_line = self.env['sale.order.line'].search([
+                    ('order_id.name', '=', so_name),
+                    ('product_id', '=', product.id)
+                ], limit=1)
+                if so_line:
+                    free_qty += so_line.reserved_qty
+            elif origin.startswith('MO'):
+                # Format could be "MO MO00001" or "MO00001 — Product"
+                parts = origin.split(' — ')[0].split(' ')
+                mo_name = parts[1] if len(parts) >= 2 and parts[0] == 'MO' else parts[0]
+                mo_comp = self.env['mrp.production.component'].search([
+                    ('production_id.name', '=', mo_name),
+                    ('product_id', '=', product.id)
+                ], limit=1)
+                if mo_comp:
+                    free_qty += mo_comp.quantity_reserved
+
+        shortage = required_qty - free_qty
         if shortage <= 0:
             return None
 
