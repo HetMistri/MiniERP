@@ -20,15 +20,17 @@ Mini ERP System that digitally manages the complete business flow:
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
-
         'data/ir_sequence_data.xml',
-        'views/views.xml',
         'views/product_views.xml',
         'views/audit_log_views.xml',
+        'views/views.xml',
+        'views/stock_views.xml',
+        'views/mrp_views.xml',
         'views/templates.xml',
     ],
     'demo': [
         'demo/demo.xml',
+        'demo/mrp_demo.xml',
     ],
     'installable': True,
     'application': True,

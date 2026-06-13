@@ -52,9 +52,9 @@ class ProductProduct(models.Model):
         ('service', 'Service'),
         ('consumable', 'Consumable'),
     ], string='Product Type', default='stockable', required=True)
-    on_hand_qty = fields.Float(string='On Hand Quantity', readonly=True)
-    reserved_qty = fields.Float(string='Reserved Quantity', readonly=True)
-    free_to_use_qty = fields.Float(string='Free to Use Quantity', readonly=True)
+    on_hand_qty = fields.Float(string='On Hand Quantity', compute='_compute_quantities', readonly=True)
+    reserved_qty = fields.Float(string='Reserved Quantity', compute='_compute_quantities', readonly=True)
+    free_to_use_qty = fields.Float(string='Free to Use Quantity', compute='_compute_quantities', readonly=True)
     active = fields.Boolean(default=True)
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True)
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
@@ -70,6 +70,49 @@ class ProductProduct(models.Model):
     min_stock_qty = fields.Float(string='Minimum Stock Quantity', default=0.0)
     lead_time_days = fields.Integer(string='Lead Time (Days)', default=1)
 
+    @api.depends('on_hand_qty', 'reserved_qty')
+    def _compute_quantities(self):
+        # Safe checks to ensure database tables are created before running queries
+        self.env.cr.execute("SELECT to_regclass('stock_ledger')")
+        has_ledger = self.env.cr.fetchone()[0]
+        
+        self.env.cr.execute("SELECT to_regclass('mrp_production_component')")
+        has_mrp = self.env.cr.fetchone()[0]
+
+        on_hand_map = {}
+        if has_ledger:
+            ledger_data = self.env['stock.ledger'].sudo().read_group(
+                [('product_id', 'in', self.ids)],
+                ['product_id', 'quantity:sum'],
+                ['product_id']
+            )
+            on_hand_map = {data['product_id'][0]: data['quantity'] for data in ledger_data if data['product_id']}
+
+        reserved_mrp_map = {}
+        if has_mrp:
+            mrp_data = self.env['mrp.production.component'].sudo().read_group(
+                [('product_id', 'in', self.ids), ('production_id.state', 'in', ('confirmed', 'progress'))],
+                ['product_id', 'quantity_reserved:sum'],
+                ['product_id']
+            )
+            reserved_mrp_map = {data['product_id'][0]: data['quantity_reserved'] for data in mrp_data if data['product_id']}
+
+        reserved_so_map = {}
+        if 'sale.order.line' in self.env:
+            self.env.cr.execute("SELECT to_regclass('sale_order_line')")
+            has_so = self.env.cr.fetchone()[0]
+            if has_so:
+                so_data = self.env['sale.order.line'].sudo().read_group(
+                    [('product_id', 'in', self.ids), ('order_id.state', '=', 'confirmed')],
+                    ['product_id', 'reserved_qty:sum'],
+                    ['product_id']
+                )
+                reserved_so_map = {data['product_id'][0]: data['reserved_qty'] for data in so_data if data['product_id']}
+
+        for record in self:
+            record.on_hand_qty = on_hand_map.get(record.id, 0.0)
+            record.reserved_qty = reserved_mrp_map.get(record.id, 0.0) + reserved_so_map.get(record.id, 0.0)
+            record.free_to_use_qty = record.on_hand_qty - record.reserved_qty
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
