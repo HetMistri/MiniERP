@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 from odoo import models, fields, api
+from odoo.exceptions import AccessError
 
 
 class DashboardData(models.TransientModel):
@@ -103,8 +104,19 @@ class DashboardData(models.TransientModel):
     def _compute_global_kpis(self):
         sale_order_model = self.env['sale.order']
         product_product_model = self.env['product.product']
-        has_sale = sale_order_model.check_access('read', raise_exception=False)
-        has_product = product_product_model.check_access('read', raise_exception=False)
+        try:
+            sale_order_model.check_access('read')
+            has_sale = True
+        except AccessError:
+            has_sale = False
+
+        try:
+            product_product_model.check_access('read')
+            has_product = True
+        except AccessError:
+            has_product = False
+            
+            
         for rec in self:
             if has_sale:
                 so_domain = [
@@ -125,7 +137,12 @@ class DashboardData(models.TransientModel):
                 rec.low_stock_products = 0
  
     def _compute_recent_audit_logs(self):
-        has_access = self.env['audit.log'].check_access('read', raise_exception=False)
+        try:
+            self.env['audit.log'].check_access('read')
+            has_access = True
+        except AccessError:
+            has_access = False
+            
         for rec in self:
             if has_access:
                 rec.recent_audit_log_ids = self.env['audit.log'].search([], limit=10).ids
