@@ -33,7 +33,7 @@ class SaleOrder(models.Model):
     delivery_count = fields.Integer(string='Delivery Count', compute='_compute_delivery_count')
     mrp_production_count = fields.Integer(string='Manufacturing Order Count', compute='_compute_mrp_production_count')
 
-    @api.depends('partner_id')
+    @api.depends('partner_id', 'partner_id.street', 'partner_id.city', 'partner_id.state_id', 'partner_id.country_id')
     def _compute_partner_address(self):
         for order in self:
             p = order.partner_id
@@ -90,6 +90,9 @@ class SaleOrder(models.Model):
         if not self.order_line_ids:
             raise UserError("An order must have at least one line.")
         
+        # Transition state to confirmed first so that computed reserved quantities count this SO's lines!
+        self.write({'state': 'confirmed'})
+        
         for line in self.order_line_ids:
             if line.quantity <= 0:
                 raise UserError("Quantity must be greater than zero.")
@@ -106,7 +109,6 @@ class SaleOrder(models.Model):
             line.reserved_qty = line.quantity
             self.env['product.product']._update_reserved_qty(line.product_id.id, line.quantity)
             
-        self.write({'state': 'confirmed'})
         # Trigger procurement evaluation
         self._trigger_procurement_evaluation()
 

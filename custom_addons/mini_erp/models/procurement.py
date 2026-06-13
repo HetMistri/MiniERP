@@ -1,16 +1,23 @@
+# -*- coding: utf-8 -*-
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
+
+import logging
 from odoo import models, fields, api
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
+
 
 class ProcurementManager(models.AbstractModel):
     _name = 'procurement.manager'
     _description = 'Procurement Manager'
 
-
     @api.model
-    def evaluate(self, product_id, required_qty, origin, origin_id=None):
+    def evaluate(self, product_id, required_qty, origin, origin_id=None, visited=None):
         if not product_id or required_qty <= 0:
             return None
 
+        visited = set(visited) if visited else set()
         product = (
             self.env['product.product'].browse(product_id)
             if isinstance(product_id, int)
@@ -20,28 +27,28 @@ class ProcurementManager(models.AbstractModel):
         if not product.exists():
             raise UserError("Product not found.")
 
+        _logger.info("Evaluating procurement for product %s (qty: %s, origin: %s)", product.name, required_qty, origin)
+
+        if product.id in visited:
+            raise UserError(f"Circular procurement detected: product '{product.name}' is already in the procurement path.")
+        
+        visited.add(product.id)
+
         free_qty = self._get_effective_free_qty(product, origin)
         shortage = required_qty - free_qty
 
         if shortage <= 0:
+            _logger.info("No shortage for product %s (shortage: %s, free: %s, required: %s)", product.name, shortage, free_qty, required_qty)
             return None
 
         if not product.procure_on_demand:
+            _logger.info("Product %s has shortage of %s but Procure on Demand is disabled.", product.name, shortage)
             return None
 
         if product.procurement_type == 'purchase':
-            return self._create_purchase_order(
-                product,
-                shortage,
-                origin
-            )
-
-        if product.procurement_type == 'manufacture':
-            return self._create_manufacturing_order(
-                product,
-                shortage,
-                origin
-            )
+            return self._create_purchase_order(product, shortage, origin)
+        elif product.procurement_type == 'manufacture':
+            return self._create_manufacturing_order(product, shortage, origin, visited=visited)
 
         raise UserError(
             f"Unsupported procurement type "
@@ -96,6 +103,7 @@ class ProcurementManager(models.AbstractModel):
         ], limit=1)
 
         if existing_po:
+            _logger.info("Reusing existing Draft Purchase Order %s for product %s and origin %s", existing_po.name, product.name, origin)
             return existing_po
 
         if not product.vendor_id:
@@ -131,10 +139,11 @@ class ProcurementManager(models.AbstractModel):
             'sequence': 10,
         })
 
+        _logger.info("Created Purchase Order %s for vendor %s to procure %s units of product %s (origin: %s)", po.name, product.vendor_id.name, qty, product.name, origin)
         return po
 
     @api.model
-    def _create_manufacturing_order(self, product, qty, origin):
+    def _create_manufacturing_order(self, product, qty, origin, visited=None):
         existing_mo = self.env['mrp.production'].search([
             ('state', '=', 'draft'),
             ('origin', '=', origin),
@@ -142,6 +151,7 @@ class ProcurementManager(models.AbstractModel):
         ], limit=1)
 
         if existing_mo:
+            _logger.info("Reusing existing Draft Manufacturing Order %s for product %s and origin %s", existing_mo.name, product.name, origin)
             return existing_mo
 
         if not product.bom_id:
@@ -165,6 +175,7 @@ class ProcurementManager(models.AbstractModel):
             'state': 'draft',
             'origin': origin,
         })
+        _logger.info("Created Manufacturing Order %s to produce %s units of product %s (origin: %s)", mo.name, qty, product.name, origin)
 
         for bom_line in bom.component_ids:
             needed_qty = (
@@ -180,11 +191,8 @@ class ProcurementManager(models.AbstractModel):
             })
 
             if bom_line.product_id.procure_on_demand:
-                self.evaluate(
-                    bom_line.product_id,
-                    needed_qty,
-                    f"MO {mo.name}"
-                )
+                component_origin = f"MO {mo.name}"
+                self.evaluate(bom_line.product_id, needed_qty, component_origin, visited=visited)
 
         return mo
 
@@ -208,4 +216,3 @@ class ProcurementManager(models.AbstractModel):
                         needed_qty,
                         f"MTS Reordering — {product.name}"
                     )
-

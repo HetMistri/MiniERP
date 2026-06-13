@@ -208,10 +208,11 @@ class MrpProduction(models.Model):
                 }))
             order.write({'work_order_ids': wo_vals})
 
-            # 3. Reserve components
-            order._reserve_components()
-
+            # 3. Transition to confirmed state before reserving components
             order.write({'state': 'confirmed'})
+
+            # 4. Reserve components
+            order._reserve_components()
         return True
 
     def _reserve_components(self):

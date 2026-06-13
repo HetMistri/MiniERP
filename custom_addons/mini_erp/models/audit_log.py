@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 # pyrefly: ignore [missing-import]
 from odoo.http import request
+from odoo.exceptions import UserError
 
 
 class AuditLog(models.Model):
@@ -29,6 +30,12 @@ class AuditLog(models.Model):
     timestamp = fields.Datetime(default=fields.Datetime.now, index=True)
     ip_address = fields.Char(string='IP Address')
     display_name = fields.Char(compute='_compute_display_name', string='Summary')
+
+    def write(self, vals):
+        raise UserError("Audit log entries are immutable and cannot be modified.")
+
+    def unlink(self):
+        raise UserError("Audit log entries are immutable and cannot be deleted.")
 
     def _select_record(self):
         return [
@@ -79,8 +86,8 @@ class AuditMixin(models.AbstractModel):
     @api.model_create_multi
     def create(self, vals_list):
         records = super().create(vals_list)
-        for record in records:
-            tracked = {k: v for k, v in (vals_list[0] or {}).items()
+        for record, vals in zip(records, vals_list):
+            tracked = {k: v for k, v in (vals or {}).items()
                        if k not in record._get_audit_excluded_fields()}
             if tracked:
                 self.env['audit.log'].create({

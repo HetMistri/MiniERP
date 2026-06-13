@@ -16,9 +16,18 @@ class ProductReplenishWizard(models.TransientModel):
         self.ensure_one()
         if self.quantity <= 0:
             raise UserError("Quantity must be greater than zero.")
-        self.env['procurement.manager'].evaluate(
+        res = self.env['procurement.manager'].evaluate(
             self.product_id.id,
             self.quantity,
             f"Manual Replenishment — {self.product_id.name}"
         )
+        if res:
+            return {
+                'name': f"Procured {res._description}",
+                'type': 'ir.actions.act_window',
+                'res_model': res._name,
+                'view_mode': 'form',
+                'res_id': res.id,
+                'target': 'current',
+            }
         return {'type': 'ir.actions.act_window_close'}

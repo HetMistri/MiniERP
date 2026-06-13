@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl.html).
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError
 
 
 class ProductUom(models.Model):
@@ -34,6 +35,11 @@ class ProductCategory(models.Model):
                 record.complete_name = f'{record.parent_id.complete_name} / {record.name}'
             else:
                 record.complete_name = record.name
+
+    @api.constrains('parent_id')
+    def _check_parent_id_recursion(self):
+        if not self._check_recursion():
+            raise ValidationError('Error! You cannot create recursive categories.')
 
 
 class ProductProduct(models.Model):

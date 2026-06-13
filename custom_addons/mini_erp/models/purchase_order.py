@@ -33,7 +33,7 @@ class PurchaseOrder(models.Model):
     # Integration Field
     origin_sale_order_id = fields.Many2one('sale.order', string='Source Sales Order', copy=False)
 
-    @api.depends('partner_id')
+    @api.depends('partner_id', 'partner_id.street', 'partner_id.city', 'partner_id.state_id', 'partner_id.country_id')
     def _compute_partner_address(self):
         for order in self:
             p = order.partner_id

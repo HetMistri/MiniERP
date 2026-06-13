@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 
 class StockLedger(models.Model):
@@ -22,12 +23,21 @@ class StockLedger(models.Model):
     user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user, required=True)
     notes = fields.Text(string='Notes')
 
+    def write(self, vals):
+        raise UserError("Stock ledger entries are immutable and cannot be modified.")
+
+    def unlink(self):
+        raise UserError("Stock ledger entries are immutable and cannot be deleted.")
+
     @api.model
     def _update_stock(self, product_id, qty, reference, transaction_type, notes=False):
         """Helper method to write a ledger entry and calculate balance_after"""
         product = self.env['product.product'].browse(product_id)
         if not product.exists():
             return None
+        
+        # Concurrency protection: lock the product row to serialize stock ledger updates
+        self.env.cr.execute("SELECT id FROM product_product WHERE id = %s FOR UPDATE", [product_id])
         
         # Calculate balance after this transaction.
         # Sum of previous quantities plus the new one.
