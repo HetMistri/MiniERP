@@ -7,8 +7,11 @@
             <field name="model">res.users</field>
             <field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
+                <field name="login" position="attributes">
+                    <attribute name="readonly">id</attribute>
+                </field>
                 <field name="login" position="after">
-                    <field name="position" placeholder="e.g. Sales Manager"/>
+                    <field name="position" placeholder="e.g. Sales Manager" groups="mini_erp.group_admin"/>
                     <field name="mobile" placeholder="e.g. +91 98765 43210"/>
                 </field>
 

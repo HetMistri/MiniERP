@@ -32,8 +32,8 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 - [x] Per-module access matrix on user form via `many2many_tags` + `many2many_checkboxes` widgets
 - [x] Permission guide for each role
 - [x] Uses standard Settings / Users menu (Admin only access via `group_admin`)
-- [ ] Make Email (login) field read-only after user creation
-- [ ] Restrict editing of Position field to System Administrator only
+- [x] Make Email (login) field read-only after user creation
+- [x] Restrict editing of Position field to System Administrator only
 
 ---
 
