@@ -61,10 +61,16 @@
 ## Phase D4 — Dashboard Engine
 
 ### 1. Work Done
-- **Dashboard Data Model:** Created `models/dashboard.py` implementing `dashboard.data` model which dynamically computes 7 KPI stats (total sales orders, pending deliveries, total MOs, delayed orders, total POs, partial receipts, low stock products) and fetches the last 10 audit logs.
-- **Vibrant Dashboard Form View:** Created `views/dashboard_views.xml` defining a custom, high-fidelity form view with colored KPI cards, action navigation buttons, and recent audit trail list view.
+- **Dashboard Data Model:** Created `models/dashboard.py` implementing the `dashboard.data` model which dynamically computes:
+  - Granular KPIs for Sales (`so_all`, `so_draft`, `so_confirmed`, `so_partial`, `so_delivered`).
+  - Granular KPIs for Purchase (`po_all`, `po_draft`, `po_confirmed`, `po_partial`, `po_received`).
+  - Granular KPIs for Manufacturing (`mo_all`, `mo_draft`, `mo_confirmed`, `mo_progress`, `mo_done`).
+  - User-specific filters (`filter_my_sales`, `filter_my_purchases`, `filter_my_manufacturing`) which filter counts and tree views dynamically.
+  - Global Search results (`search_query` string query with computed `search_sale_ids`, `search_product_ids`, `search_purchase_ids`, and `search_mo_ids`).
+- **Master Menu Sidebar:** Added a custom left-hand sidebar navigation bar featuring the App Logo and branding ("Mini ERP"), with quick links to Sales Orders, Products, Manufacturing Orders, Purchase Orders, and Bills of Materials.
+- **Vibrant Dashboard Form View:** Created `views/dashboard_views.xml` defining a custom, high-fidelity form view with glassmorphism styling, a global search input box with Clear/Search action buttons, "My Only" toggles for each module section, granular clickable sub-state KPI cards, and a recent audit trail list view.
 - **Controller Route:** Exposed `/dashboard/data` JSON POST controller route in `controllers/controllers.py` serving dashboard analytics data.
-- **Vibrant CSS Assets:** Added `static/src/css/dashboard.css` using rich gradients, custom card borders, card hover scaling, and pulse animations.
+- **Vibrant CSS Assets:** Added `static/src/css/dashboard.css` using rich gradients, modern layout columns (flex layout for Sidebar and Main Area), custom glassmorphic panels, and smooth hover scaling transitions.
 
 ---
 
@@ -116,10 +122,12 @@
 2. **Authentication:** Log in using credentials (e.g. `admin` / `admin`).
 3. **Menu Navigation:** Locate the top navigation menu bar. The **Dashboard** menu item is placed in the first position. Click on it.
 4. **Interactive Dashboard Controls:**
-   - **KPI Metrics:** View summary counts of Sales Orders, Pending Deliveries, Manufacturing Orders, Delayed Orders, Purchase Orders, and Low Stock products.
-   - **Click-to-Filter Action:** Click on any of the KPI cards to automatically jump to the relevant tree/form view pre-filtered to the state represented by that card.
-   - **Audit Logs Trail:** Scroll down to view the last 10 audit log entries dynamically retrieved.
-   - **CSS Styling:** The view is styled using a modern glassmorphic look with custom card borders, colored status indicators, and micro-hover scaling animations.
+   - **Master Menu Sidebar:** Use the left sidebar to navigate directly to major models (Sales Orders, Products, Manufacturing Orders, Purchase Orders, Bills of Materials). It has a premium glassmorphic style.
+   - **Global Search Bar:** Type a query into the Search box in the top-right and click the Search button to view a grid of matching Sales Orders, Products, Purchase Orders, and Manufacturing Orders. Click the Clear (X) button to reset search results.
+   - **"My Only" Filters:** Toggle the filter switch on the right side of the Sales, Purchases, or Manufacturing sections to filter the KPI counts and subsequent redirections to only records assigned to the logged-in user.
+   - **Granular KPI Cards:** Click on any of the state-specific sub-cards (e.g. Draft, Confirmed, Delivered) to instantly jump to the corresponding record list filtered to that specific state.
+   - **Audit Logs Trail:** Scroll to the bottom of the page to view the last 10 audit log entries tracked dynamically.
+   - **CSS Styling & Animations:** The interface has a premium look using custom Harmonious Indigo/Cyan gradients, translucent card elements, and micro-animations on hover.
 
 ### 2. Accessing through the JSON Controller Endpoint
 You can programmatically retrieve the dashboard counts by sending a JSON POST request to the `/dashboard/data` route:

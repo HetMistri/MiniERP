@@ -22,7 +22,7 @@
                                         <i class="fa fa-barcode mr-2" title="Products"/>Products
                                     </button>
                                     <button name="action_view_mos" type="object" class="o_sidebar_link">
-                                        <i class="fa fa-wrench mr-2" title="Manufacturing"/>Mfg Orders
+                                        <i class="fa fa-wrench mr-2" title="Manufacturing"/>Manufacturing Orders
                                     </button>
                                     <button name="action_view_pos" type="object" class="o_sidebar_link">
                                         <i class="fa fa-credit-card mr-2" title="Purchase"/>Purchase Orders
