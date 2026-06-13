@@ -49,6 +49,7 @@ class DashboardData(models.TransientModel):
     
     # Last 10 audit logs
     recent_audit_log_ids = fields.Many2many('audit.log', compute='_compute_recent_audit_logs')
+    financial_dashboard_widget = fields.Text(string="Financial Dashboard Widget", default="{}")
 
     @api.depends('filter_my_sales')
     def _compute_sale_kpis(self):

@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="mini_erp.FinancialDashboard" owl="1">
+        <div class="o_financial_dashboard mt-4 mb-5">
+            <!-- Header Section -->
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap">
+                <div>
+                    <h3 class="section-title text-primary"><i class="fa fa-line-chart mr-2" title="Financial Section"/>Financial Overview</h3>
+                    <p class="text-muted small mb-0">Track revenue, expenses, profitability and cash flow in real time.</p>
+                </div>
+                
+                <!-- Filter Toolbar -->
+                <div class="financial-filters d-flex align-items-center mt-2 flex-wrap">
+                    <div class="btn-group shadow-sm mr-2 mb-2">
+                        <button type="button" t-attf-class="btn btn-sm btn-outline-primary #{state.filter == 'today' ? 'active' : ''}" t-on-click="() => this.setFilter('today')">Today</button>
+                        <button type="button" t-attf-class="btn btn-sm btn-outline-primary #{state.filter == 'this_week' ? 'active' : ''}" t-on-click="() => this.setFilter('this_week')">This Week</button>
+                        <button type="button" t-attf-class="btn btn-sm btn-outline-primary #{state.filter == 'this_month' ? 'active' : ''}" t-on-click="() => this.setFilter('this_month')">This Month</button>
+                        <button type="button" t-attf-class="btn btn-sm btn-outline-primary #{state.filter == 'this_quarter' ? 'active' : ''}" t-on-click="() => this.setFilter('this_quarter')">This Quarter</button>
+                        <button type="button" t-attf-class="btn btn-sm btn-outline-primary #{state.filter == 'this_year' ? 'active' : ''}" t-on-click="() => this.setFilter('this_year')">This Year</button>
+                        <button type="button" t-attf-class="btn btn-sm btn-outline-primary #{state.filter == 'custom' ? 'active' : ''}" t-on-click="() => this.setFilter('custom')">Custom Range</button>
+                    </div>
+
+                    <!-- Custom Date Range Picker -->
+                    <t t-if="state.filter == 'custom'">
+                        <div class="custom-range-picker d-flex align-items-center shadow-sm p-1 bg-white rounded border mb-2">
+                            <input type="date" class="form-control form-control-sm border-0 mr-1" t-model="state.dateStart" placeholder="Start Date"/>
+                            <span class="text-muted mr-1">to</span>
+                            <input type="date" class="form-control form-control-sm border-0 mr-2" t-model="state.dateEnd" placeholder="End Date"/>
+                            <button class="btn btn-primary btn-sm px-3" t-on-click="applyCustomRange">Apply</button>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Loading Skeletons -->
+            <t t-if="state.loading">
+                <div class="row">
+                    <div class="col-12 col-md-3 mb-4" t-foreach="[1,2,3,4]" t-as="item" t-key="item">
+                        <div class="card skeleton-card shadow-sm border-0 p-3">
+                            <div class="skeleton-line w-50 mb-3"></div>
+                            <div class="skeleton-line w-75 h2 mb-2"></div>
+                            <div class="skeleton-line w-25"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-8 mb-4">
+                        <div class="card skeleton-card shadow-sm border-0 p-3" style="height: 350px;">
+                            <div class="skeleton-line w-25 mb-4"></div>
+                            <div class="flex-grow-1 d-flex align-items-end justify-content-between p-2">
+                                <div class="skeleton-bar" style="height: 40%"></div>
+                                <div class="skeleton-bar" style="height: 70%"></div>
+                                <div class="skeleton-bar" style="height: 50%"></div>
+                                <div class="skeleton-bar" style="height: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 mb-4">
+                        <div class="card skeleton-card shadow-sm border-0 p-3" style="height: 350px;">
+                            <div class="skeleton-line w-50 mb-5"></div>
+                            <div class="skeleton-circle mx-auto mb-4"></div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Real Content -->
+            <t t-else="">
+                <!-- KPI Cards Row -->
+                <div class="row mb-4">
+                    <!-- Revenue Card -->
+                    <div class="col-12 col-md-6 col-lg-3 mb-4">
+                        <div class="card o_dashboard_card card-finance-rev border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="finance-icon bg-light-green mr-3 text-success">
+                                    <i class="fa fa-line-chart fa-lg" title="Revenue"/>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="text-uppercase text-muted small font-weight-bold">Monthly Revenue</div>
+                                    <div class="h3 font-weight-bold text-dark my-1"><t t-esc="formatCurrency(state.kpis.revenue)"/></div>
+                                    <div class="small d-flex align-items-center">
+                                        <span t-attf-class="font-weight-bold #{state.kpis.revenue_growth >= 0 ? 'text-success' : 'text-danger'}">
+                                            <i t-attf-class="fa #{state.kpis.revenue_growth >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'} mr-1" title="Growth"/>
+                                            <t t-esc="formatPercentage(state.kpis.revenue_growth)"/>
+                                        </span>
+                                        <span class="text-muted ml-2">vs prev. period</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expenses Card -->
+                    <div class="col-12 col-md-6 col-lg-3 mb-4">
+                        <div class="card o_dashboard_card card-finance-exp border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="finance-icon bg-light-red mr-3 text-danger">
+                                    <i class="fa fa-credit-card fa-lg" title="Expenses"/>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="text-uppercase text-muted small font-weight-bold">Monthly Expenses</div>
+                                    <div class="h3 font-weight-bold text-dark my-1"><t t-esc="formatCurrency(state.kpis.expenses)"/></div>
+                                    <div class="small d-flex align-items-center">
+                                        <span t-attf-class="font-weight-bold #{state.kpis.expenses_growth &lt;= 0 ? 'text-success' : 'text-danger'}">
+                                            <i t-attf-class="fa #{state.kpis.expenses_growth &lt;= 0 ? 'fa-arrow-down' : 'fa-arrow-up'} mr-1" title="Variance"/>
+                                            <t t-esc="formatPercentage(state.kpis.expenses_growth)"/>
+                                        </span>
+                                        <span class="text-muted ml-2">vs prev. period</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Net Profit Card -->
+                    <div class="col-12 col-md-6 col-lg-3 mb-4">
+                        <div class="card o_dashboard_card card-finance-profit border-0 shadow-sm">
+                            <div class="card-body d-flex align-items-center">
+                                <div t-attf-class="finance-icon mr-3 #{state.kpis.profit >= 0 ? 'bg-light-green text-success' : 'bg-light-red text-danger'}">
+                                    <i t-attf-class="fa #{state.kpis.profit >= 0 ? 'fa-smile-o' : 'fa-frown-o'} fa-lg" title="Profit"/>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="text-uppercase text-muted small font-weight-bold">Net Profit</div>
+                                    <div t-attf-class="h3 font-weight-bold my-1 #{state.kpis.profit >= 0 ? 'text-success' : 'text-danger'}">
+                                        <t t-esc="formatCurrency(state.kpis.profit)"/>
+                                    </div>
+                                    <div class="small text-muted">Revenue - Expenses</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Remaining Cash Card -->
+                    <div class="col-12 col-md-6 col-lg-3 mb-4">
+                        <div class="card o_dashboard_card card-finance-cash border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <div class="text-uppercase text-muted small font-weight-bold">Remaining Balance</div>
+                                    <span class="badge badge-light-indigo"><t t-esc="state.kpis.cash_utilization"/>% Utilized</span>
+                                </div>
+                                <div class="h3 font-weight-bold text-dark my-1"><t t-esc="formatCurrency(state.kpis.remaining_balance)"/></div>
+                                
+                                <!-- Progress Bar -->
+                                <div class="progress mt-2" style="height: 6px;">
+                                    <div class="progress-bar bg-indigo progress-bar-striped progress-bar-animated" role="progressbar" 
+                                         t-att-style="'width: ' + state.kpis.cash_utilization + '%'" 
+                                         t-att-aria-valuenow="state.kpis.cash_utilization" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1: Income vs Expenses & Revenue Breakdown -->
+                <div class="row mb-4">
+                    <div class="col-12 col-lg-8 mb-4">
+                        <div class="card shadow-sm border-0 h-100 p-4 chart-card">
+                            <h5 class="chart-card-title mb-3">Monthly Income vs Expenses</h5>
+                            <div class="chart-container flex-grow-1" style="position: relative; height: 300px;">
+                                <canvas ref="chart_income_vs_expenses"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4 mb-4">
+                        <div class="card shadow-sm border-0 h-100 p-4 chart-card">
+                            <h5 class="chart-card-title mb-3">Revenue Breakdown</h5>
+                            <div class="chart-container flex-grow-1" style="position: relative; height: 300px;">
+                                <canvas ref="chart_revenue_breakdown"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 2: Profit Trend & Expense Categories -->
+                <div class="row mb-4">
+                    <div class="col-12 col-lg-6 mb-4">
+                        <div class="card shadow-sm border-0 h-100 p-4 chart-card">
+                            <h5 class="chart-card-title mb-3">Profit Trend</h5>
+                            <div class="chart-container flex-grow-1" style="position: relative; height: 300px;">
+                                <canvas ref="chart_profit_trend"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 mb-4">
+                        <div class="card shadow-sm border-0 h-100 p-4 chart-card">
+                            <h5 class="chart-card-title mb-3">Expense Categories</h5>
+                            <div class="chart-container flex-grow-1" style="position: relative; height: 300px;">
+                                <canvas ref="chart_expense_categories"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Health Score & Quick Summary -->
+                <div class="row">
+                    <!-- Quick Financial Summary Panel -->
+                    <div class="col-12 col-lg-7 mb-4">
+                        <div class="card shadow-sm border-0 p-4 h-100 summary-card">
+                            <h5 class="chart-card-title border-bottom pb-2 mb-3">Quick Financial Summary</h5>
+                            <div class="row">
+                                <div class="col-12 col-md-6">
+                                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                        <span class="text-muted">Today's Income</span>
+                                        <span class="font-weight-bold text-success"><t t-esc="formatCurrency(state.summary.today_income)"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                        <span class="text-muted">Today's Expenses</span>
+                                        <span class="font-weight-bold text-danger"><t t-esc="formatCurrency(state.summary.today_expenses)"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom-md-none">
+                                        <span class="text-muted">This Month Profit</span>
+                                        <span t-attf-class="font-weight-bold #{state.summary.month_profit >= 0 ? 'text-success' : 'text-danger'}">
+                                            <t t-esc="formatCurrency(state.summary.month_profit)"/>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                        <span class="text-muted">Year-to-Date Revenue</span>
+                                        <span class="font-weight-bold text-dark"><t t-esc="formatCurrency(state.summary.ytd_revenue)"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                        <span class="text-muted">Year-to-Date Expenses</span>
+                                        <span class="font-weight-bold text-muted"><t t-esc="formatCurrency(state.summary.ytd_expenses)"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center py-2">
+                                        <span class="text-muted">Year-to-Date Profit</span>
+                                        <span t-attf-class="font-weight-bold #{state.summary.ytd_profit >= 0 ? 'text-success' : 'text-danger'}">
+                                            <t t-esc="formatCurrency(state.summary.ytd_profit)"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Financial Health Score Widget -->
+                    <div class="col-12 col-lg-5 mb-4">
+                        <div class="card shadow-sm border-0 p-4 h-100 health-card text-center">
+                            <h5 class="chart-card-title mb-3 text-left">Financial Health Score</h5>
+                            
+                            <div class="d-flex align-items-center justify-content-center flex-column flex-md-row p-3">
+                                <!-- Circular progress SVG -->
+                                <div class="radial-progress-wrapper mr-md-4 mb-3 mb-md-0">
+                                    <svg viewBox="0 0 100 100" class="health-score-svg">
+                                        <circle cx="50" cy="50" r="40" class="circle-bg" />
+                                        <circle cx="50" cy="50" r="40" class="circle-progress"
+                                                t-att-style="'stroke-dashoffset: ' + (251.2 - (251.2 * state.health.score / 100)) + '; stroke: ' + (state.health.score >= 80 ? '#10b981' : (state.health.score >= 60 ? '#6366f1' : (state.health.score >= 40 ? '#f59e0b' : '#ef4444')))" />
+                                        <text x="50" y="55" class="circle-text" t-att-fill="state.health.score >= 80 ? '#10b981' : (state.health.score >= 60 ? '#6366f1' : (state.health.score >= 40 ? '#f59e0b' : '#ef4444'))"><t t-esc="state.health.score" /></text>
+                                    </svg>
+                                </div>
+
+                                <div class="text-left mt-2">
+                                    <div class="text-muted text-uppercase small font-weight-bold">Health Status</div>
+                                    <div t-attf-class="h3 font-weight-bold #{state.health.score >= 80 ? 'text-success' : (state.health.score >= 60 ? 'text-indigo' : (state.health.score >= 40 ? 'text-warning' : 'text-danger'))}"><t t-esc="state.health.status"/></div>
+                                    <p class="small text-muted mb-0">Score based on YTD profitability, cash reserves, and revenue growth trend.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

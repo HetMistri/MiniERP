@@ -41,11 +41,14 @@ Mini ERP System that digitally manages the complete business flow:
     'assets': {
         'web.assets_backend': [
             'mini_erp/static/src/css/dashboard.css',
+            'mini_erp/static/src/js/financial_dashboard.js',
+            'mini_erp/static/src/xml/financial_dashboard.xml',
         ],
     },
     'demo': [
         'demo/demo.xml',
         'demo/mrp_demo.xml',
+        'demo/financial_demo.xml',
     ],
     'installable': True,
     'application': True,

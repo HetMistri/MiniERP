@@ -39,5 +39,13 @@
             <field name="padding">5</field>
             <field name="company_id" eval="False"/>
         </record>
+
+        <record id="seq_financial_invoice" model="ir.sequence">
+            <field name="name">Financial Invoice / Bill</field>
+            <field name="code">financial.invoice</field>
+            <field name="prefix"></field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
     </data>
 </odoo>

@@ -12,3 +12,5 @@ from . import procurement
 from . import users
 from . import dashboard
 from . import company
+from . import financial
+

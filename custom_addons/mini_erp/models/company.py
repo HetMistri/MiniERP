@@ -11,3 +11,9 @@ class ResCompany(models.Model):
         default=False,
         help='If checked, stockable products can be delivered or consumed beyond their on-hand quantity without blocking validation.'
     )
+    opening_balance = fields.Monetary(
+        string='Opening Balance',
+        default=100000.0,
+        currency_field='currency_id'
+    )
+

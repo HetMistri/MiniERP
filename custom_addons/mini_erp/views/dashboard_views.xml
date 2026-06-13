@@ -127,6 +127,9 @@
                                     </div>
                                 </div>
 
+                                <!-- Financial Overview & Analytics Section -->
+                                <field name="financial_dashboard_widget" widget="financial_dashboard" nolabel="1"/>
+
                                 <!-- Sales Section -->
                                 <div class="o_section_box mb-4">
                                     <div class="o_section_header d-flex justify-content-between align-items-center mb-3">
