@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+# pyrefly: ignore [missing-import]
 from odoo.http import request
 
 
@@ -37,6 +38,7 @@ class AuditLog(models.Model):
             ('mrp.production', 'Manufacturing Order'),
             ('mrp.bom', 'Bill of Material'),
             ('mrp.work.order', 'Work Order'),
+            ('mrp.work.center', 'Work Center'),
         ]
 
     @api.depends('model_name', 'record_id')

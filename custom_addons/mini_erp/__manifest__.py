@@ -25,10 +25,13 @@ Mini ERP System that digitally manages the complete business flow:
         'views/views.xml',
         'views/product_views.xml',
         'views/audit_log_views.xml',
+        'views/stock_views.xml',
+        'views/mrp_views.xml',
         'views/templates.xml',
     ],
     'demo': [
         'demo/demo.xml',
+        'demo/mrp_demo.xml',
     ],
     'installable': True,
     'application': True,

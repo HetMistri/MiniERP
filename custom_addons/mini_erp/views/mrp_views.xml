@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ==================== WORK CENTERS ==================== -->
+        <record id="view_mrp_work_center_tree" model="ir.ui.view">
+            <field name="name">mrp.work.center.tree</field>
+            <field name="model">mrp.work.center</field>
+            <field name="arch" type="xml">
+                <list string="Work Centers">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="responsible_id"/>
+                    <field name="working_hours"/>
+                    <field name="cost_per_hour" widget="monetary"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_mrp_work_center_form" model="ir.ui.view">
+            <field name="name">mrp.work.center.form</field>
+            <field name="model">mrp.work.center</field>
+            <field name="arch" type="xml">
+                <form string="Work Center">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="responsible_id"/>
+                            </group>
+                            <group>
+                                <field name="working_hours"/>
+                                <field name="cost_per_hour" widget="monetary"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description">
+                                <field name="description" placeholder="Enter work center details here..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_mrp_work_center" model="ir.actions.act_window">
+            <field name="name">Work Centers</field>
+            <field name="res_model">mrp.work.center</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Work Center!
+                </p>
+                <p>
+                    Work Centers define where manufacturing operations are performed and calculate hourly labor rates.
+                </p>
+            </field>
+        </record>
+
+        <!-- ==================== BILL OF MATERIALS ==================== -->
+        <record id="view_mrp_bom_tree" model="ir.ui.view">
+            <field name="name">mrp.bom.tree</field>
+            <field name="model">mrp.bom</field>
+            <field name="arch" type="xml">
+                <list string="Bills of Materials">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="product_qty"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_mrp_bom_form" model="ir.ui.view">
+            <field name="name">mrp.bom.form</field>
+            <field name="model">mrp.bom</field>
+            <field name="arch" type="xml">
+                <form string="Bill of Materials">
+                    <sheet>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" class="oe_inline"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="product_id"/>
+                                <field name="product_qty"/>
+                            </group>
+                            <group>
+                                <field name="active" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Components">
+                                <field name="component_ids">
+                                    <list string="Components" editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="quantity"/>
+                                        <field name="uom_id"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Operations">
+                                <field name="operation_ids">
+                                    <list string="Operations" editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name"/>
+                                        <field name="work_center_id"/>
+                                        <field name="duration_minutes"/>
+                                        <field name="description"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes" placeholder="Enter notes or special instructions..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_mrp_bom" model="ir.actions.act_window">
+            <field name="name">Bills of Materials</field>
+            <field name="res_model">mrp.bom</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a Bill of Materials!
+                </p>
+                <p>
+                    A BoM lists raw components and steps needed to produce a finished product.
+                </p>
+            </field>
+        </record>
+
+        <!-- ==================== MANUFACTURING ORDERS ==================== -->
+        <record id="view_mrp_production_tree" model="ir.ui.view">
+            <field name="name">mrp.production.tree</field>
+            <field name="model">mrp.production</field>
+            <field name="arch" type="xml">
+                <list string="Manufacturing Orders" decoration-info="state == 'draft'" decoration-warning="state == 'progress'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="product_qty"/>
+                    <field name="date_planned_start"/>
+                    <field name="assignee_id"/>
+                    <field name="state" widget="badge"
+                           decoration-info="state == 'draft'"
+                           decoration-warning="state == 'confirmed'"
+                           decoration-primary="state == 'progress'"
+                           decoration-success="state == 'done'"
+                           decoration-danger="state == 'cancel'"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_mrp_production_form" model="ir.ui.view">
+            <field name="name">mrp.production.form</field>
+            <field name="model">mrp.production</field>
+            <field name="arch" type="xml">
+                <form string="Manufacturing Order">
+                    <header>
+                        <button name="action_confirm" string="Confirm" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                        <button name="action_start" string="Start Production" type="object" class="oe_highlight" invisible="state != 'confirmed'"/>
+                        <button name="action_finish" string="Finish" type="object" class="oe_highlight" invisible="state != 'progress'"/>
+                        <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('draft', 'confirmed')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,progress,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="product_id" readonly="state != 'draft'"/>
+                                <field name="product_qty" readonly="state != 'draft'"/>
+                                <field name="bom_id" readonly="state != 'draft'"/>
+                            </group>
+                            <group>
+                                <field name="date_planned_start" readonly="state in ('done', 'cancel')"/>
+                                <field name="date_planned_finish" readonly="state in ('done', 'cancel')"/>
+                                <field name="date_start"/>
+                                <field name="date_finished"/>
+                            </group>
+                            <group>
+                                <field name="assignee_id" readonly="state in ('done', 'cancel')"/>
+                                <field name="origin" readonly="state != 'draft'"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Components">
+                                <field name="component_ids" readonly="state in ('done', 'cancel')">
+                                    <list string="Components" editable="bottom" create="0" delete="0">
+                                        <field name="product_id" readonly="1"/>
+                                        <field name="quantity_needed" readonly="1"/>
+                                        <field name="quantity_reserved" readonly="1"/>
+                                        <field name="quantity_consumed"/>
+                                        <field name="uom_id" readonly="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Work Orders">
+                                <field name="work_order_ids" readonly="state in ('done', 'cancel')">
+                                    <list string="Work Orders" editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name" readonly="1"/>
+                                        <field name="work_center_id" readonly="1"/>
+                                        <field name="duration_minutes" readonly="1"/>
+                                        <field name="assignee_id"/>
+                                        <field name="state" widget="badge"
+                                               decoration-muted="state == 'pending'"
+                                               decoration-info="state == 'ready'"
+                                               decoration-warning="state == 'progress'"
+                                               decoration-success="state == 'done'"/>
+                                        <button name="action_start" string="Start" type="object" icon="fa-play" invisible="state != 'ready'" class="btn-success"/>
+                                        <button name="action_done" string="Complete" type="object" icon="fa-check" invisible="state != 'progress'" class="btn-primary"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes" placeholder="Production notes..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_mrp_production_search" model="ir.ui.view">
+            <field name="name">mrp.production.search</field>
+            <field name="model">mrp.production</field>
+            <field name="arch" type="xml">
+                <search string="Search Manufacturing Orders">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="bom_id"/>
+                    <field name="assignee_id"/>
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                    <filter name="progress" string="In Progress" domain="[('state', '=', 'progress')]"/>
+                    <filter name="done" string="Done" domain="[('state', '=', 'done')]"/>
+                    <filter name="cancel" string="Cancelled" domain="[('state', '=', 'cancel')]"/>
+                    <separator/>
+                    <filter name="group_by_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_date" string="Planned Start Date" context="{'group_by': 'date_planned_start'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_mrp_production" model="ir.actions.act_window">
+            <field name="name">Manufacturing Orders</field>
+            <field name="res_model">mrp.production</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_mrp_production_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a Manufacturing Order!
+                </p>
+                <p>
+                    Use MOs to track production runs, reserve inventory components, and document assembly time.
+                </p>
+            </field>
+        </record>
+
+        <!-- ==================== MENUS ==================== -->
+        <!-- Manufacturing Root Level Menu under Root Menu -->
+        <menuitem id="menu_mrp_root"
+                  name="Manufacturing"
+                  parent="menu_mini_erp_root"
+                  sequence="20"
+                  groups="mini_erp.group_admin,mini_erp.group_manufacturing_user,mini_erp.group_inventory_manager,mini_erp.group_business_owner"/>
+
+        <!-- Operations Category -->
+        <menuitem id="menu_mrp_operations"
+                  name="Operations"
+                  parent="menu_mrp_root"
+                  sequence="10"/>
+
+        <menuitem id="menu_mrp_production"
+                  name="Manufacturing Orders"
+                  parent="menu_mrp_operations"
+                  action="action_mrp_production"
+                  sequence="10"/>
+
+        <!-- Master Data Category -->
+        <menuitem id="menu_mrp_master_data"
+                  name="Master Data"
+                  parent="menu_mrp_root"
+                  sequence="20"/>
+
+        <menuitem id="menu_mrp_bom"
+                  name="Bills of Materials"
+                  parent="menu_mrp_master_data"
+                  action="action_mrp_bom"
+                  sequence="10"/>
+
+        <!-- Configuration Category -->
+        <menuitem id="menu_mrp_configuration"
+                  name="Configuration"
+                  parent="menu_mrp_root"
+                  sequence="100"
+                  groups="mini_erp.group_admin,mini_erp.group_manufacturing_user"/>
+
+        <menuitem id="menu_mrp_work_center"
+                  name="Work Centers"
+                  parent="menu_mrp_configuration"
+                  action="action_mrp_work_center"
+                  sequence="10"/>
+    </data>
+</odoo>
