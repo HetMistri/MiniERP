@@ -198,5 +198,22 @@
             <field name="date_planned_start" eval="datetime.now().strftime('%Y-%m-%d %H:%M:%S')"/>
             <field name="notes">Initial batch for showroom inventory</field>
         </record>
+
+        <!-- Procurement configuration for Wooden Table -->
+        <record id="product_wooden_table" model="product.product">
+            <field name="procure_on_demand" eval="True"/>
+            <field name="procurement_type">manufacture</field>
+            <field name="bom_id" ref="bom_wooden_table"/>
+        </record>
+
+        <!-- Procurement configuration for Office Chair -->
+        <record id="product_office_chair" model="product.product">
+            <field name="procure_on_demand" eval="True"/>
+            <field name="procurement_type">manufacture</field>
+            <field name="bom_id" ref="bom_office_chair"/>
+        </record>
+
+        <!-- Execute action_confirm on Confirmed SO now that product procurement settings and BoMs are loaded -->
+        <function model="sale.order" name="action_confirm" eval="[[ref('so_confirmed_1')]]"/>
     </data>
 </odoo>

@@ -152,8 +152,7 @@
             <field name="price_unit">8000.00</field>
         </record>
 
-        <!-- Execute action_confirm on Confirmed SO -->
-        <function model="sale.order" name="action_confirm" eval="[[ref('so_confirmed_1')]]"/>
+
 
         <!-- Demo Purchase Order 1 (Draft) -->
         <record id="po_draft_1" model="purchase.order">
