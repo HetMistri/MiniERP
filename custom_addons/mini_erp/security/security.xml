@@ -11,7 +11,7 @@
             <field name="name">Admin</field>
             <field name="category_id" ref="module_category_mini_erp"/>
             <field name="comment">Full system access — manages all modules, users, audit logs</field>
-            <field name="users" eval="[(4, 1)]"/>
+            <field name="users" eval="[(4, ref('base.user_admin'))]"/>
         </record>
 
         <record id="group_sales_user" model="res.groups">
