@@ -138,18 +138,33 @@
             <field name="res_model">product.product</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="view_product_product_search"/>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_product_product_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_product_form')}),
+            ]"/>
         </record>
 
         <record id="action_open_categories" model="ir.actions.act_window">
             <field name="name">Categories</field>
             <field name="res_model">product.category</field>
             <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_product_category_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_category_form')}),
+            ]"/>
         </record>
 
         <record id="action_open_uoms" model="ir.actions.act_window">
             <field name="name">Units of Measure</field>
             <field name="res_model">product.uom</field>
             <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_product_uom_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_uom_form')}),
+            ]"/>
         </record>
 
         <!-- Product Menus -->
