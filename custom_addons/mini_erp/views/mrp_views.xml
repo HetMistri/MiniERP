@@ -78,7 +78,18 @@
             <field name="model">mrp.bom</field>
             <field name="arch" type="xml">
                 <form string="Bill of Materials">
+                    <header>
+                        <button name="action_save" string="Save" type="object" class="oe_highlight"/>
+                    </header>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(mini_erp.action_open_audit_logs_bom)d"
+                                    type="action"
+                                    string="Logs"
+                                    class="oe_stat_button"
+                                    icon="fa-list"
+                                    groups="mini_erp.group_admin"/>
+                        </div>
                         <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
                         <div class="oe_title">
                             <h1>
@@ -145,9 +156,12 @@
             <field name="arch" type="xml">
                 <list string="Manufacturing Orders" decoration-info="state == 'draft'" decoration-warning="state == 'progress'" decoration-success="state == 'done'" decoration-muted="state == 'cancel'">
                     <field name="name"/>
+                    <field name="date_planned_start"/>
                     <field name="product_id"/>
                     <field name="product_qty"/>
-                    <field name="date_planned_start"/>
+                    <field name="component_status" widget="badge"
+                           decoration-success="component_status == 'available'"
+                           decoration-danger="component_status == 'not_available'"/>
                     <field name="assignee_id"/>
                     <field name="state" widget="badge"
                            decoration-info="state == 'draft'"
@@ -167,8 +181,9 @@
                     <header>
                         <button name="action_confirm" string="Confirm" type="object" class="oe_highlight" invisible="state != 'draft'"/>
                         <button name="action_start" string="Start Production" type="object" class="oe_highlight" invisible="state != 'confirmed'"/>
-                        <button name="action_finish" string="Finish" type="object" class="oe_highlight" invisible="state != 'progress'"/>
+                        <button name="action_produce" string="Produce" type="object" class="oe_highlight" invisible="state not in ('confirmed', 'progress')"/>
                         <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('draft', 'confirmed')"/>
+                        <button name="%(mini_erp.action_open_audit_logs_mrp)d" string="Logs" type="action" groups="mini_erp.group_admin"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,progress,done"/>
                     </header>
                     <sheet>
@@ -213,6 +228,7 @@
                                         <field name="name" readonly="1"/>
                                         <field name="work_center_id" readonly="1"/>
                                         <field name="duration_minutes" readonly="1"/>
+                                        <field name="real_duration" readonly="1"/>
                                         <field name="assignee_id"/>
                                         <field name="state" widget="badge"
                                                decoration-muted="state == 'pending'"
@@ -225,7 +241,7 @@
                                 </field>
                             </page>
                             <page string="Notes">
-                                <field name="notes" placeholder="Production notes..."/>
+                                <field name="notes" placeholder="Production notes..." readonly="state in ('done', 'cancel')"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -255,10 +271,42 @@
             </field>
         </record>
 
+        <record id="view_mrp_production_kanban" model="ir.ui.view">
+            <field name="name">mrp.production.kanban</field>
+            <field name="model">mrp.production</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state" quick_create="false">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="product_qty"/>
+                    <field name="date_planned_start"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="o_kanban_record_top">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_record_body">
+                                        <div>Product: <field name="product_id"/></div>
+                                        <div>Qty: <field name="product_qty"/></div>
+                                        <div>Date: <field name="date_planned_start"/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
         <record id="action_mrp_production" model="ir.actions.act_window">
             <field name="name">Manufacturing Orders</field>
             <field name="res_model">mrp.production</field>
-            <field name="view_mode">list,form</field>
+            <field name="view_mode">list,kanban,form</field>
             <field name="search_view_id" ref="view_mrp_production_search"/>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">

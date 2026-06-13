@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
+# pyrefly: ignore [missing-import]
 from odoo.exceptions import ValidationError
 
 class MrpWorkCenter(models.Model):
@@ -77,6 +78,9 @@ class MrpBom(models.Model):
             result.append((bom.id, f"{bom.name} ({bom.product_id.name})"))
         return result
 
+    def action_save(self):
+        return True
+
 
 class MrpBomComponent(models.Model):
     _name = 'mrp.bom.component'
@@ -134,6 +138,22 @@ class MrpProduction(models.Model):
     assignee_id = fields.Many2one('res.users', string='Assignee', default=lambda self: self.env.user)
     origin = fields.Char(string='Source Document')
     notes = fields.Text(string='Notes')
+    component_status = fields.Selection([
+        ('available', 'Available'),
+        ('not_available', 'Not Available'),
+    ], string='Component Status', compute='_compute_component_status', store=False)
+
+    @api.depends('component_ids', 'component_ids.product_id.free_to_use_qty', 'component_ids.quantity_needed', 'component_ids.quantity_reserved')
+    def _compute_component_status(self):
+        for order in self:
+            status = 'available'
+            for comp in order.component_ids:
+                needed = comp.quantity_needed
+                available = comp.quantity_reserved + comp.product_id.free_to_use_qty
+                if needed > available:
+                    status = 'not_available'
+                    break
+            order.component_status = status
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
@@ -264,6 +284,26 @@ class MrpProduction(models.Model):
                 raise ValidationError(_("You can only delete manufacturing orders in 'Draft' or 'Cancelled' status."))
         return super().unlink()
 
+    def action_produce(self):
+        for order in self:
+            if order.state not in ('confirmed', 'progress'):
+                continue
+            # Auto-complete any work orders that aren't done yet
+            for wo in order.work_order_ids:
+                if wo.state != 'done':
+                    if wo.state in ('pending', 'ready'):
+                        wo.action_start()
+                    wo.action_done()
+            # If the state is confirmed, transition to progress first
+            if order.state == 'confirmed':
+                order.write({
+                    'state': 'progress',
+                    'date_start': fields.Datetime.now(),
+                })
+            # Finish the manufacturing order (this backflushes, logs stock ledger, and marks it Done)
+            order.action_finish()
+        return True
+
 
 class MrpProductionComponent(models.Model):
     _name = 'mrp.production.component'
@@ -295,9 +335,19 @@ class MrpWorkOrder(models.Model):
         ('done', 'Done'),
     ], string='Status', default='pending', required=True, copy=False)
     duration_minutes = fields.Float(string='Duration (Minutes)', default=60.0)
+    real_duration = fields.Float(string='Real Duration (Minutes)', compute='_compute_real_duration', store=True)
     date_start = fields.Datetime(string='Start Date')
     date_end = fields.Datetime(string='End Date')
     assignee_id = fields.Many2one('res.users', string='Assignee')
+
+    @api.depends('date_start', 'date_end')
+    def _compute_real_duration(self):
+        for wo in self:
+            if wo.date_start and wo.date_end:
+                diff = wo.date_end - wo.date_start
+                wo.real_duration = diff.total_seconds() / 60.0
+            else:
+                wo.real_duration = 0.0
 
     def action_start(self):
         for wo in self:

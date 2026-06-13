@@ -20,7 +20,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 
 ---
 
-### Phase C2 — Bill of Materials (BoM) ⚠️
+### Phase C2 — Bill of Materials (BoM) ✅
 
 - [x] Create `mrp.bom` model with all fields (name seq-generated, product_id, product_qty, component_ids, operation_ids, active, notes)
 - [x] Create `mrp.bom.component` model (bom_id, product_id, quantity, uom_id)
@@ -28,9 +28,9 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 - [x] Tree + form views for BoM (notebook: components tab, operations tab)
 - [x] Menu: `Manufacturing / Bill of Materials`
 - [x] Demo data: BoM for Wooden Table, BoM for Office Chair
-- [ ] **Mockup addition**: Add **"Logs" button** on BoM form → opens audit logs filtered by module "BoM"
-- [ ] **Mockup addition**: BoM form should have explicit "Save" button
-- [ ] **Mockup addition**: Operations section should have "Add a line" button
+- [x] **Mockup addition**: Add **"Logs" button** on BoM form → opens audit logs filtered by module "BoM"
+- [x] **Mockup addition**: BoM form should have explicit "Save" button
+- [x] **Mockup addition**: Operations section should have "Add a line" button
 
 ---
 
@@ -69,20 +69,20 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 
 ---
 
-### Phase C5 — Manufacturing Business Logic ⚠️
+### Phase C5 — Manufacturing Business Logic ✅
 
 - [x] **`action_confirm()`** on MO
 - [x] **`action_start()`**
 - [x] **`action_record_production()`** / **`action_finish()`**
 - [x] **`action_cancel()`**
 - [x] Backflush component consumption
-- [ ] **Mockup addition**: Add **`action_produce()`** button (labelled "Produce") as alternative/convenience to Finish — marks MO as Done, makes all fields readonly
-- [ ] **Mockup addition**: Cancel makes all fields readonly
-- [ ] **Mockup addition**: Track audit logs for all MO state changes, qty changes, assignee changes
+- [x] **Mockup addition**: Add **`action_produce()`** button (labelled "Produce") as alternative/convenience to Finish — marks MO as Done, makes all fields readonly
+- [x] **Mockup addition**: Cancel makes all fields readonly
+- [x] **Mockup addition**: Track audit logs for all MO state changes, qty changes, assignee changes
 
 ---
 
-### Phase C6 — Manufacturing Views & Menus ⚠️
+### Phase C6 — Manufacturing Views & Menus ✅
 
 > **SVG Mockup specifies additional details:**
 > - List View columns: Reference, Date, Finished Product, Status, **Component Status** (Available / Not Available)
@@ -95,16 +95,16 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 > - Reference auto-generated following sequence on "New"
 
 - [x] Tree view for MO: name, product, qty, state, date, assignee
-- [ ] **Mockup addition**: Add **Component Status** column to MO tree view (Available / Not Available — computed from free_to_use_qty of each component)
+- [x] **Mockup addition**: Add **Component Status** column to MO tree view (Available / Not Available — computed from free_to_use_qty of each component)
 - [x] Form view with notebook:
   - Page 1: General (product, qty, BoM, dates, assignee, origin)
   - Page 2: Components (tree: product, needed/to-consume, consumed, reserved)
   - Page 3: Work Orders (tree: sequence, name, center, duration, state, real duration)
   - Page 4: Notes
 - [x] Action buttons: **Confirm**, **Start Production**, **Finish**, **Cancel** (context-dependent)
-- [ ] **Mockup addition**: Rename "Finish" to **"Produce"** (or add as separate button) — marks MO Done, all fields readonly
-- [ ] **Mockup addition**: Add **"Logs" button** — opens `audit.log` tree view filtered by module = "Manufacturing"
-- [ ] Add Kanban view for MO by state
+- [x] **Mockup addition**: Rename "Finish" to **"Produce"** (or add as separate button) — marks MO Done, all fields readonly
+- [x] **Mockup addition**: Add **"Logs" button** — opens `audit.log` tree view filtered by module = "Manufacturing"
+- [x] Add Kanban view for MO by state
 - [x] Search view: filter by state, product, BoM, date range
 - [x] Menu: `Manufacturing / Manufacturing Orders`
 - [x] Access: `group_manufacturing_user` full CRUD; `group_inventory_manager` read; `group_business_owner` read-only

@@ -117,5 +117,31 @@
             </field>
         </record>
 
+        <!-- Filtered audit log action for BoM Logs button -->
+        <record id="action_open_audit_logs_bom" model="ir.actions.act_window">
+            <field name="name">Audit Logs — BoM</field>
+            <field name="res_model">audit.log</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="view_audit_log_tree"/>
+            <field name="search_view_id" ref="view_audit_log_search"/>
+            <field name="domain">[('model_name', '=', 'mrp.bom')]</field>
+            <field name="help" type="html">
+                <p>Audit logs for BoM changes.</p>
+            </field>
+        </record>
+
+        <!-- Filtered audit log action for Manufacturing Logs button -->
+        <record id="action_open_audit_logs_mrp" model="ir.actions.act_window">
+            <field name="name">Audit Logs — Manufacturing</field>
+            <field name="res_model">audit.log</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="view_audit_log_tree"/>
+            <field name="search_view_id" ref="view_audit_log_search"/>
+            <field name="domain">[('model_name', '=', 'mrp.production')]</field>
+            <field name="help" type="html">
+                <p>Audit logs for Manufacturing changes.</p>
+            </field>
+        </record>
+
     </data>
 </odoo>
