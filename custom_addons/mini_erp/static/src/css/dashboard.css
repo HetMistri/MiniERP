@@ -7,7 +7,7 @@
 }
 
 .text-gradient {
-    background: linear-gradient(45deg, #1d4ed8, #0ea5e9);
+    background: linear-gradient(45deg, #4f46e5, #0ea5e9);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -35,13 +35,8 @@
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1) !important;
 }
 
-.card-sales::before { background: #1d4ed8; }
-.card-pending::before { background: #d97706; }
-.card-delayed::before { background: #dc2626; }
-.card-mfg::before { background: #0d9488; }
-.card-purchase::before { background: #4f46e5; }
-.card-receipt::before { background: #ea580c; }
-.card-lowstock::before { background: #9333ea; }
+.card-lowstock::before { background: #dc2626; }
+.card-delayed::before { background: #d97706; }
 
 .o_card_icon {
     margin-bottom: 8px;
@@ -52,18 +47,186 @@
     transform: scale(1.1);
 }
 
-.o_btn_pulse {
-    animation: pulse 2s infinite;
+/* Layout Wrapper */
+.o_dashboard_container {
+    display: flex;
+    min-height: 80vh;
 }
 
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(29, 78, 216, 0.4);
+/* Sidebar */
+.o_dashboard_sidebar {
+    width: 240px;
+    background: rgba(0, 0, 0, 0.02);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px 0 0 12px;
+}
+
+.o_sidebar_brand {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    margin-bottom: 24px;
+}
+
+.brand-icon {
+    color: #4f46e5;
+}
+
+.brand-text {
+    font-size: 20px;
+    font-weight: 700;
+    margin-left: 12px;
+    background: linear-gradient(45deg, #4f46e5, #0ea5e9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.o_sidebar_menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.o_sidebar_link {
+    background: none !important;
+    border: none !important;
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4b5563 !important;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 100%;
+}
+
+.o_sidebar_link:hover {
+    background: rgba(79, 70, 229, 0.08) !important;
+    color: #4f46e5 !important;
+}
+
+/* Main Area */
+.o_dashboard_main {
+    flex: 1;
+    padding: 20px 24px;
+    background: transparent;
+}
+
+/* Topbar and Search */
+.o_search_input {
+    min-width: 250px;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+    height: auto !important;
+}
+
+.btn-search {
+    border-radius: 8px !important;
+    padding: 6px 16px !important;
+}
+
+.btn-clear {
+    border-radius: 8px !important;
+    padding: 6px 12px !important;
+}
+
+/* Section Box & Headers */
+.o_section_box {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Compact Sub-KPI Cards */
+.o_kpi_card_row {
+    gap: 12px;
+}
+
+.o_kpi_subcard {
+    position: relative;
+    background: rgba(249, 250, 251, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    padding: 14px 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 100px;
+    cursor: pointer;
+}
+
+.o_kpi_subcard:hover {
+    transform: translateY(-3px);
+    background: #ffffff;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+}
+
+.o_kpi_subcard .h4 {
+    display: block;
+    margin-top: 6px;
+    font-size: 22px;
+}
+
+/* Overlay click logic */
+.o_card_overlay_btn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    border: none !important;
+    background: none !important;
+    z-index: 10;
+}
+
+/* Toggle custom alignment */
+.o_my_filter_toggle {
+    background: rgba(0, 0, 0, 0.02);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+/* Search results panel */
+.o_search_results {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* Low Stock / Delayed custom styling */
+.card-lowstock {
+    background: linear-gradient(135deg, #fff5f5, #ffffff) !important;
+}
+
+.card-delayed {
+    background: linear-gradient(135deg, #fffbf0, #ffffff) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .o_dashboard_container {
+        flex-direction: column;
     }
-    70% {
-        box-shadow: 0 0 0 10px rgba(29, 78, 216, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(29, 78, 216, 0);
+    .o_dashboard_sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 12px 12px 0 0;
     }
 }
