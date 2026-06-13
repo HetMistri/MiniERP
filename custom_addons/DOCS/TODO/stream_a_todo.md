@@ -23,7 +23,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A1b — User Management (Admin CRUD + Per-Module Access Matrix) ✅
+### Phase A1b — User Management (Admin CRUD + Per-Module Access Matrix)
 
 - [x] Extend `res.users` with `position` (Char) field
 - [x] Add `mobile` field to user form view (inherited from `res.partner`)
@@ -32,10 +32,12 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 - [x] Per-module access matrix on user form via `many2many_tags` + `many2many_checkboxes` widgets
 - [x] Permission guide for each role
 - [x] Uses standard Settings / Users menu (Admin only access via `group_admin`)
+- [ ] Make Email (login) field read-only after user creation
+- [ ] Restrict editing of Position field to System Administrator only
 
 ---
 
-### Phase A2 — Audit Log Engine ✅
+### Phase A2 — Audit Log Engine
 
 - [x] Create `audit.log` model with all required fields, Reference field, display_name, IP tracking
 - [x] Create abstract mixin `audit.mixin` with `_audit_track_create()`, `_audit_track_write()`, `_audit_track_unlink()` helpers
@@ -44,10 +46,10 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 - [x] Create access rule so only `group_admin` can read audit logs (ir.model.access.csv)
 - [x] Register audit hook helpers ready for integration with core models via mixin inheritance
 
-> **Out of scope for Stream A** (belongs to Stream D or future enhancement):
-> - KPI banner with Records Created/Updated/Deleted/Total counts
-> - Filter bar with Date Range picker, User/Module/Action dropdowns
-> - Dashboard-level pagination with page buttons
+**UI / Dashboard Enhancements:**
+- [ ] KPI banner with Records Created/Updated/Deleted/Total counts
+- [ ] Filter bar with Date Range picker, User/Module/Action dropdowns
+- [ ] Dashboard-level pagination with page buttons
 
 ---
 
