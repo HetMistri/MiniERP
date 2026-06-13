@@ -220,6 +220,7 @@ class ProcurementManager(models.AbstractModel):
     @api.model
     def manual_replenish(self, product, qty, procurement_type=None):
         proc_type = procurement_type or product.procurement_type
+
         if proc_type == 'purchase':
             return self._create_purchase_order(
                 product,
@@ -235,5 +236,6 @@ class ProcurementManager(models.AbstractModel):
             )
 
         raise UserError(
-            f"Unsupported procurement type '{proc_type}'"
+            f"Please select a valid replenishment route "
+            f"for product '{product.display_name}'."
         )
