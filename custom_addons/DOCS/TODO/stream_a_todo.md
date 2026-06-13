@@ -5,7 +5,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A1 — Project Scaffold & Security Foundation ✅
+### Phase A1 — Project Scaffold & Security Foundation
 
 - [x] Create Odoo module `mini_erp` with `__manifest__.py` (name, description, depends, data keys)
 - [x] Define security groups in XML:
@@ -51,7 +51,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A3 — Product Master Model ✅
+### Phase A3 — Product Master Model
 
 - [x] Create `product.product` model with all fields: name, reference (auto-sequence via ir.sequence), sale_price, cost_price, uom_id, product_type, on_hand_qty (computed), reserved_qty (computed), free_to_use_qty (computed), active
 - [x] Create `product.category` model with: name, parent_id (hierarchical), parent_path, child_ids, description, complete_name (computed)
@@ -65,7 +65,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A4 — Product Views, Menus & Access ✅
+### Phase A4 — Product Views, Menus & Access
 
 - [x] Create tree view for `product.product` with all key fields
 - [x] Create form view with notebook:
@@ -84,7 +84,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A5 — Stock Ledger Engine ✅
+### Phase A5 — Stock Ledger Engine
 
 - [x] Create `stock.ledger` model (`_name = 'stock.ledger'`):
   - `product_id` (Many2one → product.product)
@@ -100,7 +100,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A6 — Currency & Company Settings ✅
+### Phase A6 — Currency & Company Settings
 
 - [x] Monetary fields use `currency_id` related from `company_id.currency_id`
 - [x] `res.currency` and `res.company` provided by `base` module

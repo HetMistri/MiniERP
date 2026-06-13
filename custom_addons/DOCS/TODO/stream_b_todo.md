@@ -5,7 +5,7 @@ Partner management, complete Sales Order lifecycle, Purchase Order lifecycle, de
 
 ---
 
-### Phase B1 — Partner / Contact Base ✅
+### Phase B1 — Partner / Contact Base
 
 - [x] Create `res.partner` extension (inherit `res.partner`):
   - `is_customer` (Boolean)
@@ -18,7 +18,7 @@ Partner management, complete Sales Order lifecycle, Purchase Order lifecycle, de
 
 ---
 
-### Phase B2 — Sales Order Model ✅
+### Phase B2 — Sales Order Model
 
 - [x] Create `sale.order` model (`_name = 'sale.order'`):
   - `name` (Char, sequence-generated, eg. SO-000001)
@@ -43,7 +43,7 @@ Partner management, complete Sales Order lifecycle, Purchase Order lifecycle, de
 
 ---
 
-### Phase B3 — Sales Order Workflow & Business Logic ✅
+### Phase B3 — Sales Order Workflow & Business Logic
 
 - [x] **Confirm action**: `action_confirm()`
   - Validate partner and lines
@@ -70,7 +70,7 @@ Partner management, complete Sales Order lifecycle, Purchase Order lifecycle, de
 
 ---
 
-### Phase B4 — Sales Order Views & Menus ✅
+### Phase B4 — Sales Order Views & Menus
 
 > **SVG Mockup specifies:**
 > - List View columns: Reference, Date, Customer, Status, Salesperson
@@ -99,7 +99,7 @@ Partner management, complete Sales Order lifecycle, Purchase Order lifecycle, de
 
 ---
 
-### Phase B5 — Purchase Order Model ✅
+### Phase B5 — Purchase Order Model
 
 - [x] Create `purchase.order` model (`_name = 'purchase.order'`):
   - `name` (Char, sequence-generated, eg. PO-000001)
@@ -122,7 +122,7 @@ Partner management, complete Sales Order lifecycle, Purchase Order lifecycle, de
 
 ---
 
-### Phase B6 — Purchase Order Workflow & Business Logic ✅
+### Phase B6 — Purchase Order Workflow & Business Logic
 
 - [x] **Confirm action**: Validate, transition → *Confirmed*
 - [x] **Receive action**: `action_receive()`
@@ -135,7 +135,7 @@ Partner management, complete Sales Order lifecycle, Purchase Order lifecycle, de
 
 ---
 
-### Phase B7 — Purchase Order Views & Menus ✅
+### Phase B7 — Purchase Order Views & Menus
 
 > **SVG Mockup specifies:**
 > - List View columns: Reference, Date, Vendor, Status, Responsible
@@ -156,7 +156,7 @@ Partner management, complete Sales Order lifecycle, Purchase Order lifecycle, de
 
 ---
 
-### Phase B8 — Sales ↔ Purchase Integration ✅
+### Phase B8 — Sales ↔ Purchase Integration
 
 - [x] Relate SO lines to automatically generated POs (via procurement)
 - [x] Show procurement origin on PO (e.g. "Generated from SO-000001 — Dining Table x15")
