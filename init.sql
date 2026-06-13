@@ -1,0 +1,2 @@
+CREATE DATABASE mini_erp OWNER odoo;
+ALTER USER odoo CREATEDB;

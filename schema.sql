@@ -1,15 +1,13 @@
 -- ============================================================================
--- Mini ERP — Full Database Bootstrap
+-- Mini ERP — Full Database Schema (Reference Only)
 -- Shiv Furniture Works: From Demand to Delivery
 -- ============================================================================
--- Self-contained: creates mini_erp database and all tables.
--- Mount into /docker-entrypoint-initdb.d/ via docker-compose.
+-- This file documents the complete data model.
+-- Tables are created by Odoo's ORM when the module is installed.
+-- Not used for container bootstrap.
 -- ============================================================================
 
-CREATE DATABASE mini_erp OWNER odoo;
-ALTER USER odoo CREATEDB;
-
-\c mini_erp
+BEGIN;
 
 -- ============================================================================
 -- ENUMS
@@ -546,3 +544,5 @@ INSERT INTO mrp_work_center (name, code, cost_per_hour) VALUES
     ('Assembly Line', 'ASSY', 50.00),
     ('Paint Floor', 'PAINT', 30.00),
     ('Packaging Unit', 'PACK', 20.00);
+
+COMMIT;

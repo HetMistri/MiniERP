@@ -25,7 +25,7 @@ chmod +x bootstrap.sh
 
 1. ⚠ Checks for Python, Git, Docker
 2. 📦 Clones Odoo 18.0 source (if not present)
-3. 🔧 Creates `odoo.conf`, `docker-compose.yaml`
+3. 🔧 Creates `odoo.conf`, `docker-compose.yaml`, `init.sql`
 4. 🐍 Creates Python virtual environment (`venv/`)
 5. 📥 Installs Odoo Python dependencies (`pip install -r requirements.txt`)
 6. 🐘 Starts PostgreSQL via Docker
