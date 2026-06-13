@@ -5,7 +5,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 
 ---
 
-### Phase C1 — Work Centers
+### Phase C1 — Work Centers ✅
 
 - [x] Create `mrp.work.center` model (`_name = 'mrp.work.center'`):
   - `name` (Char, required)
@@ -18,10 +18,9 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 - [x] Menu: `Manufacturing / Configuration / Work Centers`
 - [x] Demo data: Assembly Line, Paint Floor, Packaging Unit
 
-
 ---
 
-### Phase C2 — Bill of Materials (BoM)
+### Phase C2 — Bill of Materials (BoM) ✅
 
 - [x] Create `mrp.bom` model with all fields (name seq-generated, product_id, product_qty, component_ids, operation_ids, active, notes)
 - [x] Create `mrp.bom.component` model (bom_id, product_id, quantity, uom_id)
@@ -35,7 +34,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 
 ---
 
-### Phase C3 — Manufacturing Order (MO) Model
+### Phase C3 — Manufacturing Order (MO) Model ✅
 
 - [x] Create `mrp.production` model (`_name = 'mrp.production'`):
   - `name` (Char, sequence-generated, eg. MO-000001)
@@ -62,7 +61,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 
 ---
 
-### Phase C4 — Work Orders
+### Phase C4 — Work Orders ✅
 
 - [x] Create `mrp.work.order` model with all fields (production_id, work_center_id, name, sequence, state, duration_minutes, date_start, date_end, assignee_id)
 - [x] Tree view for work orders inside MO form (editable in-line)
@@ -70,7 +69,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 
 ---
 
-### Phase C5 — Manufacturing Business Logic
+### Phase C5 — Manufacturing Business Logic ✅
 
 - [x] **`action_confirm()`** on MO
 - [x] **`action_start()`**
@@ -83,7 +82,7 @@ Complete BoM structure, Work Centers, Work Orders, Manufacturing Orders, compone
 
 ---
 
-### Phase C6 — Manufacturing Views & Menus
+### Phase C6 — Manufacturing Views & Menus ✅
 
 > **SVG Mockup specifies additional details:**
 > - List View columns: Reference, Date, Finished Product, Status, **Component Status** (Available / Not Available)
