@@ -152,5 +152,62 @@
                 </search>
             </field>
         </record>
+        <!-- Product Action Windows -->
+        <record id="action_open_products" model="ir.actions.act_window">
+            <field name="name">Products</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_product_product_search"/>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_product_product_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_product_form')}),
+            ]"/>
+        </record>
+
+        <record id="action_open_categories" model="ir.actions.act_window">
+            <field name="name">Categories</field>
+            <field name="res_model">product.category</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_product_category_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_category_form')}),
+            ]"/>
+        </record>
+
+        <record id="action_open_uoms" model="ir.actions.act_window">
+            <field name="name">Units of Measure</field>
+            <field name="res_model">product.uom</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_product_uom_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_product_uom_form')}),
+            ]"/>
+        </record>
+
+        <!-- Product Menus -->
+        <menuitem id="menu_root_products"
+                  name="Products"
+                  sequence="10"/>
+
+        <menuitem id="menu_products"
+                  name="Products"
+                  parent="menu_root_products"
+                  action="action_open_products"
+                  sequence="10"/>
+
+        <menuitem id="menu_categories"
+                  name="Categories"
+                  parent="menu_root_products"
+                  action="action_open_categories"
+                  sequence="20"/>
+
+        <menuitem id="menu_uoms"
+                  name="Units of Measure"
+                  parent="menu_root_products"
+                  action="action_open_uoms"
+                  sequence="30"/>
     </data>
 </odoo>
