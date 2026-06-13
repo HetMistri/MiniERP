@@ -4,6 +4,7 @@ import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { Component, onMounted, onWillUnmount, useRef, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { rpc } from "@web/core/network/rpc";
 
 export class FinancialDashboard extends Component {
     static template = "mini_erp.FinancialDashboard";
@@ -12,7 +13,6 @@ export class FinancialDashboard extends Component {
     };
 
     setup() {
-        this.rpc = useService("rpc");
         this.chart1Ref = useRef("chart_income_vs_expenses");
         this.chart2Ref = useRef("chart_revenue_breakdown");
         this.chart3Ref = useRef("chart_profit_trend");
@@ -68,7 +68,7 @@ export class FinancialDashboard extends Component {
                 params.date_end = this.state.dateEnd;
             }
 
-            const data = await this.rpc("/dashboard/financial_data", params);
+            const data = await rpc("/dashboard/financial_data", params);
 
             this.state.kpis = data.kpis;
             this.state.health = data.health;

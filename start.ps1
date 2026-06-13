@@ -5,11 +5,11 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $ScriptDir
 
-Write-Host "=== Mini ERP — Starting PostgreSQL ===" -ForegroundColor Green
+Write-Host "=== Mini ERP - Starting PostgreSQL ===" -ForegroundColor Green
 docker compose up -d
 
 # Get container ID for postgres service
-$PostgresContainer = docker compose ps -q postgres
+$PostgresContainer = docker compose ps -q db
 
 if (-not $PostgresContainer) {
     Write-Host "Could not find PostgreSQL container." -ForegroundColor Red
@@ -50,16 +50,16 @@ if ($Retry -eq $MaxRetries) {
 
 
 Write-Host ""
-Write-Host "=== Mini ERP — venv ===" -ForegroundColor Green
-if (-not (Test-Path "$ScriptDir\.venv\Scripts\activate")) {
+Write-Host "=== Mini ERP - venv ===" -ForegroundColor Green
+if (-not (Test-Path "$ScriptDir\venv\Scripts\activate")) {
     Write-Host "Virtual environment not found. Please run setup.ps1 first." -ForegroundColor Red
     exit 1
 }
-& "$ScriptDir\.venv\Scripts\activate"
+& "$ScriptDir\venv\Scripts\activate"
 Write-Host "Virtual environment activated." -ForegroundColor Green
 
 Write-Host ""
-Write-Host "=== Mini ERP — Starting Odoo ===" -ForegroundColor Green
-Write-Host "Using virtual environment: $ScriptDir\.venv" -ForegroundColor Green
+Write-Host "=== Mini ERP - Starting Odoo ===" -ForegroundColor Green
+Write-Host "Using virtual environment: $ScriptDir\venv" -ForegroundColor Green
 
-& "$ScriptDir\.venv\Scripts\python.exe" odoo/odoo-bin -c odoo.conf @args
+& "$ScriptDir\venv\Scripts\python.exe" odoo/odoo-bin -c odoo.conf @args

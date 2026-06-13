@@ -7,9 +7,10 @@
 }
 
 .text-gradient {
-    background: linear-gradient(45deg, #4f46e5, #0ea5e9);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #7047eb;
+    background: none;
+    -webkit-background-clip: initial;
+    -webkit-text-fill-color: initial;
 }
 
 .o_dashboard_card {
@@ -41,7 +42,6 @@
 
 /* Layout Wrapper */
 .o_dashboard_container {
-    display: flex;
     min-height: 80vh;
 }
 
@@ -224,10 +224,7 @@
 .o_kpi_subcard:hover:has(.text-primary) { border-color: rgba(37, 99, 235, 0.4) !important; background: rgba(37, 99, 235, 0.02); }
 .o_kpi_subcard:hover:has(.text-info) { border-color: rgba(13, 148, 136, 0.4) !important; background: rgba(13, 148, 136, 0.02); }
 .o_kpi_subcard:hover:has(.text-success) { border-color: rgba(22, 163, 74, 0.4) !important; background: rgba(22, 163, 74, 0.02); }
-<<<<<<< Updated upstream
 .o_kpi_subcard:hover:has(.text-danger) { border-color: rgba(220, 38, 38, 0.4) !important; background: rgba(220, 38, 38, 0.02); } */
-=======
-.o_kpi_subcard:hover:has(.text-danger) { border-color: rgba(220, 38, 38, 0.4) !important; background: rgba(220, 38, 38, 0.02); }
 
 /* Financial Dashboard Styles */
 .bg-light-green {
@@ -240,6 +237,11 @@
     background-color: rgba(99, 102, 241, 0.1) !important;
     color: #6366f1 !important;
 }
+
+/* Indigo color utilities */
+.text-indigo { color: #6366f1 !important; }
+.bg-indigo { background-color: #6366f1 !important; }
+
 .badge-light-indigo {
     background-color: rgba(99, 102, 241, 0.1);
     color: #6366f1;
@@ -382,4 +384,48 @@
     }
 }
 
->>>>>>> Stashed changes
+
+/* === SECTION VIEW WIDGET (kanban/table toggle) === */
+.o_section_views_container { margin-top: 8px; }
+.o_sv_section_header { padding-bottom: 8px; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 16px !important; }
+.o_sv_toggle .btn { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 6px !important; transition: all 0.2s ease; }
+.o_sv_toggle .btn i { font-size: 11px; }
+.btn-indigo { background-color: #6366f1 !important; border-color: #6366f1 !important; color: #fff !important; }
+.btn-indigo:hover { background-color: #4f46e5 !important; }
+.o_sv_loading, .o_sv_empty { padding: 32px 20px; text-align: center; color: #9ca3af; font-size: 14px; font-weight: 500; }
+.o_sv_loading .fa-spinner { color: #6366f1; }
+.o_sv_empty .fa-inbox { font-size: 24px; display: block; margin-bottom: 8px; color: #d1d5db; }
+.o_sv_kanban_grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(185px, 1fr)); gap: 14px; padding: 4px 2px 8px; }
+.o_sv_card { background: #ffffff; border: 1px solid rgba(0,0,0,0.06); border-radius: 12px; display: flex; flex-direction: column; cursor: pointer; overflow: hidden; transition: all 0.22s cubic-bezier(0.25,0.8,0.25,1); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+.o_sv_card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.12); }
+.o_sv_card_icon { padding: 16px 16px 8px; display: flex; align-items: center; }
+.o_sv_card_body { padding: 0 16px 8px; flex: 1; }
+.o_sv_card_title { font-size: 13px; font-weight: 700; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.o_sv_card_ref { font-size: 11px; margin-top: 2px; }
+.o_sv_card_footer { background: rgba(249,250,251,0.7); border-top: 1px solid rgba(0,0,0,0.04); padding: 8px 16px; font-size: 12px; }
+.o_sv_card_product  { border-top: 3px solid #6366f1; }
+.o_sv_card_sale     { border-top: 3px solid #10b981; }
+.o_sv_card_purchase { border-top: 3px solid #6366f1; }
+.o_sv_card_mfg      { border-top: 3px solid #0d9488; }
+.o_sv_card_inventory{ border-top: 3px solid #f59e0b; }
+.o_sv_card_danger   { border-top: 3px solid #ef4444 !important; background: #fff5f5 !important; }
+.o_sv_badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+.badge-state-draft      { background: rgba(99,102,241,0.12);  color: #4f46e5; }
+.badge-state-confirmed  { background: rgba(245,158,11,0.14);  color: #b45309; }
+.badge-state-partial    { background: rgba(59,130,246,0.12);  color: #1d4ed8; }
+.badge-state-done       { background: rgba(16,185,129,0.12);  color: #059669; }
+.badge-state-cancelled  { background: rgba(239,68,68,0.1);    color: #dc2626; }
+.badge-state-progress   { background: rgba(13,148,136,0.12);  color: #0d9488; }
+.o_sv_tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; background: rgba(0,0,0,0.06); color: #374151; }
+.o_sv_tag_danger  { background: rgba(239,68,68,0.1);   color: #dc2626; }
+.o_sv_tag_success { background: rgba(16,185,129,0.1);  color: #059669; }
+.o_sv_table_wrapper { overflow-x: auto; border-radius: 8px; border: 1px solid rgba(0,0,0,0.06); }
+.o_sv_table { margin-bottom: 0 !important; font-size: 13px; }
+.o_sv_table thead th { background: rgba(249,250,251,1); border-bottom: 2px solid rgba(0,0,0,0.07); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; padding: 10px 14px; white-space: nowrap; }
+.o_sv_table tbody tr.o_sv_row { cursor: pointer; transition: background 0.12s ease; }
+.o_sv_table tbody tr.o_sv_row:hover { background: rgba(99,102,241,0.04) !important; }
+.o_sv_table tbody td { vertical-align: middle; padding: 9px 14px; border-bottom: 1px solid rgba(0,0,0,0.04); color: #374151; }
+@media (max-width: 640px) {
+    .o_sv_kanban_grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 10px; }
+    .o_sv_toggle .btn { padding: 3px 8px; font-size: 11px; }
+}

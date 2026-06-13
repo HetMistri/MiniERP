@@ -16,7 +16,7 @@ Mini ERP System that digitally manages the complete business flow:
     'license': 'LGPL-3',
     'category': 'Manufacturing',
     'version': '1.0.0',
-    'depends': ['base'],
+    'depends': ['base', 'web'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
@@ -43,6 +43,8 @@ Mini ERP System that digitally manages the complete business flow:
             'mini_erp/static/src/css/dashboard.css',
             'mini_erp/static/src/js/financial_dashboard.js',
             'mini_erp/static/src/xml/financial_dashboard.xml',
+            'mini_erp/static/src/js/section_view_widget.js',
+            'mini_erp/static/src/xml/section_view_widget.xml',
         ],
     },
     'demo': [

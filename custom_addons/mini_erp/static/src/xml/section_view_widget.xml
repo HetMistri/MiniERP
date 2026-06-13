@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+<t t-name="mini_erp.SectionViewWidget" owl="1">
+    <div class="o_section_views_container">
+
+        <!-- ══════════════════════════════════
+             PRODUCTS SECTION
+             ══════════════════════════════════ -->
+        <div class="o_sv_section o_section_box mb-4" id="sv_products">
+            <div class="o_sv_section_header d-flex justify-content-between align-items-center mb-3">
+                <h3 class="section-title text-primary">
+                    <i class="fa fa-cube mr-2" title="Products"/>Products
+                </h3>
+                <div class="o_sv_toggle btn-group shadow-sm" role="group">
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isKanban('products') ? 'btn-primary' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('products','kanban')">
+                        <i class="fa fa-th-large mr-1"/>Kanban
+                    </button>
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isTable('products') ? 'btn-primary' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('products','table')">
+                        <i class="fa fa-list mr-1"/>Table
+                    </button>
+                </div>
+            </div>
+
+            <t t-if="isLoading('products')">
+                <div class="o_sv_loading"><i class="fa fa-spinner fa-spin mr-2"/>Loading products…</div>
+            </t>
+            <t t-elif="rows('products').length === 0">
+                <div class="o_sv_empty"><i class="fa fa-inbox mr-2"/>No products found.</div>
+            </t>
+
+            <!-- KANBAN VIEW -->
+            <t t-elif="isKanban('products')">
+                <div class="o_sv_kanban_grid">
+                    <t t-foreach="rows('products')" t-as="rec" t-key="rec.id">
+                        <div class="o_sv_card o_sv_card_product" t-on-click="() => this.openRecord('product.product', rec.id)">
+                            <div class="o_sv_card_icon">
+                                <i class="fa fa-cube fa-2x text-primary"/>
+                            </div>
+                            <div class="o_sv_card_body">
+                                <div class="o_sv_card_title" t-esc="rec.name"/>
+                                <div class="o_sv_card_ref text-muted small" t-esc="fmt(rec.reference)"/>
+                                <div class="o_sv_card_tags mt-2">
+                                    <span class="o_sv_tag" t-esc="fmt(rec.product_type)"/>
+                                </div>
+                            </div>
+                            <div class="o_sv_card_footer">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small">Price</span>
+                                    <span class="font-weight-bold text-success small" t-esc="fmtCurrency(rec.sale_price)"/>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <span class="text-muted small">In Stock</span>
+                                    <span t-att-class="'font-weight-bold small ' + (rec.free_to_use_qty > 0 ? 'text-success' : 'text-danger')"
+                                          t-esc="fmt(rec.free_to_use_qty)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- TABLE VIEW -->
+            <t t-elif="isTable('products')">
+                <div class="o_sv_table_wrapper">
+                    <table class="o_sv_table table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th><th>Reference</th><th>Type</th>
+                                <th>Sale Price</th><th>Cost</th><th>On Hand</th><th>Free Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="rows('products')" t-as="rec" t-key="rec.id">
+                                <tr class="o_sv_row" t-on-click="() => this.openRecord('product.product', rec.id)">
+                                    <td class="font-weight-bold" t-esc="rec.name"/>
+                                    <td class="text-muted" t-esc="fmt(rec.reference)"/>
+                                    <td><span class="o_sv_tag" t-esc="fmt(rec.product_type)"/></td>
+                                    <td class="text-success" t-esc="fmtCurrency(rec.sale_price)"/>
+                                    <td t-esc="fmtCurrency(rec.cost_price)"/>
+                                    <td t-esc="fmt(rec.on_hand_qty)"/>
+                                    <td t-att-class="rec.free_to_use_qty > 0 ? 'text-success' : 'text-danger'" t-esc="fmt(rec.free_to_use_qty)"/>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+
+        <!-- ══════════════════════════════════
+             SALES ORDERS SECTION
+             ══════════════════════════════════ -->
+        <div class="o_sv_section o_section_box mb-4" id="sv_sales">
+            <div class="o_sv_section_header d-flex justify-content-between align-items-center mb-3">
+                <h3 class="section-title text-success">
+                    <i class="fa fa-shopping-cart mr-2" title="Sales"/>Sales Orders
+                </h3>
+                <div class="o_sv_toggle btn-group shadow-sm" role="group">
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isKanban('sales') ? 'btn-success' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('sales','kanban')">
+                        <i class="fa fa-th-large mr-1"/>Kanban
+                    </button>
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isTable('sales') ? 'btn-success' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('sales','table')">
+                        <i class="fa fa-list mr-1"/>Table
+                    </button>
+                </div>
+            </div>
+
+            <t t-if="isLoading('sales')">
+                <div class="o_sv_loading"><i class="fa fa-spinner fa-spin mr-2"/>Loading sales orders…</div>
+            </t>
+            <t t-elif="rows('sales').length === 0">
+                <div class="o_sv_empty"><i class="fa fa-inbox mr-2"/>No sales orders found.</div>
+            </t>
+
+            <!-- KANBAN VIEW -->
+            <t t-elif="isKanban('sales')">
+                <div class="o_sv_kanban_grid">
+                    <t t-foreach="rows('sales')" t-as="rec" t-key="rec.id">
+                        <div class="o_sv_card o_sv_card_sale" t-on-click="() => this.openRecord('sale.order', rec.id)">
+                            <div class="o_sv_card_icon">
+                                <i class="fa fa-shopping-cart fa-2x text-success"/>
+                            </div>
+                            <div class="o_sv_card_body">
+                                <div class="o_sv_card_title" t-esc="rec.name"/>
+                                <div class="text-muted small" t-esc="m2oName(rec.partner_id)"/>
+                                <div class="mt-2">
+                                    <span t-att-class="'o_sv_badge ' + stateCss(rec.state)" t-esc="stateLabel(rec.state)"/>
+                                </div>
+                            </div>
+                            <div class="o_sv_card_footer">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small">Total</span>
+                                    <span class="font-weight-bold text-success small" t-esc="fmtCurrency(rec.total_amount)"/>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <span class="text-muted small">Date</span>
+                                    <span class="small" t-esc="fmtDate(rec.date_order)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- TABLE VIEW -->
+            <t t-elif="isTable('sales')">
+                <div class="o_sv_table_wrapper">
+                    <table class="o_sv_table table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Order</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="rows('sales')" t-as="rec" t-key="rec.id">
+                                <tr class="o_sv_row" t-on-click="() => this.openRecord('sale.order', rec.id)">
+                                    <td class="font-weight-bold" t-esc="rec.name"/>
+                                    <td t-esc="m2oName(rec.partner_id)"/>
+                                    <td t-esc="fmtDate(rec.date_order)"/>
+                                    <td class="text-success" t-esc="fmtCurrency(rec.total_amount)"/>
+                                    <td><span t-att-class="'o_sv_badge ' + stateCss(rec.state)" t-esc="stateLabel(rec.state)"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+
+        <!-- ══════════════════════════════════
+             PURCHASES SECTION
+             ══════════════════════════════════ -->
+        <div class="o_sv_section o_section_box mb-4" id="sv_purchases">
+            <div class="o_sv_section_header d-flex justify-content-between align-items-center mb-3">
+                <h3 class="section-title text-indigo">
+                    <i class="fa fa-credit-card mr-2" title="Purchases"/>Purchase Orders
+                </h3>
+                <div class="o_sv_toggle btn-group shadow-sm" role="group">
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isKanban('purchases') ? 'btn-indigo' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('purchases','kanban')">
+                        <i class="fa fa-th-large mr-1"/>Kanban
+                    </button>
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isTable('purchases') ? 'btn-indigo' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('purchases','table')">
+                        <i class="fa fa-list mr-1"/>Table
+                    </button>
+                </div>
+            </div>
+
+            <t t-if="isLoading('purchases')">
+                <div class="o_sv_loading"><i class="fa fa-spinner fa-spin mr-2"/>Loading purchase orders…</div>
+            </t>
+            <t t-elif="rows('purchases').length === 0">
+                <div class="o_sv_empty"><i class="fa fa-inbox mr-2"/>No purchase orders found.</div>
+            </t>
+
+            <!-- KANBAN VIEW -->
+            <t t-elif="isKanban('purchases')">
+                <div class="o_sv_kanban_grid">
+                    <t t-foreach="rows('purchases')" t-as="rec" t-key="rec.id">
+                        <div class="o_sv_card o_sv_card_purchase" t-on-click="() => this.openRecord('purchase.order', rec.id)">
+                            <div class="o_sv_card_icon">
+                                <i class="fa fa-credit-card fa-2x text-indigo"/>
+                            </div>
+                            <div class="o_sv_card_body">
+                                <div class="o_sv_card_title" t-esc="rec.name"/>
+                                <div class="text-muted small" t-esc="m2oName(rec.partner_id)"/>
+                                <div class="mt-2">
+                                    <span t-att-class="'o_sv_badge ' + stateCss(rec.state)" t-esc="stateLabel(rec.state)"/>
+                                </div>
+                            </div>
+                            <div class="o_sv_card_footer">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small">Total</span>
+                                    <span class="font-weight-bold text-indigo small" t-esc="fmtCurrency(rec.total_amount)"/>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <span class="text-muted small">Date</span>
+                                    <span class="small" t-esc="fmtDate(rec.date_order)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- TABLE VIEW -->
+            <t t-elif="isTable('purchases')">
+                <div class="o_sv_table_wrapper">
+                    <table class="o_sv_table table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Order</th><th>Vendor</th><th>Date</th><th>Amount</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="rows('purchases')" t-as="rec" t-key="rec.id">
+                                <tr class="o_sv_row" t-on-click="() => this.openRecord('purchase.order', rec.id)">
+                                    <td class="font-weight-bold" t-esc="rec.name"/>
+                                    <td t-esc="m2oName(rec.partner_id)"/>
+                                    <td t-esc="fmtDate(rec.date_order)"/>
+                                    <td class="text-indigo" t-esc="fmtCurrency(rec.total_amount)"/>
+                                    <td><span t-att-class="'o_sv_badge ' + stateCss(rec.state)" t-esc="stateLabel(rec.state)"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+
+        <!-- ══════════════════════════════════
+             MANUFACTURING SECTION
+             ══════════════════════════════════ -->
+        <div class="o_sv_section o_section_box mb-4" id="sv_manufacturing">
+            <div class="o_sv_section_header d-flex justify-content-between align-items-center mb-3">
+                <h3 class="section-title text-info">
+                    <i class="fa fa-wrench mr-2" title="Manufacturing"/>Manufacturing Orders
+                </h3>
+                <div class="o_sv_toggle btn-group shadow-sm" role="group">
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isKanban('manufacturing') ? 'btn-info' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('manufacturing','kanban')">
+                        <i class="fa fa-th-large mr-1"/>Kanban
+                    </button>
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isTable('manufacturing') ? 'btn-info' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('manufacturing','table')">
+                        <i class="fa fa-list mr-1"/>Table
+                    </button>
+                </div>
+            </div>
+
+            <t t-if="isLoading('manufacturing')">
+                <div class="o_sv_loading"><i class="fa fa-spinner fa-spin mr-2"/>Loading manufacturing orders…</div>
+            </t>
+            <t t-elif="rows('manufacturing').length === 0">
+                <div class="o_sv_empty"><i class="fa fa-inbox mr-2"/>No manufacturing orders found.</div>
+            </t>
+
+            <!-- KANBAN VIEW -->
+            <t t-elif="isKanban('manufacturing')">
+                <div class="o_sv_kanban_grid">
+                    <t t-foreach="rows('manufacturing')" t-as="rec" t-key="rec.id">
+                        <div class="o_sv_card o_sv_card_mfg" t-on-click="() => this.openRecord('mrp.production', rec.id)">
+                            <div class="o_sv_card_icon">
+                                <i class="fa fa-wrench fa-2x text-info"/>
+                            </div>
+                            <div class="o_sv_card_body">
+                                <div class="o_sv_card_title" t-esc="rec.name"/>
+                                <div class="text-muted small" t-esc="m2oName(rec.product_id)"/>
+                                <div class="mt-2">
+                                    <span t-att-class="'o_sv_badge ' + stateCss(rec.state)" t-esc="stateLabel(rec.state)"/>
+                                </div>
+                            </div>
+                            <div class="o_sv_card_footer">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small">Qty</span>
+                                    <span class="font-weight-bold small" t-esc="fmt(rec.product_qty)"/>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <span class="text-muted small">Planned</span>
+                                    <span class="small" t-esc="fmtDate(rec.date_planned_start)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- TABLE VIEW -->
+            <t t-elif="isTable('manufacturing')">
+                <div class="o_sv_table_wrapper">
+                    <table class="o_sv_table table table-hover">
+                        <thead>
+                            <tr>
+                                <th>MO #</th><th>Product</th><th>Qty</th><th>Planned Start</th><th>Assignee</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="rows('manufacturing')" t-as="rec" t-key="rec.id">
+                                <tr class="o_sv_row" t-on-click="() => this.openRecord('mrp.production', rec.id)">
+                                    <td class="font-weight-bold" t-esc="rec.name"/>
+                                    <td t-esc="m2oName(rec.product_id)"/>
+                                    <td t-esc="fmt(rec.product_qty)"/>
+                                    <td t-esc="fmtDate(rec.date_planned_start)"/>
+                                    <td t-esc="m2oName(rec.assignee_id)"/>
+                                    <td><span t-att-class="'o_sv_badge ' + stateCss(rec.state)" t-esc="stateLabel(rec.state)"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+
+        <!-- ══════════════════════════════════
+             INVENTORY SECTION
+             ══════════════════════════════════ -->
+        <div class="o_sv_section o_section_box mb-4" id="sv_inventory">
+            <div class="o_sv_section_header d-flex justify-content-between align-items-center mb-3">
+                <h3 class="section-title text-warning">
+                    <i class="fa fa-archive mr-2" title="Inventory"/>Inventory
+                </h3>
+                <div class="o_sv_toggle btn-group shadow-sm" role="group">
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isKanban('inventory') ? 'btn-warning' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('inventory','kanban')">
+                        <i class="fa fa-th-large mr-1"/>Kanban
+                    </button>
+                    <button type="button"
+                        t-att-class="'btn btn-sm ' + (isTable('inventory') ? 'btn-warning' : 'btn-outline-secondary')"
+                        t-on-click="() => this.setView('inventory','table')">
+                        <i class="fa fa-list mr-1"/>Table
+                    </button>
+                </div>
+            </div>
+
+            <t t-if="isLoading('inventory')">
+                <div class="o_sv_loading"><i class="fa fa-spinner fa-spin mr-2"/>Loading inventory…</div>
+            </t>
+            <t t-elif="rows('inventory').length === 0">
+                <div class="o_sv_empty"><i class="fa fa-inbox mr-2"/>No stockable products found.</div>
+            </t>
+
+            <!-- KANBAN VIEW -->
+            <t t-elif="isKanban('inventory')">
+                <div class="o_sv_kanban_grid">
+                    <t t-foreach="rows('inventory')" t-as="rec" t-key="rec.id">
+                        <div t-att-class="'o_sv_card o_sv_card_inventory' + (rec.free_to_use_qty <= 0 ? ' o_sv_card_danger' : '')"
+                             t-on-click="() => this.openRecord('product.product', rec.id)">
+                            <div class="o_sv_card_icon">
+                                <i t-att-class="'fa fa-2x ' + (rec.free_to_use_qty <= 0 ? 'fa-exclamation-triangle text-danger' : 'fa-archive text-warning')"/>
+                            </div>
+                            <div class="o_sv_card_body">
+                                <div class="o_sv_card_title" t-esc="rec.name"/>
+                                <div class="text-muted small" t-esc="fmt(rec.reference)"/>
+                                <div class="mt-2">
+                                    <span t-att-class="'o_sv_tag ' + (rec.free_to_use_qty <= 0 ? 'o_sv_tag_danger' : 'o_sv_tag_success')">
+                                        <t t-if="rec.free_to_use_qty &lt;= 0">Low Stock</t>
+                                        <t t-else="">In Stock</t>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_sv_card_footer">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted small">On Hand</span>
+                                    <span class="font-weight-bold small" t-esc="fmt(rec.on_hand_qty)"/>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <span class="text-muted small">Free</span>
+                                    <span t-att-class="'font-weight-bold small ' + (rec.free_to_use_qty > 0 ? 'text-success' : 'text-danger')"
+                                          t-esc="fmt(rec.free_to_use_qty)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- TABLE VIEW -->
+            <t t-elif="isTable('inventory')">
+                <div class="o_sv_table_wrapper">
+                    <table class="o_sv_table table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product</th><th>Reference</th><th>On Hand</th><th>Reserved</th><th>Free Stock</th><th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="rows('inventory')" t-as="rec" t-key="rec.id">
+                                <tr class="o_sv_row" t-on-click="() => this.openRecord('product.product', rec.id)">
+                                    <td class="font-weight-bold" t-esc="rec.name"/>
+                                    <td class="text-muted" t-esc="fmt(rec.reference)"/>
+                                    <td t-esc="fmt(rec.on_hand_qty)"/>
+                                    <td t-esc="fmt(rec.reserved_qty)"/>
+                                    <td t-att-class="rec.free_to_use_qty > 0 ? 'text-success' : 'text-danger font-weight-bold'" t-esc="fmt(rec.free_to_use_qty)"/>
+                                    <td>
+                                        <span t-att-class="'o_sv_tag ' + (rec.free_to_use_qty &lt;= 0 ? 'o_sv_tag_danger' : 'o_sv_tag_success')">
+                                            <t t-if="rec.free_to_use_qty &lt;= 0">Low Stock</t>
+                                            <t t-else="">OK</t>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+
+    </div>
+</t>
+
+</templates>
