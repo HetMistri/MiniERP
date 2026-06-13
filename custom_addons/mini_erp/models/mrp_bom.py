@@ -30,6 +30,11 @@ class MrpBom(models.Model):
     )
     active = fields.Boolean(default=True)
     notes = fields.Text(string='Notes')
+    component_ids = fields.One2many(
+        'mrp.bom.component',
+        'bom_id',
+        string='Components'
+    )
 
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'The BoM reference must be unique!'),
@@ -41,3 +46,35 @@ class MrpBom(models.Model):
             if not vals.get('name') or vals.get('name') == '/':
                 vals['name'] = self.env['ir.sequence'].next_by_code('mrp.bom') or '/'
         return super().create(vals_list)
+
+
+class MrpBomComponent(models.Model):
+    _name = 'mrp.bom.component'
+    _description = 'BoM Component'
+    _inherit = ['audit.mixin']
+    _order = 'id'
+
+    bom_id = fields.Many2one(
+        'mrp.bom',
+        string='Parent BoM',
+        required=True,
+        ondelete='cascade'
+    )
+    product_id = fields.Many2one(
+        'product.product',
+        string='Component Product',
+        required=True,
+        ondelete='restrict'
+    )
+    quantity = fields.Float(
+        string='Quantity',
+        default=1.0,
+        required=True
+    )
+    uom_id = fields.Many2one(
+        'product.uom',
+        string='Unit of Measure',
+        required=True,
+        ondelete='restrict'
+    )
+

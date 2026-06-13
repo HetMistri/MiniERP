@@ -5,4 +5,13 @@ access_product_category_all,product.category.all,model_product_category,base.gro
 access_product_product_all,product.product.all,model_product_product,base.group_user,1,1,1,1
 access_product_quantity_history_all,product.quantity.history.all,model_product_quantity_history,base.group_user,1,1,1,1
 access_mrp_bom_all,mrp.bom.all,model_mrp_bom,base.group_user,1,1,1,1
+access_mrp_bom_component_all,mrp.bom.component.all,model_mrp_bom_component,base.group_user,1,1,1,1
+access_mrp_work_center_all,mrp.work.center.all,model_mrp_work_center,base.group_user,1,1,1,1
+access_mrp_work_order_all,mrp.work.order.all,model_mrp_work_order,base.group_user,1,1,1,1
+access_mrp_production_all,mrp.production.all,model_mrp_production,base.group_user,1,1,1,1
+access_mrp_production_component_all,mrp.production.component.all,model_mrp_production_component,base.group_user,1,1,1,1
+access_purchase_order_all,purchase.order.all,model_purchase_order,base.group_user,1,1,1,1
+access_purchase_order_line_all,purchase.order.line.all,model_purchase_order_line,base.group_user,1,1,1,1
+access_sale_order_all,sale.order.all,model_sale_order,base.group_user,1,1,1,1
+access_sale_order_line_all,sale.order.line.all,model_sale_order_line,base.group_user,1,1,1,1
 

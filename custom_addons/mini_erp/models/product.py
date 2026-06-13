@@ -52,9 +52,9 @@ class ProductProduct(models.Model):
         ('service', 'Service'),
         ('consumable', 'Consumable'),
     ], string='Product Type', default='stockable', required=True)
-    on_hand_qty = fields.Float(string='On Hand Quantity', compute='_compute_quantities', readonly=True)
-    reserved_qty = fields.Float(string='Reserved Quantity', compute='_compute_quantities', readonly=True)
-    free_to_use_qty = fields.Float(string='Free to Use Quantity', compute='_compute_quantities', readonly=True)
+    on_hand_qty = fields.Float(string='On Hand Quantity', readonly=True)
+    reserved_qty = fields.Float(string='Reserved Quantity', readonly=True)
+    free_to_use_qty = fields.Float(string='Free to Use Quantity', readonly=True)
     active = fields.Boolean(default=True)
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True)
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
@@ -69,13 +69,6 @@ class ProductProduct(models.Model):
     bom_id = fields.Many2one('mrp.bom', string='Bill of Materials')
     min_stock_qty = fields.Float(string='Minimum Stock Quantity', default=0.0)
     lead_time_days = fields.Integer(string='Lead Time (Days)', default=1)
-
-    @api.depends('on_hand_qty', 'reserved_qty')
-    def _compute_quantities(self):
-        for record in self:
-            record.on_hand_qty = 0
-            record.reserved_qty = 0
-            record.free_to_use_qty = 0
 
     @api.model_create_multi
     def create(self, vals_list):

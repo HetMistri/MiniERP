@@ -24,3 +24,26 @@
 - **Odoo ORM / API:** Inherited `audit.mixin` on `mrp.bom` for automatic lifecycle logging, matching existing module audit logs pattern.
 - **Dynamic Views:** Used Odoo 18's python-style conditional logic in views (e.g. `invisible="not procure_on_demand"` and `required="procure_on_demand and procurement_type == 'purchase'"`).
 - **Sequences:** Utilized `self.env['ir.sequence'].next_by_code('mrp.bom')` to assign automatic sequence IDs on record creation.
+
+---
+
+## Phase D2 — Procurement Engine (Core Logic)
+
+### 1. Work Done
+- **Python Models Definitions for DB Mapping:** Created the following Odoo models in python corresponding to PG tables:
+  - `mrp.bom.component` (in `models/mrp_bom.py` with One2many link on `mrp.bom`)
+  - `mrp.work.center`, `mrp.work.order`, `mrp.production` (MO), and `mrp.production.component` (in `models/mrp.py`)
+  - `purchase.order`, `purchase.order.line` (in `models/purchase.py`)
+  - `sale.order`, `sale.order.line` (in `models/sale.py`)
+- **Product Model Field Updates:** Changed quantity fields (`on_hand_qty`, `reserved_qty`, and `free_to_use_qty`) in `product.product` to standard fields instead of computed fields, so that Odoo reads them directly from the database columns populated by PG triggers.
+- **Procurement Manager Implementation:** Created `models/procurement.py` with the abstract model `procurement.manager`.
+  - Implemented `evaluate(product, required_qty, origin)` to compute shortage against `free_to_use_qty`.
+  - Implemented `_create_purchase_order` to create Draft POs for configured vendors.
+  - Implemented `_create_manufacturing_order` to create Draft MOs, explode the BoM components into the MO component list, and recursively execute `evaluate` on any components that have MTO (`procure_on_demand`) enabled (cascading procurement).
+  - Added checks to prevent duplicate procurement if a draft document with the same product and origin already exists.
+- **Security Mapping:** Added access permissions in `security/ir.model.access.csv` for all the new models.
+
+### 2. Tech Stack & Odoo 18 Framework Logic
+- **Odoo ORM Database Mappings:** Mapped Odoo Python classes exactly to the pre-existing SQL tables and constraints (e.g. `name` fields automatically fetching sequence values, relations, constraints, and currency fields).
+- **Recursion & Search API:** Leveraged `self.env[model].search(...)` to prevent duplicate document generation and recursively trigger cascading procurement for sub-assembly components during BOM explosion.
+
