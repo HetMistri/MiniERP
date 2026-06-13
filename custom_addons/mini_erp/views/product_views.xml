@@ -82,6 +82,15 @@
             <field name="arch" type="xml">
                 <form string="Product">
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(action_open_audit_logs_product)d"
+                                    type="action"
+                                    string="Logs"
+                                    class="oe_stat_button"
+                                    icon="fa-list"
+                                    context="{'search_default_model_name': 'product.product'}"
+                                    groups="mini_erp.group_admin"/>
+                        </div>
                         <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
                         <group>
                             <group>

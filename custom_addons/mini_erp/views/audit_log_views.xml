@@ -59,17 +59,21 @@
             <field name="model">audit.log</field>
             <field name="arch" type="xml">
                 <search string="Search Audit Logs">
-                    <field name="action" filter_domain="[('action', 'ilike', self)]"/>
-                    <field name="model_name" filter_domain="[('model_name', 'ilike', self)]"/>
+                    <field name="model_name"/>
+                    <field name="action"/>
                     <field name="user_id"/>
-                    <field name="field_name"/>
                     <separator/>
-                    <filter name="filter_create" string="Created"
+                    <filter name="filter_create" string="Create"
                             domain="[('action', '=', 'create')]"/>
-                    <filter name="filter_write" string="Updated"
+                    <filter name="filter_write" string="Update"
                             domain="[('action', '=', 'write')]"/>
-                    <filter name="filter_unlink" string="Deleted"
+                    <filter name="filter_unlink" string="Delete"
                             domain="[('action', '=', 'unlink')]"/>
+                    <separator/>
+                    <filter name="filter_today" string="Today"
+                            domain="[('timestamp', '>=', (context_today().strftime('%%Y-%%m-%%d')))]"/>
+                    <filter name="filter_week" string="This Week"/>
+                    <filter name="filter_month" string="This Month"/>
                     <separator/>
                     <filter name="group_by_model" string="Model"
                             context="{'group_by': 'model_name'}"/>
@@ -77,9 +81,6 @@
                             context="{'group_by': 'action'}"/>
                     <filter name="group_by_user" string="User"
                             context="{'group_by': 'user_id'}"/>
-                    <separator/>
-                    <filter name="filter_today" string="Today"
-                            date="timestamp"/>
                 </search>
             </field>
         </record>
@@ -102,6 +103,19 @@
                   action="action_open_audit_logs"
                   sequence="99"
                   groups="mini_erp.group_admin"/>
+
+        <!-- Filtered audit log action for Product Logs button -->
+        <record id="action_open_audit_logs_product" model="ir.actions.act_window">
+            <field name="name">Audit Logs — Product</field>
+            <field name="res_model">audit.log</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="view_audit_log_tree"/>
+            <field name="search_view_id" ref="view_audit_log_search"/>
+            <field name="domain">[('model_name', '=', 'product.product')]</field>
+            <field name="help" type="html">
+                <p>Audit logs for Product changes.</p>
+            </field>
+        </record>
 
     </data>
 </odoo>

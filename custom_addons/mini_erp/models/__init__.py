@@ -9,3 +9,4 @@ from . import mrp
 from . import sale_order
 from . import purchase_order
 from . import procurement
+from . import users

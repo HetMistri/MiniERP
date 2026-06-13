@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_user_form_inherit" model="ir.ui.view">
+            <field name="name">res.users.form.inherit.mini_erp</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <field name="login" position="after">
+                    <field name="position" placeholder="e.g. Sales Manager"/>
+                </field>
+
+                <xpath expr="//notebook" position="inside">
+                    <page string="Module Access" groups="mini_erp.group_admin">
+                        <group string="Assigned Roles">
+                            <field name="groups_id"
+                                   widget="many2many_tags"
+                                   domain="[('category_id', '=', 'mini_erp.module_category_mini_erp')]"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group string="Role Permissions">
+                            <field name="groups_id"
+                                   widget="many2many_checkboxes"
+                                   domain="[('category_id', '=', 'mini_erp.module_category_mini_erp')]"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group string="Permission Guide">
+                            <p class="text-muted">
+                                <b>Admin</b> — Full access to all modules
+                            </p>
+                            <p class="text-muted">
+                                <b>Sales User</b> — Manage sales orders
+                            </p>
+                            <p class="text-muted">
+                                <b>Purchase User</b> — Manage purchase orders
+                            </p>
+                            <p class="text-muted">
+                                <b>Manufacturing User</b> — Handle manufacturing orders, work orders, BoMs
+                            </p>
+                            <p class="text-muted">
+                                <b>Inventory Manager</b> — Track stock movement, manage inventory
+                            </p>
+                            <p class="text-muted">
+                                <b>Business Owner</b> — Monitor business flow (read-only)
+                            </p>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
