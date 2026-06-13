@@ -81,7 +81,7 @@ class DashboardData(models.TransientModel):
     def _compute_mfg_kpis(self):
         mrp_production_model = self.env['mrp.production'] if 'mrp.production' in self.env else None
         for rec in self:
-            if mrp_production_model:
+            if mrp_production_model is not None:
                 domain = []
                 if rec.filter_my_manufacturing:
                     domain.append(('assignee_id', '=', self.env.user.id))
