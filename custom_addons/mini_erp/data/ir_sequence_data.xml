@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_sale_order" model="ir.sequence">
+            <field name="name">Sale Order</field>
+            <field name="code">sale.order</field>
+            <field name="prefix">SO</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_purchase_order" model="ir.sequence">
+            <field name="name">Purchase Order</field>
+            <field name="code">purchase.order</field>
+            <field name="prefix">PO</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_manufacturing_order" model="ir.sequence">
+            <field name="name">Manufacturing Order</field>
+            <field name="code">mrp.production</field>
+            <field name="prefix">MO</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <record id="seq_bill_of_material" model="ir.sequence">
+            <field name="name">Bill of Material</field>
+            <field name="code">mrp.bom</field>
+            <field name="prefix">BoM</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+        <record id="seq_product_reference" model="ir.sequence">
+            <field name="name">Product Reference</field>
+            <field name="code">product.product</field>
+            <field name="prefix">P</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>

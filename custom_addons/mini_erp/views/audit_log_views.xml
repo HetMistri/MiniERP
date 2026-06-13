@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_audit_log_tree" model="ir.ui.view">
+            <field name="name">audit.log.tree</field>
+            <field name="model">audit.log</field>
+            <field name="arch" type="xml">
+                <list string="Audit Logs" multi_edit="0">
+                    <field name="timestamp" widget="datetime"/>
+                    <field name="user_id" optional="show"/>
+                    <field name="action" optional="show" widget="badge"
+                           decoration-success="action == 'create'"
+                           decoration-warning="action == 'write'"
+                           decoration-danger="action == 'unlink'"/>
+                    <field name="model_name" optional="show"/>
+                    <field name="record_id" optional="hide"/>
+                    <field name="field_name" optional="show"/>
+                    <field name="old_value" optional="hide"/>
+                    <field name="new_value" optional="show"/>
+                    <field name="ip_address" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_audit_log_form" model="ir.ui.view">
+            <field name="name">audit.log.form</field>
+            <field name="model">audit.log</field>
+            <field name="arch" type="xml">
+                <form string="Audit Log Entry">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="timestamp" readonly="1"/>
+                                <field name="user_id" readonly="1"/>
+                                <field name="action" readonly="1" widget="badge"/>
+                                <field name="ip_address" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="model_name" readonly="1"/>
+                                <field name="record_id" readonly="1"/>
+                                <field name="field_name" readonly="1"/>
+                                <field name="res_id" readonly="1" widget="many2one"/>
+                            </group>
+                        </group>
+                        <group string="Change Details">
+                            <field name="old_value" readonly="1" nolabel="1"
+                                   colspan="2" class="mb16"/>
+                            <field name="new_value" readonly="1" nolabel="1"
+                                   colspan="2"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_audit_log_search" model="ir.ui.view">
+            <field name="name">audit.log.search</field>
+            <field name="model">audit.log</field>
+            <field name="arch" type="xml">
+                <search string="Search Audit Logs">
+                    <field name="action" filter_domain="[('action', 'ilike', self)]"/>
+                    <field name="model_name" filter_domain="[('model_name', 'ilike', self)]"/>
+                    <field name="user_id"/>
+                    <field name="field_name"/>
+                    <separator/>
+                    <filter name="filter_create" string="Created"
+                            domain="[('action', '=', 'create')]"/>
+                    <filter name="filter_write" string="Updated"
+                            domain="[('action', '=', 'write')]"/>
+                    <filter name="filter_unlink" string="Deleted"
+                            domain="[('action', '=', 'unlink')]"/>
+                    <separator/>
+                    <filter name="group_by_model" string="Model"
+                            context="{'group_by': 'model_name'}"/>
+                    <filter name="group_by_action" string="Action"
+                            context="{'group_by': 'action'}"/>
+                    <filter name="group_by_user" string="User"
+                            context="{'group_by': 'user_id'}"/>
+                    <separator/>
+                    <filter name="filter_today" string="Today"
+                            date="timestamp"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_open_audit_logs" model="ir.actions.act_window">
+            <field name="name">Audit Logs</field>
+            <field name="res_model">audit.log</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_audit_log_search"/>
+            <field name="help" type="html">
+                <p>Audit logs track every change made to critical records in the system.</p>
+                <p>Only administrators can view this data.</p>
+            </field>
+        </record>
+
+        <menuitem id="menu_audit_logs"
+                  name="Audit Logs"
+                  parent="base.menu_custom"
+                  action="action_open_audit_logs"
+                  sequence="99"
+                  groups="mini_erp.group_admin"/>
+
+    </data>
+</odoo>

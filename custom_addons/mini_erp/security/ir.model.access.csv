@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_audit_log_admin,audit.log.admin,model_audit_log,mini_erp.group_admin,1,1,1,1
+access_product_uom_all,product.uom.all,model_product_uom,base.group_user,1,1,1,1
+access_product_category_all,product.category.all,model_product_category,base.group_user,1,1,1,1
+access_product_product_all,product.product.all,model_product_product,base.group_user,1,1,1,1
+access_product_quantity_history_all,product.quantity.history.all,model_product_quantity_history,base.group_user,1,1,1,1

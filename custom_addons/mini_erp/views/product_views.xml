@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_product_uom_tree" model="ir.ui.view">
+            <field name="name">product.uom.tree</field>
+            <field name="model">product.uom</field>
+            <field name="arch" type="xml">
+                <list string="Units of Measure" multi_edit="0">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_product_uom_form" model="ir.ui.view">
+            <field name="name">product.uom.form</field>
+            <field name="model">product.uom</field>
+            <field name="arch" type="xml">
+                <form string="Unit of Measure">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_product_category_tree" model="ir.ui.view">
+            <field name="name">product.category.tree</field>
+            <field name="model">product.category</field>
+            <field name="arch" type="xml">
+                <list string="Product Categories" multi_edit="0">
+                    <field name="complete_name"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_product_category_form" model="ir.ui.view">
+            <field name="name">product.category.form</field>
+            <field name="model">product.category</field>
+            <field name="arch" type="xml">
+                <form string="Product Category">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="parent_id"/>
+                            <field name="description"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_product_product_tree" model="ir.ui.view">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <list string="Products" multi_edit="0" default_order="name">
+                    <field name="name"/>
+                    <field name="reference"/>
+                    <field name="category_id" optional="show"/>
+                    <field name="product_type" optional="show"/>
+                    <field name="sale_price" widget="monetary"/>
+                    <field name="cost_price" widget="monetary"/>
+                    <field name="uom_id" optional="show"/>
+                    <field name="on_hand_qty"/>
+                    <field name="free_to_use_qty"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_product_product_form" model="ir.ui.view">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <form string="Product">
+                    <sheet>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="reference" readonly="1"/>
+                                <field name="category_id"/>
+                                <field name="product_type"/>
+                                <field name="uom_id"/>
+                            </group>
+                            <group>
+                                <field name="sale_price" widget="monetary"/>
+                                <field name="cost_price" widget="monetary"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Inventory">
+                                <group>
+                                    <field name="on_hand_qty" readonly="1"/>
+                                    <field name="reserved_qty" readonly="1"/>
+                                    <field name="free_to_use_qty" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_product_product_search" model="ir.ui.view">
+            <field name="name">product.product.search</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="reference"/>
+                    <field name="category_id"/>
+                    <filter name="filter_stockable" string="Stockable"
+                            domain="[('product_type', '=', 'stockable')]"/>
+                    <filter name="filter_service" string="Service"
+                            domain="[('product_type', '=', 'service')]"/>
+                    <filter name="filter_consumable" string="Consumable"
+                            domain="[('product_type', '=', 'consumable')]"/>
+                    <separator/>
+                    <filter name="group_by_category" string="Category"
+                            context="{'group_by': 'category_id'}"/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

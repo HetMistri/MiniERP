@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="module_category_mini_erp" model="ir.module.category">
+            <field name="name">Mini ERP</field>
+            <field name="description">Mini ERP — From Demand to Delivery</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_admin" model="res.groups">
+            <field name="name">Admin</field>
+            <field name="category_id" ref="module_category_mini_erp"/>
+            <field name="comment">Full system access — manages all modules, users, audit logs</field>
+        </record>
+
+        <record id="group_sales_user" model="res.groups">
+            <field name="name">Sales User</field>
+            <field name="category_id" ref="module_category_mini_erp"/>
+            <field name="comment">Manage sales orders, view products</field>
+        </record>
+
+        <record id="group_purchase_user" model="res.groups">
+            <field name="name">Purchase User</field>
+            <field name="category_id" ref="module_category_mini_erp"/>
+            <field name="comment">Manage purchase orders, view products</field>
+        </record>
+
+        <record id="group_manufacturing_user" model="res.groups">
+            <field name="name">Manufacturing User</field>
+            <field name="category_id" ref="module_category_mini_erp"/>
+            <field name="comment">Handle manufacturing orders, work orders, BoMs</field>
+        </record>
+
+        <record id="group_inventory_manager" model="res.groups">
+            <field name="name">Inventory Manager</field>
+            <field name="category_id" ref="module_category_mini_erp"/>
+            <field name="comment">Track stock movement, manage inventory</field>
+        </record>
+
+        <record id="group_business_owner" model="res.groups">
+            <field name="name">Business Owner</field>
+            <field name="category_id" ref="module_category_mini_erp"/>
+            <field name="comment">Monitor business flow — read-only dashboard, products, and reports</field>
+        </record>
+    </data>
+</odoo>
