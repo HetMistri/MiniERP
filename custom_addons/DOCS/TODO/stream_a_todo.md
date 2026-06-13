@@ -23,7 +23,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A1b — User Management (Admin CRUD + Per-Module Access Matrix) ⬜
+### Phase A1b — User Management (Admin CRUD + Per-Module Access Matrix) ⚠️
 
 > SVG Mockup shows a **System Administrator Dashboard** with user management where Admin manages:
 > - User list (Mahesh Gupta, Nisarg Verma, Dinesh Patel, Sweta Kediva, Trisha K.)
@@ -31,18 +31,16 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 > - Per-module CRUD matrix (Create/View/Edit/Delete for Sales, Purchase, Manufacturing, Product)
 > - Email ID read-only (matches signup), Position editable only by Admin
 
-- [ ] Create `res.users` extension (inherit) or standalone user management view:
-  - `mobile` (Char)
-  - `photo` (Binary — image)
-  - `position` (Char) — editable only by Admin
-- [ ] Create Admin-only user list view with search
-- [ ] Create Admin-only user form view (Name, Address, Position, Email read-only, Mobile, Photo)
-- [ ] Create per-module access matrix on user form:
-  - Sales: Create/View/Edit/Delete checkboxes (maps to `group_sales_user` + finer controls)
-  - Purchase: Create/View/Edit/Delete checkboxes
-  - Manufacturing: Create/View/Edit/Delete checkboxes
-  - Product: Create/View/Edit/Delete checkboxes
-- [ ] Menu: `Settings / Users` (Admin only)
+- [x] Extend `res.users` with `position` (Char) field — editable by all, but only Admin can manage in Module Access tab
+- [ ] Add `mobile` (Char) to `res.users` — inherits from `res.partner`; may need explicit form field insertion
+- [ ] Add `photo` (Binary image) to `res.users`
+- [x] Create inherited user form view (`base.view_users_form` inheritage) with Module Access page
+- [x] Add per-module access matrix on user form via Module Access page:
+  - `many2many_tags` widget showing assigned roles
+  - `many2many_checkboxes` widget for role permissions
+  - Permission guide text for each role
+- [-] Menu: Uses standard Settings / Users menu (no separate admin-only user list created)
+- [ ] Admin-only user list view with search (if custom list needed beyond Odoo's standard)
 
 ---
 
@@ -62,6 +60,8 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 > - [ ] Show date range context: e.g. "01 May 2026 - 26 May 2026"
 > - [ ] Show "All time logs" summary section
 
+> **Current search view** has basic filter buttons (Create/Update/Delete), Today/This Week/This Month date filters, and group by Model/Action/User. Does not match SVG mockup's KPI-centric layout.
+
 ---
 
 ### Phase A3 — Product Master Model ✅
@@ -78,7 +78,7 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 
 ---
 
-### Phase A4 — Product Views, Menus & Access ⚠️
+### Phase A4 — Product Views, Menus & Access ✅
 
 - [x] Create tree view for `product.product` with all key fields
 - [x] Create form view with notebook:
@@ -91,8 +91,8 @@ Module scaffolding, security model, user/group management with per-module CRUD, 
 - [x] Assign menu access by group (internal users via `base.group_user`)
 - [x] Create demo data: 5 products, 4 UoMs, 4 categories
 
-> **SVG Mockup enhancements needed (product form):**
-> - [ ] Add **"Logs"** button/link on product form header that opens audit logs filtered to Product module
+> **SVG Mockup enhancements:**
+> - [x] Add **"Logs"** button on product form header that opens audit logs filtered to Product module (Admin only)
 > - [ ] Add smart buttons on product form: Manufacturing (n), Sales (n), Purchase (n) — deferred until Streams B/C exist
 
 > **Inventory Dashboard** deferred to Phase D (dashboard engine).
