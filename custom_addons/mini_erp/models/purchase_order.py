@@ -16,7 +16,7 @@ class PurchaseOrder(models.Model):
         ('partially_received', 'Partially Received'),
         ('fully_received', 'Fully Received'),
         ('cancelled', 'Cancelled'),
-    ], string='Status', default='draft', required=True, copy=False, tracking=True)
+    ], string='Status', default='draft', required=True, copy=False)
     order_line_ids = fields.One2many('purchase.order.line', 'order_id', string='Order Lines', copy=True)
     date_order = fields.Datetime(string='Order Date', required=True, default=fields.Datetime.now)
     total_amount = fields.Monetary(string='Total Amount', compute='_compute_total_amount', store=True, currency_field='currency_id')

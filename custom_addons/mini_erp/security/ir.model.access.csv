@@ -4,7 +4,6 @@ access_product_uom_all,product.uom.all,model_product_uom,base.group_user,1,1,1,1
 access_product_category_all,product.category.all,model_product_category,base.group_user,1,1,1,1
 access_product_product_all,product.product.all,model_product_product,base.group_user,1,1,1,1
 access_product_quantity_history_all,product.quantity.history.all,model_product_quantity_history,base.group_user,1,1,1,1
-access_mrp_bom_all,mrp.bom.all,model_mrp_bom,base.group_user,1,1,1,1
 access_mrp_work_center_admin,mrp.work.center.admin,model_mrp_work_center,mini_erp.group_admin,1,1,1,1
 access_mrp_work_center_mfg,mrp.work.center.mfg,model_mrp_work_center,mini_erp.group_manufacturing_user,1,1,1,1
 access_mrp_work_center_inv,mrp.work.center.inv,model_mrp_work_center,mini_erp.group_inventory_manager,1,0,0,0

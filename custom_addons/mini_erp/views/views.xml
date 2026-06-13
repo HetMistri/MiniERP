@@ -25,6 +25,12 @@
             </field>
         </record>
 
+        <record id="action_product_uom" model="ir.actions.act_window">
+            <field name="name">Units of Measure</field>
+            <field name="res_model">product.uom</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
         <!-- Menu Hierarchy -->
         <menuitem id="menu_mini_erp_root"
                   name="Mini ERP"
@@ -46,5 +52,11 @@
                   parent="menu_products_parent"
                   action="action_product_category"
                   sequence="20"/>
+
+        <menuitem id="menu_product_uom"
+                  name="Units of Measure"
+                  parent="menu_products_parent"
+                  action="action_product_uom"
+                  sequence="30"/>
     </data>
 </odoo>

@@ -16,7 +16,7 @@ class SaleOrder(models.Model):
         ('partially_delivered', 'Partially Delivered'),
         ('fully_delivered', 'Fully Delivered'),
         ('cancelled', 'Cancelled'),
-    ], string='Status', default='draft', required=True, copy=False, tracking=True)
+    ], string='Status', default='draft', required=True, copy=False)
     order_line_ids = fields.One2many('sale.order.line', 'order_id', string='Order Lines', copy=True)
     date_order = fields.Datetime(string='Order Date', required=True, default=fields.Datetime.now)
     total_amount = fields.Monetary(string='Total Amount', compute='_compute_total_amount', store=True, currency_field='currency_id')
@@ -109,8 +109,14 @@ class SaleOrder(models.Model):
             order.write({'state': 'cancelled'})
 
     def _trigger_procurement_evaluation(self):
-        # Hook for procurement evaluation (Stream D integration)
-        pass
+        """Trigger procurement engine for each confirmed sale order line."""
+        for line in self.order_line_ids:
+            if line.product_id.procure_on_demand:
+                self.env['procurement.manager'].evaluate(
+                    line.product_id.id,
+                    line.quantity,
+                    self.name
+                )
 
     # View Actions
     def action_view_purchase_orders(self):

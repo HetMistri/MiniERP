@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from . import models
 from . import audit_log
 from . import product
 from . import partner
-from . import mrp_bom
 from . import stock
 from . import mrp
 from . import sale_order
 from . import purchase_order
+from . import procurement

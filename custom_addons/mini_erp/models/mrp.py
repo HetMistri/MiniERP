@@ -1,8 +1,6 @@
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
-
-# pyrefly: ignore [missing-import]
 from odoo.exceptions import ValidationError
-
 
 class MrpWorkCenter(models.Model):
     _name = 'mrp.work.center'
@@ -88,7 +86,7 @@ class MrpBomComponent(models.Model):
     bom_id = fields.Many2one('mrp.bom', string='Parent BoM', ondelete='cascade', required=True)
     product_id = fields.Many2one('product.product', string='Component Product', required=True, ondelete='restrict')
     quantity = fields.Float(string='Quantity Needed', default=1.0, required=True)
-    uom_id = fields.Many2one('product.uom', string='Unit of Measure', related='product_id.uom_id', readonly=True)
+    uom_id = fields.Many2one('product.uom', string='Unit of Measure', related='product_id.uom_id', readonly=True, store=True)
 
     @api.constrains('quantity')
     def _check_quantity(self):
@@ -198,7 +196,6 @@ class MrpProduction(models.Model):
     def _reserve_components(self):
         for order in self:
             for comp in order.component_ids:
-                # Calculate what can be reserved based on free_to_use_qty of the product.
                 free_qty = comp.product_id.free_to_use_qty
                 needed = comp.quantity_needed
                 reserved = min(needed, max(0.0, free_qty))
@@ -212,7 +209,6 @@ class MrpProduction(models.Model):
                 'state': 'progress',
                 'date_start': fields.Datetime.now(),
             })
-            # Also update pending work orders to ready/progress if sequence demands
             for wo in order.work_order_ids:
                 if wo.state == 'pending':
                     wo.write({'state': 'ready'})
@@ -222,17 +218,13 @@ class MrpProduction(models.Model):
         for order in self:
             if order.state != 'progress':
                 continue
-            
-            # Validate all work orders are Done
             if any(wo.state != 'done' for wo in order.work_order_ids):
                 raise ValidationError(_("All work orders must be completed ('Done') before finishing the production order."))
 
-            # 1. Backflush component consumption
             for comp in order.component_ids:
                 if comp.quantity_consumed <= 0:
                     comp.write({'quantity_consumed': comp.quantity_needed})
 
-            # 2. Log component consumption in stock ledger
             for comp in order.component_ids:
                 self.env['stock.ledger']._update_stock(
                     comp.product_id.id,
@@ -241,7 +233,6 @@ class MrpProduction(models.Model):
                     'manufacture_out'
                 )
 
-            # 3. Log finished product receipt in stock ledger
             self.env['stock.ledger']._update_stock(
                 order.product_id.id,
                 order.product_qty,
@@ -249,11 +240,9 @@ class MrpProduction(models.Model):
                 'manufacture_in'
             )
 
-            # 4. Release reservations
             for comp in order.component_ids:
                 comp.write({'quantity_reserved': 0.0})
 
-            # 5. Transition to Done
             order.write({
                 'state': 'done',
                 'date_finished': fields.Datetime.now(),
@@ -264,11 +253,8 @@ class MrpProduction(models.Model):
         for order in self:
             if order.state not in ('draft', 'confirmed'):
                 raise ValidationError(_("You can only cancel manufacturing orders in 'Draft' or 'Confirmed' status."))
-            
-            # Release reservations
             for comp in order.component_ids:
                 comp.write({'quantity_reserved': 0.0})
-
             order.write({'state': 'cancel'})
         return True
 
@@ -289,7 +275,7 @@ class MrpProductionComponent(models.Model):
     quantity_needed = fields.Float(string='Quantity Needed', default=1.0, required=True)
     quantity_consumed = fields.Float(string='Quantity Consumed', default=0.0)
     quantity_reserved = fields.Float(string='Quantity Reserved', default=0.0)
-    uom_id = fields.Many2one('product.uom', string='Unit of Measure', related='product_id.uom_id', readonly=True)
+    uom_id = fields.Many2one('product.uom', string='Unit of Measure', related='product_id.uom_id', readonly=True, store=True)
 
 
 class MrpWorkOrder(models.Model):

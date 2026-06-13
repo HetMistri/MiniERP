@@ -114,7 +114,6 @@ class ProductProduct(models.Model):
             record.on_hand_qty = on_hand_map.get(record.id, 0.0)
             record.reserved_qty = reserved_mrp_map.get(record.id, 0.0) + reserved_so_map.get(record.id, 0.0)
             record.free_to_use_qty = record.on_hand_qty - record.reserved_qty
-
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
