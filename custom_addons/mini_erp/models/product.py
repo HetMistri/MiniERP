@@ -59,6 +59,17 @@ class ProductProduct(models.Model):
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True)
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company)
 
+    # Procurement settings (Phase D)
+    procure_on_demand = fields.Boolean(string='Procure on Demand', default=False)
+    procurement_type = fields.Selection([
+        ('manufacture', 'Manufacture'),
+        ('purchase', 'Purchase'),
+    ], string='Procurement Type')
+    vendor_id = fields.Many2one('res.partner', string='Vendor', domain=[('is_vendor', '=', True)])
+    bom_id = fields.Many2one('mrp.bom', string='Bill of Materials')
+    min_stock_qty = fields.Float(string='Minimum Stock Quantity', default=0.0)
+    lead_time_days = fields.Integer(string='Lead Time (Days)', default=1)
+
     @api.depends('on_hand_qty', 'reserved_qty')
     def _compute_quantities(self):
         for record in self:

@@ -106,6 +106,26 @@
                                     <field name="free_to_use_qty" readonly="1"/>
                                 </group>
                             </page>
+                            <page string="Procurement Settings">
+                                <group>
+                                    <group string="Configuration">
+                                        <field name="procure_on_demand"/>
+                                        <field name="procurement_type" invisible="not procure_on_demand"/>
+                                    </group>
+                                    <group string="Stock Parameters">
+                                        <field name="min_stock_qty"/>
+                                        <field name="lead_time_days"/>
+                                    </group>
+                                </group>
+                                <group invisible="not procure_on_demand">
+                                    <group string="Purchase Details" invisible="procurement_type != 'purchase'">
+                                        <field name="vendor_id" required="procure_on_demand and procurement_type == 'purchase'"/>
+                                    </group>
+                                    <group string="Manufacturing Details" invisible="procurement_type != 'manufacture'">
+                                        <field name="bom_id" required="procure_on_demand and procurement_type == 'manufacture'"/>
+                                    </group>
+                                </group>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
