@@ -84,7 +84,7 @@
         <record id="action_stock_ledger" model="ir.actions.act_window">
             <field name="name">Stock Ledger</field>
             <field name="res_model">stock.ledger</field>
-            <field name="view_mode">kanban,list</field>
+            <field name="view_mode">list,kanban</field>
             <field name="search_view_id" ref="view_stock_ledger_search"/>
             <field name="help" type="html">
                 <p>
