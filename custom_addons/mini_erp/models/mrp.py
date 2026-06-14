@@ -32,10 +32,11 @@ class MrpWorkCenter(models.Model):
                 raise ValidationError(_("Cost per hour cannot be negative."))
 
     def unlink(self):
-        for wc in self:
-            operations = self.env['mrp.bom.operation'].search([('work_center_id', '=', wc.id)])
-            if operations:
-                raise ValidationError(_("You cannot delete a Work Center that is referenced in Bill of Materials operations."))
+        if not self.env.context.get('force_delete'):
+            for wc in self:
+                operations = self.env['mrp.bom.operation'].search([('work_center_id', '=', wc.id)])
+                if operations:
+                    raise ValidationError(_("You cannot delete a Work Center that is referenced in Bill of Materials operations."))
         return super().unlink()
 
 
@@ -60,10 +61,11 @@ class MrpBom(models.Model):
                 raise ValidationError(_("The product quantity on the Bill of Materials must be greater than zero."))
 
     def unlink(self):
-        for bom in self:
-            productions = self.env['mrp.production'].search([('bom_id', '=', bom.id)])
-            if productions:
-                raise ValidationError(_("You cannot delete a Bill of Materials that is used in Manufacturing Orders."))
+        if not self.env.context.get('force_delete'):
+            for bom in self:
+                productions = self.env['mrp.production'].search([('bom_id', '=', bom.id)])
+                if productions:
+                    raise ValidationError(_("You cannot delete a Bill of Materials that is used in Manufacturing Orders."))
         return super().unlink()
 
     @api.model_create_multi
@@ -324,9 +326,10 @@ class MrpProduction(models.Model):
         return True
 
     def unlink(self):
-        for order in self:
-            if order.state not in ('draft', 'cancel'):
-                raise ValidationError(_("You can only delete manufacturing orders in 'Draft' or 'Cancelled' status."))
+        if not self.env.context.get('force_delete'):
+            for order in self:
+                if order.state not in ('draft', 'cancel'):
+                    raise ValidationError(_("You can only delete manufacturing orders in 'Draft' or 'Cancelled' status."))
         return super().unlink()
 
     def action_produce(self):

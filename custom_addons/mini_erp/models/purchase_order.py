@@ -56,9 +56,10 @@ class PurchaseOrder(models.Model):
         return super().create(vals_list)
 
     def unlink(self):
-        for order in self:
-            if order.state != 'draft':
-                raise UserError("You can only delete purchase orders in draft state.")
+        if not self.env.context.get('force_delete'):
+            for order in self:
+                if order.state != 'draft':
+                    raise UserError("You can only delete purchase orders in draft state.")
         return super().unlink()
 
     def action_confirm(self):

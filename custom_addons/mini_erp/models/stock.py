@@ -29,7 +29,7 @@ class StockLedger(models.Model):
         return super().write(vals)
 
     def unlink(self):
-        if not self.env.context.get('install_mode') and not self.env.context.get('test_enable'):
+        if not self.env.context.get('install_mode') and not self.env.context.get('test_enable') and not self.env.context.get('force_delete'):
             raise UserError("Stock ledger entries are immutable and cannot be deleted.")
         return super().unlink()
 
