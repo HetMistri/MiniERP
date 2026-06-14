@@ -13,5 +13,4 @@ from . import users
 from . import dashboard
 from . import company
 from . import financial
-from ..tools import demo_generator
 
