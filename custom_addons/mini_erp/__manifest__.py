@@ -47,12 +47,6 @@ Mini ERP System that digitally manages the complete business flow:
             'mini_erp/static/src/xml/section_view_widget.xml',
         ],
     },
-    'demo': [
-        'demo/demo.xml',
-        'demo/mrp_demo.xml',
-        'demo/demo_stock.xml',
-        'demo/financial_demo.xml',
-    ],
     'installable': True,
     'application': True,
     'auto_install': False,
