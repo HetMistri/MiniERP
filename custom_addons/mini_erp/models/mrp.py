@@ -213,7 +213,22 @@ class MrpProduction(models.Model):
 
             # 4. Reserve components
             order._reserve_components()
+
+            # 5. Trigger procurement for unreservable components with procure_on_demand
+            order._trigger_component_procurement()
         return True
+
+    def _trigger_component_procurement(self):
+        for order in self:
+            for comp in order.component_ids:
+                shortage = comp.quantity_needed - comp.quantity_reserved
+                if shortage > 0 and comp.product_id.procure_on_demand:
+                    origin = f"MO {order.name} — {comp.product_id.name}"
+                    self.env['procurement.manager'].evaluate(
+                        comp.product_id.id,
+                        shortage,
+                        origin,
+                    )
 
     def _reserve_components(self):
         for order in self:

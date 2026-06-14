@@ -179,5 +179,55 @@
         <function model="mrp.production" name="action_confirm" eval="[[ref('mo_completed_1')]]"/>
         <function model="mrp.production" name="action_produce" eval="[[ref('mo_completed_1')]]"/>
 
+        <!-- ══════════════════════════════════════════════════
+             PROCUREMENT CONFIGURATION — Enable auto-procurement
+             ══════════════════════════════════════════════════ -->
+
+        <!-- Raw Materials: purchase from vendors -->
+        <record id="product_wooden_legs" model="product.product">
+            <field name="procure_on_demand" eval="True"/>
+            <field name="procurement_type">purchase</field>
+            <field name="vendor_id" ref="partner_plastofact_in"/>
+            <field name="lead_time_days">3</field>
+            <field name="min_stock_qty">100.0</field>
+        </record>
+
+        <record id="product_wooden_top" model="product.product">
+            <field name="procure_on_demand" eval="True"/>
+            <field name="procurement_type">purchase</field>
+            <field name="vendor_id" ref="partner_plastofact_in"/>
+            <field name="lead_time_days">5</field>
+            <field name="min_stock_qty">50.0</field>
+        </record>
+
+        <record id="product_screws" model="product.product">
+            <field name="procure_on_demand" eval="True"/>
+            <field name="procurement_type">purchase</field>
+            <field name="vendor_id" ref="partner_orm_metals"/>
+            <field name="lead_time_days">2</field>
+            <field name="min_stock_qty">500.0</field>
+        </record>
+
+        <record id="product_chair_base" model="product.product">
+            <field name="procure_on_demand" eval="True"/>
+            <field name="procurement_type">purchase</field>
+            <field name="vendor_id" ref="partner_plastofact_in"/>
+            <field name="lead_time_days">4</field>
+        </record>
+
+        <record id="product_wheels" model="product.product">
+            <field name="procure_on_demand" eval="True"/>
+            <field name="procurement_type">purchase</field>
+            <field name="vendor_id" ref="partner_plastofact_in"/>
+            <field name="lead_time_days">3</field>
+        </record>
+
+        <!-- Dining Table: manufacture (same BoM structure as Wooden Table) -->
+        <record id="product_dining_table" model="product.product">
+            <field name="procure_on_demand" eval="True"/>
+            <field name="procurement_type">manufacture</field>
+            <field name="bom_id" ref="bom_wooden_table"/>
+        </record>
+
     </data>
 </odoo>

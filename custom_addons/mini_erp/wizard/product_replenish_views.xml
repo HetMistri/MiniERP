@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
         <record id="view_product_replenish_wizard_form" model="ir.ui.view">
             <field name="name">product.replenish.wizard.form</field>
             <field name="model">product.replenish.wizard</field>
             <field name="arch" type="xml">
                 <form string="Replenish Product">
                     <group>
-                        <field name="product_id" readonly="1"/>
+                        <field name="product_id"/>
                         <field name="quantity"/>
+                        <field name="replenish_type" widget="radio"/>
                     </group>
                     <footer>
                         <button name="action_replenish" string="Confirm" type="object" class="btn-primary"/>
@@ -24,5 +26,13 @@
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>
+
+        <menuitem id="menu_product_replenish"
+                  name="Replenish Stock"
+                  parent="menu_products_parent"
+                  action="action_product_replenish_wizard"
+                  sequence="40"
+                  groups="base.group_user"/>
+
     </data>
 </odoo>
