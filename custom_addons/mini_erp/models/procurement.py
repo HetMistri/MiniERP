@@ -51,9 +51,11 @@ class ProcurementManager(models.AbstractModel):
             return self._create_manufacturing_order(product, shortage, origin, visited=visited)
 
         raise UserError(
-            f"Unsupported procurement type "
-            f"'{product.procurement_type}' "
-            f"for product '{product.name}'."
+            f"Cannot procure product '{product.name}': "
+            f"Procurement Type is set to '{product.procurement_type}' "
+            f"(expected 'purchase' or 'manufacture'). "
+            f"Go to the product form's Procurement Settings tab "
+            f"and configure a valid Procurement Type."
         )
 
     @api.model
@@ -109,7 +111,9 @@ class ProcurementManager(models.AbstractModel):
         if not product.vendor_id:
             raise UserError(
                 f"Cannot create Purchase Order for "
-                f"{product.name}: no vendor configured."
+                f"'{product.name}': no vendor configured. "
+                f"Go to the product form, open Procurement Settings, "
+                f"and set a Vendor."
             )
 
         so_name = origin.split(' — ')[0] if ' — ' in origin else origin
@@ -157,7 +161,9 @@ class ProcurementManager(models.AbstractModel):
         if not product.bom_id:
             raise UserError(
                 f"Cannot create Manufacturing Order for "
-                f"{product.name}: no Bill of Materials (BoM) configured."
+                f"'{product.name}': no Bill of Materials (BoM) configured. "
+                f"Go to the product form, open Procurement Settings, "
+                f"and assign a BoM."
             )
 
         bom = product.bom_id
@@ -236,6 +242,10 @@ class ProcurementManager(models.AbstractModel):
             )
 
         raise UserError(
-            f"Please select a valid replenishment route "
-            f"for product '{product.display_name}'."
+            f"Cannot replenish product '{product.name}': "
+            f"no valid replenishment route available. "
+            f"Configure the product with a Procurement Type "
+            f"('Purchase' or 'Manufacture') and ensure the "
+            f"required dependencies (Vendor for Purchase, "
+            f"BoM for Manufacture) are set."
         )
