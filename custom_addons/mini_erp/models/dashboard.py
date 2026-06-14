@@ -8,6 +8,9 @@ class DashboardData(models.TransientModel):
     _name = 'dashboard.data'
     _description = 'Dashboard Data'
 
+    def name_get(self):
+        return [(rec.id, 'Dashboard') for rec in self]
+
     # Filter Toggles
     filter_my_sales = fields.Boolean(string="My Sales Only", default=False)
     filter_my_purchases = fields.Boolean(string="My Purchases Only", default=False)
