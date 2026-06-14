@@ -7,10 +7,10 @@
 }
 
 .text-gradient {
-    color: #7047eb;
-    background: none;
-    -webkit-background-clip: initial;
-    -webkit-text-fill-color: initial;
+    color: #71639E !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
 }
 
 .o_dashboard_card {
@@ -71,9 +71,10 @@
     font-size: 20px;
     font-weight: 700;
     margin-left: 12px;
-    background: linear-gradient(45deg, #4f46e5, #0ea5e9);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #71639E !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
 }
 
 .o_sidebar_menu {
