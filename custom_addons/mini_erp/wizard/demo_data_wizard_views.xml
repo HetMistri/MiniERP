@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_demo_data_wizard_form" model="ir.ui.view">
+        <field name="name">demo.data.wizard.form</field>
+        <field name="model">demo.data.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Demo Data">
+                <group col="4" string="Entity Counts">
+                    <field name="vendor_count" />
+                    <field name="customer_count" />
+                    <field name="raw_material_count" />
+                    <field name="component_count" />
+                    <field name="finished_good_count" />
+                    <field name="bom_count" />
+                    <field name="purchase_order_count" />
+                    <field name="mo_count" />
+                    <field name="sales_order_count" />
+                </group>
+                <group col="2">
+                    <field name="confirm_ratio" widget="percentpie" />
+                </group>
+                <footer>
+                    <button name="action_generate" string="Generate" type="object" class="btn-primary" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_demo_data_wizard_result_form" model="ir.ui.view">
+        <field name="name">demo.data.wizard.result.form</field>
+        <field name="model">demo.data.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Demo Data Generated">
+                <field name="result" nolabel="1" />
+                <footer>
+                    <button string="Close" class="btn-primary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_demo_data_wizard" model="ir.actions.act_window">
+        <field name="name">Generate Demo Data</field>
+        <field name="res_model">demo.data.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_demo_data"
+              name="Generate Demo Data"
+              parent="menu_mini_erp_root"
+              action="action_demo_data_wizard"
+              sequence="99" />
+</odoo>
