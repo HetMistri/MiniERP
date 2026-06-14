@@ -50,6 +50,7 @@ Mini ERP System that digitally manages the complete business flow:
     'demo': [
         'demo/demo.xml',
         'demo/mrp_demo.xml',
+        'demo/demo_stock.xml',
         'demo/financial_demo.xml',
     ],
     'installable': True,

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ══════════════════════════════════════════════════
+             INITIAL STOCK — All products start with inventory
+             ══════════════════════════════════════════════════ -->
+
+        <!-- Raw Materials -->
+        <record id="stock_wooden_legs" model="stock.ledger">
+            <field name="product_id" ref="product_wooden_legs"/>
+            <field name="reference">INIT-STOCK</field>
+            <field name="transaction_type">initial</field>
+            <field name="quantity">500.0</field>
+            <field name="balance_after">500.0</field>
+        </record>
+
+        <record id="stock_wooden_top" model="stock.ledger">
+            <field name="product_id" ref="product_wooden_top"/>
+            <field name="reference">INIT-STOCK</field>
+            <field name="transaction_type">initial</field>
+            <field name="quantity">200.0</field>
+            <field name="balance_after">200.0</field>
+        </record>
+
+        <record id="stock_screws" model="stock.ledger">
+            <field name="product_id" ref="product_screws"/>
+            <field name="reference">INIT-STOCK</field>
+            <field name="transaction_type">initial</field>
+            <field name="quantity">5000.0</field>
+            <field name="balance_after">5000.0</field>
+        </record>
+
+        <record id="stock_chair_base" model="stock.ledger">
+            <field name="product_id" ref="product_chair_base"/>
+            <field name="reference">INIT-STOCK</field>
+            <field name="transaction_type">initial</field>
+            <field name="quantity">200.0</field>
+            <field name="balance_after">200.0</field>
+        </record>
+
+        <record id="stock_wheels" model="stock.ledger">
+            <field name="product_id" ref="product_wheels"/>
+            <field name="reference">INIT-STOCK</field>
+            <field name="transaction_type">initial</field>
+            <field name="quantity">1000.0</field>
+            <field name="balance_after">1000.0</field>
+        </record>
+
+        <!-- Finished Goods — SOs fulfilled from stock without manufacturing -->
+        <record id="stock_wooden_table" model="stock.ledger">
+            <field name="product_id" ref="product_wooden_table"/>
+            <field name="reference">INIT-STOCK</field>
+            <field name="transaction_type">initial</field>
+            <field name="quantity">50.0</field>
+            <field name="balance_after">50.0</field>
+        </record>
+
+        <record id="stock_office_chair" model="stock.ledger">
+            <field name="product_id" ref="product_office_chair"/>
+            <field name="reference">INIT-STOCK</field>
+            <field name="transaction_type">initial</field>
+            <field name="quantity">50.0</field>
+            <field name="balance_after">50.0</field>
+        </record>
+
+        <record id="stock_dining_table" model="stock.ledger">
+            <field name="product_id" ref="product_dining_table"/>
+            <field name="reference">INIT-STOCK</field>
+            <field name="transaction_type">initial</field>
+            <field name="quantity">20.0</field>
+            <field name="balance_after">20.0</field>
+        </record>
+
+        <!-- ══════════════════════════════════════════════════
+             COMPLETE SALES ORDER — Confirmed + Delivered
+             ══════════════════════════════════════════════════ -->
+        <record id="so_completed_1" model="sale.order">
+            <field name="partner_id" ref="partner_mrf_ltd"/>
+            <field name="state">draft</field>
+            <field name="date_order" eval="(datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="so_line_completed_1a" model="sale.order.line">
+            <field name="order_id" ref="so_completed_1"/>
+            <field name="product_id" ref="product_wooden_table"/>
+            <field name="description">Wooden Table</field>
+            <field name="quantity">3.0</field>
+            <field name="price_unit">15000.00</field>
+        </record>
+
+        <record id="so_line_completed_1b" model="sale.order.line">
+            <field name="order_id" ref="so_completed_1"/>
+            <field name="product_id" ref="product_dining_table"/>
+            <field name="description">Dining Table</field>
+            <field name="quantity">2.0</field>
+            <field name="price_unit">25000.00</field>
+        </record>
+
+        <function model="sale.order" name="action_confirm" eval="[[ref('so_completed_1')]]"/>
+
+        <record id="deliver_wizard_1" model="sale.order.deliver">
+            <field name="order_id" ref="so_completed_1"/>
+            <field name="line_ids" eval="[(0, 0, {
+                'sale_line_id': ref('so_line_completed_1a'),
+                'product_id': ref('product_wooden_table'),
+                'qty_ordered': 3.0,
+                'qty_delivered': 3.0,
+            }), (0, 0, {
+                'sale_line_id': ref('so_line_completed_1b'),
+                'product_id': ref('product_dining_table'),
+                'qty_ordered': 2.0,
+                'qty_delivered': 2.0,
+            })]"/>
+        </record>
+
+        <function model="sale.order.deliver" name="action_validate"
+                  eval="[[ref('deliver_wizard_1')]]"/>
+
+        <!-- ══════════════════════════════════════════════════
+             COMPLETE PURCHASE ORDER — Confirmed + Received
+             ══════════════════════════════════════════════════ -->
+        <record id="po_completed_1" model="purchase.order">
+            <field name="partner_id" ref="partner_plastofact_in"/>
+            <field name="state">draft</field>
+            <field name="date_order" eval="(datetime.now() - timedelta(days=14)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <record id="po_line_completed_1a" model="purchase.order.line">
+            <field name="order_id" ref="po_completed_1"/>
+            <field name="product_id" ref="product_wooden_legs"/>
+            <field name="description">Wooden Legs</field>
+            <field name="quantity">100.0</field>
+            <field name="price_unit">200.00</field>
+        </record>
+
+        <record id="po_line_completed_1b" model="purchase.order.line">
+            <field name="order_id" ref="po_completed_1"/>
+            <field name="product_id" ref="product_wooden_top"/>
+            <field name="description">Wooden Top</field>
+            <field name="quantity">30.0</field>
+            <field name="price_unit">1500.00</field>
+        </record>
+
+        <function model="purchase.order" name="action_confirm" eval="[[ref('po_completed_1')]]"/>
+
+        <record id="receive_wizard_1" model="purchase.order.receive">
+            <field name="order_id" ref="po_completed_1"/>
+            <field name="line_ids" eval="[(0, 0, {
+                'purchase_line_id': ref('po_line_completed_1a'),
+                'product_id': ref('product_wooden_legs'),
+                'qty_ordered': 100.0,
+                'qty_received': 100.0,
+            }), (0, 0, {
+                'purchase_line_id': ref('po_line_completed_1b'),
+                'product_id': ref('product_wooden_top'),
+                'qty_ordered': 30.0,
+                'qty_received': 30.0,
+            })]"/>
+        </record>
+
+        <function model="purchase.order.receive" name="action_validate"
+                  eval="[[ref('receive_wizard_1')]]"/>
+
+        <!-- ══════════════════════════════════════════════════
+             COMPLETE MANUFACTURING ORDER — Produced + Done
+             ══════════════════════════════════════════════════ -->
+        <record id="mo_completed_1" model="mrp.production">
+            <field name="product_id" ref="product_wooden_table"/>
+            <field name="product_qty">5.0</field>
+            <field name="bom_id" ref="bom_wooden_table"/>
+            <field name="state">draft</field>
+            <field name="date_planned_start" eval="(datetime.now() - timedelta(days=3)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="notes">Produced from raw materials</field>
+        </record>
+
+        <function model="mrp.production" name="action_confirm" eval="[[ref('mo_completed_1')]]"/>
+        <function model="mrp.production" name="action_produce" eval="[[ref('mo_completed_1')]]"/>
+
+    </data>
+</odoo>
