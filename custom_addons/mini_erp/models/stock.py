@@ -1,6 +1,6 @@
 from odoo import models, fields, api
+# pyrefly: ignore [missing-import]
 from odoo.exceptions import UserError
-
 
 class StockLedger(models.Model):
     _name = 'stock.ledger'

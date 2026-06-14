@@ -1,8 +1,9 @@
 from odoo import models, fields, api
+
 # pyrefly: ignore [missing-import]
 from odoo.http import request
+# pyrefly: ignore [missing-import]
 from odoo.exceptions import UserError
-
 
 class AuditLog(models.Model):
     _name = 'audit.log'
