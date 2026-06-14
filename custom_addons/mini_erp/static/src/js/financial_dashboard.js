@@ -18,6 +18,7 @@ export class FinancialDashboard extends Component {
         this.chart2Ref = useRef("chart_revenue_breakdown");
         this.chart3Ref = useRef("chart_profit_trend");
         this.chart4Ref = useRef("chart_expense_categories");
+        this.rootRef = useRef("root");
 
         this.state = useState({
             loading: true,
@@ -61,10 +62,20 @@ export class FinancialDashboard extends Component {
 
         onMounted(() => {
             this.loadData();
+            // Hide the control panel (breadcrumb & pager row) on the dashboard
+            const controlPanel = this.rootRef.el?.closest('.o_action')?.querySelector('.o_control_panel');
+            if (controlPanel) {
+                controlPanel.style.setProperty('display', 'none', 'important');
+            }
         });
 
         onWillUnmount(() => {
             this.destroyCharts();
+            // Restore the control panel when navigating away
+            const controlPanel = this.rootRef.el?.closest('.o_action')?.querySelector('.o_control_panel');
+            if (controlPanel) {
+                controlPanel.style.removeProperty('display');
+            }
         });
     }
 

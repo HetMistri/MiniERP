@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <templates xml:space="preserve">
     <t t-name="mini_erp.FinancialDashboard" owl="1">
-        <div class="o_financial_dashboard mt-4 mb-5">
+        <div class="o_financial_dashboard mt-4 mb-5" t-ref="root">
             <!-- Header Section -->
             <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap">
                 <div>
