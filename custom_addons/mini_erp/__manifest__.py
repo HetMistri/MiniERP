@@ -30,7 +30,6 @@ Mini ERP System that digitally manages the complete business flow:
         'wizard/sale_order_deliver_views.xml',
         'wizard/purchase_order_receive_views.xml',
         'wizard/product_replenish_views.xml',
-        'wizard/demo_data_wizard_views.xml',
         'views/partner_views.xml',
         'views/sale_order_views.xml',
         'views/purchase_order_views.xml',
