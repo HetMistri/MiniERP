@@ -188,7 +188,7 @@ class SaleOrder(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'audit.log',
             'view_mode': 'list,form',
-            'domain': [('model', '=', 'sale.order')],
+            'domain': [('model_name', '=', 'sale.order')],
             'context': {'search_default_res_id': self.id},
         }
 
