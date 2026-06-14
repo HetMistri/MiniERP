@@ -8,5 +8,6 @@ __pycache__/
 .env
 .idea/
 .vscode/
-
+start.ps1
+start.sh
 pgdata/
